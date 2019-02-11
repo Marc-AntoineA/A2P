@@ -2,10 +2,14 @@
 
 import React, { Component } from 'react';
 
+import { Navbar } from 'react-bootstrap';
+
 class Header extends Component {
   render() {
     return (
-        <h3>Header for application process</h3>
+      <Navbar bg="light">
+        <Navbar.Brand href="#home">Social Hackers Academy</Navbar.Brand>
+      </Navbar>
     );
   }
 }

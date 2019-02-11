@@ -15,7 +15,7 @@ class Welcome extends Component {
         <Header></Header>
         <h2>Welcome Page</h2>
         <div>
-          <Button href='/apply' variant='success' block>Apply now</Button>
+          <Button href='/nextStep' variant='success' block>Apply now</Button>
           <Button href='/login' variant='info' block>Already registered</Button>
         </div>
       </div>
