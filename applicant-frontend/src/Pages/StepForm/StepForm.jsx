@@ -3,26 +3,26 @@
 import React, { Component } from 'react';
 
 import Header from '../../Components/Header/Header.jsx';
-import Question from '../../Components/Question/Question.jsx';
-import { Carousel } from 'react-bootstrap';
+import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
+
+// TODO do this for tests only
+const data = require('../../dataExamples/step1.json');
 
 class StepForm extends Component {
+  constructor(props) {
+    super(props);
+    console.log(data);
+  }
+
   render() {
     return (
       <div>
         <Header/>
-        <h2>Step form (carousel below)</h2>
-        <Carousel>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-          <Question></Question>
-        </Carousel>
+        <div>
+          <QuestionPage data={data[0]}></QuestionPage>
+          <QuestionPage data={data[1]}></QuestionPage>
+          <QuestionPage data={data[2]}></QuestionPage>
+        </div>
       </div>
     );
   }
