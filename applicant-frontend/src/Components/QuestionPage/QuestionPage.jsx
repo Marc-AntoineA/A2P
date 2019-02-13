@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import Question from '../../Components/Question/Question.jsx';
+import './styles.css';
 
 class QuestionPage extends Component {
 
@@ -13,13 +14,13 @@ class QuestionPage extends Component {
   render() {
     const data = this.props.data;
 
-    let questions = [];
+    const questions = [];
     data.questions.forEach((question) => {
-      questions.push(<Question data={ question }></Question>);
+      questions.push(<Question key={ question.id } data={ question }></Question>);
     });
 
     return (
-      <div>
+      <div className={this.props.hidden ? 'hidden' : ''}>
         <h2>{ data.label }</h2>
         <p>{ data.caption }</p>
         { questions }

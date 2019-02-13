@@ -13,11 +13,13 @@ class Welcome extends Component {
     return (
       <div>
         <Header></Header>
-        <h2>Welcome Page</h2>
-        <div>
-          <Button href='/nextStep' variant='success' block>Apply now</Button>
-          <Button href='/login' variant='info' block>Already registered</Button>
-        </div>
+        <main>
+          <h2>Welcome Page</h2>
+          <div>
+            <Button href='/nextStep' variant='success' block>Apply now</Button>
+            <Button href='/login' variant='info' block>Already registered</Button>
+          </div>
+        </main>
       </div>
     );
   }

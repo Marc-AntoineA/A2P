@@ -9,7 +9,9 @@ class Summary extends Component {
     return (
       <div>
         <Header/>
-        <h3>My summary</h3>
+        <main>
+          <h3>My summary</h3>
+        </main>
       </div>
     );
   }
