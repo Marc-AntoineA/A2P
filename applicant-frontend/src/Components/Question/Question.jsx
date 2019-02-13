@@ -11,7 +11,7 @@ class Question extends Component {
     return (
       <div>
         <label htmlFor={ data.id }>{ data.label }</label>
-        <Input id={ data. id} type={ data.type }></Input>
+        <Input id={ data. id} type={ data.type } data={ data }></Input>
       </div>
     );
   }

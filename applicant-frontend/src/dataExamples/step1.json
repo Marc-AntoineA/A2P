@@ -4,6 +4,34 @@
     "label": "Become a Student in Social Hackers Academy",
     "caption": "Welcome to the application form for the third Social Hackers Academy class. This class will run once per week but will require you to put in up 10 hours of your time a week. The course will run for six months and is completely free. You can see the whole application process here: http://socialhackersacademy.org/application-process/ If you have any questions please email me at: admissions@socialhackersacademy.org",
     "questions": []
+  }
+  {
+    "id":1,
+    "label": "Eligibility",
+    "caption": "... todo ...",
+    "questions": [
+      {
+        "id": 5,
+        "label": "If you are unemployed, are you unemployed for 12 months minimum?",
+        "type": "radio",
+        "mandatory": true,
+        "choices": ["Yes", "No", "I'm not unemployed"]
+      },
+      {
+        "id": 6,
+        "label": "If you are not a Greek or EU national, what is the status of your asylum request?",
+        "mandatory": true,
+        "type": "radio",
+        "choices": [
+          "I am unregistered",
+          "I am waiting for my interview",
+          "I have applied for asylum",
+          "I have received my asylum",
+          "I am waiting to be relocated",
+          "I ame a Greek Citizen or EU national"
+        ]
+      }
+    ]
   },
   {
     "id": 2,
@@ -43,6 +71,32 @@
         "label": "Your phone number",
         "caption": "we'll only contact you through WhatsApp",
         "type": "phone",
+        "mandatory": true
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "label": "Studies",
+    "caption": "",
+    "questions": [
+      {
+        "id": 7,
+        "label": "Have you studied in university?",
+        "type": "radio",
+        "choices": ["Yes", "No"],
+        "mandatory": true
+      },
+      {
+        "id": 8,
+        "label": "If you studied, what and where, and how long?",
+        "type": "text",
+        "mandatory": true
+      },
+      {
+        "id": 9,
+        "label": "Do you have any experience with programming before?",
+        "type": "text",
         "mandatory": true
       }
     ]
