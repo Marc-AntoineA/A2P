@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMobileAlt } from '@fortawesome/free-solid-svg-icons';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class Input extends Component {
   render() {
@@ -19,10 +21,10 @@ class Input extends Component {
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="mail address"/>
         </div>);
-      case 'dateOfBirth': // TODO
+      case 'date': // TODO
       return (
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="mail address"/>
+          <DatePicker className='form-control'/>
         </div>);
       case 'email': // TODO
         return (

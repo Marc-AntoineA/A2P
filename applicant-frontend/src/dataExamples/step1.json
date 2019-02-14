@@ -49,7 +49,7 @@
         "id": 1,
         "label": "Your date of birth",
         "caption": "caption",
-        "type": "dateOfBirth",
+        "type": "date",
         "mandatory": true
       }
     ]
