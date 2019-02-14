@@ -2,29 +2,54 @@
 
 import React, { Component } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMobileAlt } from '@fortawesome/free-solid-svg-icons';
+
 class Input extends Component {
   render() {
     const props = this.props;
-    console.log(props);
+
     let input = (<div>MISTAKE</div>);
+
     switch (props.type) {
       case 'text':
         return <textarea></textarea>
       case 'inline':
-        return <input id={props.id} type='text'></input>;
+      return (
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="mail address"/>
+        </div>);
       case 'dateOfBirth': // TODO
-        return <input id={props.id} type='text'></input>;
+      return (
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="mail address"/>
+        </div>);
       case 'email': // TODO
-        return <input id={props.id} type='email'></input>;
+        return (
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="mail address"/>
+          </div>);
       case 'phone': // TODO
-        return <input id={props.id} type='tel'></input>;
+      return (
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class='input-group-text'>
+              <FontAwesomeIcon icon={faMobileAlt} />
+            </span>
+          </div>
+          <input type="text" class="form-control" placeholder="phone number"/>
+        </div>);
       case 'radio':
         const choices = [];
         this.props.data.choices.forEach((choice) => {
           choices.push(
-            <label>{ choice }
-              <input type="checkbox"/>
-            </label>);
+            <div className='custom-control custom-checkbox'>
+              <input type='checkbox' className='custom-control-input'/>
+              <label className='custom-control-label'>{ choice }</label>
+            </div>);
         });
         return (<div>{ choices }</div>);
     }
