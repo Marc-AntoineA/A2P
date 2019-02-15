@@ -1,0 +1,10 @@
+[
+  {
+    "cssSelector": "a",
+    "minValue": 5
+  },
+  {
+    "cssSelector": "p",
+    "minValue": 2
+  }
+]
