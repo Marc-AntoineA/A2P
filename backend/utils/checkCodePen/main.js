@@ -10,13 +10,24 @@ const { JSDOM } = jsdom;
     It will be integrated into the final platform
 
     Usage.
-      node <code pen website>
+      node main.js <code pen website>
+
+    Test
+      node main.js https://codepen.io/marc-antoinea/pen/qggWPP
 */
 
 const rules = require('./rules.json');
 
+function checkRuleValidity(rule) {
+  const language = rule.language;
+  const type = rule.type;
+  if (language != 'css' && language != 'html') throw `language ${language} is not defined`;
+  if (type != 'regex' && type != 'cssSelector') throw `css ${type} is not defined`;
+}
+
+
 let codepenWebsite = process.argv[2];
-const regex = new RegExp('https:\/\/codepen\.io\/(.*)\/((details)|(full)|(pen))\/(.*)');
+const regex = new RegExp('https:\/\/codepen\.io\/(.*)\/((details)|(full)|(pen)|(live))\/(.*)');
 
 console.log("Check for codepen: ", codepenWebsite);
 
@@ -28,25 +39,42 @@ if (!regex.test(codepenWebsite)) {
 const penView = codepenWebsite.match(regex)[2];
 if (penView !== 'pen') {
   const matches = codepenWebsite.match(regex);
-  codepenWebsite = 'https://codepen.io/' + matches[1] + '/pen/' + matches[6];
+  codepenWebsite = 'https://codepen.io/' + matches[1] + '/pen/' + matches[7];
   console.log("WARNING: the address given was changed to ", codepenWebsite);
 }
 
 request(codepenWebsite, function(error, response, body) {
   if (error) { console.log("Error"); return; }
   const dom = new JSDOM(body);
-  //console.log(dom);
-  const textContent = dom.window.document.querySelector('pre#html').querySelector('code').textContent;
-  const htmlContent = new JSDOM(textContent);
 
-  const document = htmlContent.window.document;
+  const htmlTextContent = dom.window.document.querySelector('pre#html').querySelector('code').textContent;
+  const cssTextContent = dom.window.document.querySelector('pre#css').querySelector('code').textContent;
+  const htmlContent = new JSDOM(htmlTextContent);
+  const htmlDocument = htmlContent.window.document;
 
   let nbCheckedRules = 0;
   for (let ruleIndex in rules){
     const rule = rules[ruleIndex];
-    const nbInCodePen = document.querySelectorAll(rule.cssSelector).length;
-    console.log("CSS Selector ", rule.cssSelector, " ", nbInCodePen, " / ", rule.minValue, (nbInCodePen >= rule.minValue ? 'checked' : 'failed'));
-    if (nbInCodePen >= rule.minValue) nbCheckedRules += 1;
+    checkRuleValidity(rule);
+    const type = rule.type;
+    const language = rule.language;
+    const value = rule.value;
+
+    let nbInCodepen = 0;
+    if (type == "regex") {
+      const content = language == 'html' ? htmlTextContent : cssTextContent;
+      const regex = new RegExp(value, 'g');
+      content.replace(regex, function(m) {
+        nbInCodepen++;
+      });
+    } else {
+      const content = htmlDocument;
+      nbInCodepen = content.querySelectorAll(value).length;
+    }
+
+    const nbInCodePen = htmlDocument.querySelectorAll(rule.cssSelector).length;
+    console.log(`${language} ${type} ${value} ${nbInCodepen} / ${rule.expected} ${nbInCodepen >= rule.expected ? 'checked' : 'failed'}`);
+    if (nbInCodepen >= rule.expected) nbCheckedRules += 1;
   }
 
   console.log("");
