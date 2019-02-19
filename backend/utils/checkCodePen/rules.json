@@ -24,6 +24,12 @@
   },
   {
     "type": "cssSelector",
+    "value": "img",
+    "expected": 3,
+    "language": "html"
+  },
+  {
+    "type": "cssSelector",
     "value": "a > img",
     "expected": 3,
     "language": "html"
