@@ -10,6 +10,11 @@ class Question extends Component {
 
   constructor(props) {
       super(props);
+      this.handleChangeValue = this.handleChangeValue.bind(this);
+  }
+
+  handleChangeValue(value) {
+    this.props.onChange(this.props.data.id, value);
   }
 
   render() {
@@ -20,7 +25,8 @@ class Question extends Component {
         <Input
           id={ data. id}
           type={ data.type }
-          data={ data }>
+          data={ data }
+          onChange={this.handleChangeValue}>
         </Input>
       </div>
     );

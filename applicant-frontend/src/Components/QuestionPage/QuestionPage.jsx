@@ -7,6 +7,15 @@ import './styles.css';
 
 class QuestionPage extends Component {
 
+  constructor(props) {
+    super(props);
+    this.handleChangeValue = this.handleChangeValue.bind(this);
+  }
+
+  handleChangeValue(questionId, value) {
+    this.props.onChange(questionId, value);
+  }
+
   componentDidMount() {
     console.log(this.props.data);
   }
@@ -16,7 +25,12 @@ class QuestionPage extends Component {
 
     const questions = [];
     data.questions.forEach((question) => {
-      questions.push(<Question key={ question.id } data={ question }></Question>);
+      questions.push(
+        <Question
+          key={ question.id }
+          data={ question }
+          onChange={this.handleChangeValue}>
+        </Question>);
     });
 
     return (

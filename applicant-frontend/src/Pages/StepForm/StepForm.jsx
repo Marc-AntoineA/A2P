@@ -14,10 +14,18 @@ const data = require('../../dataExamples/step1.json');
 class StepForm extends Component {
   constructor(props) {
     super(props);
-    this.state = { currentPage: 1 };
+
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.submitForm = this.submitForm.bind(this);
+    this.handleChangeValue = this.handleChangeValue.bind(this);
+
+    this.state = {
+      'submissionRunning': false,
+      'currentPage': 1,
+      'answers': {}
+    };
   }
 
   componentWillMount(){
@@ -51,14 +59,29 @@ class StepForm extends Component {
     });
   }
 
+  handleChangeValue(questionId, value) {
+    console.log("New answer: ", questionId, value);
+    this.setState((prevState) => {
+      prevState.answers[questionId] = value;
+    });
+  }
+
+  submitForm() {
+    console.log(this.state.answers);
+  }
+
   render() {
     const pages = [];
     data.forEach((page, index) => {
-      pages.push(<QuestionPage key={ page.id } data={ page }
-        hidden={ index + 1 !== this.state.currentPage }></QuestionPage>);
+      pages.push(
+        <QuestionPage
+          key={ page.id }
+          data={ page }
+          hidden={ index + 1 !== this.state.currentPage }
+          onChange={this.handleChangeValue}>
+        </QuestionPage>);
     });
 
-    // TODO don't displayed previous / next if no pages are available
     return (
       <div>
         <Header/>
@@ -75,7 +98,7 @@ class StepForm extends Component {
             <Button className='float-right' onClick={ this.nextPage }>Next</Button> : ''}
           {this.state.currentPage === pages.length ?
             <Button
-              onClick={ this.submit }
+              onClick={ this.submitForm }
               size='lg'
               variant='success'>
               Submit

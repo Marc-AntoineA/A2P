@@ -31,6 +31,7 @@ class Input extends Component {
       default:
         this.state = {'currentValue': ''};
     }
+    this.props.onChange(this.state.currentValue);
   }
 
   handleChangeTextInput(e) {
@@ -40,6 +41,7 @@ class Input extends Component {
       prevState.currentValue = value;
       return prevState;
     });
+    this.props.onChange(value);
   }
 
   handleChangeDate(date) {
@@ -47,6 +49,7 @@ class Input extends Component {
       prevState.currentValue = date;
       return prevState;
     });
+    this.props.onChange(date);
   }
 
   handleChangeRadio(e) {
@@ -57,6 +60,7 @@ class Input extends Component {
       prevState.currentValue = value;
       return prevState;
     });
+    this.props.onChange(value);
   }
 
   renderText() {
