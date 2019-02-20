@@ -13,7 +13,7 @@ Automated Application Process
 
 ## Backend
 
-Installing `MongoDB` on your computer: `sudo apt-get -y install mongodb`
+Installing `MongoDB` on your computer: [MongoDb]https://www.mongodb.com/download-center/community
 
 `npm install`
 
