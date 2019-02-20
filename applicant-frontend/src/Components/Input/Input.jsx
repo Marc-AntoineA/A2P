@@ -12,6 +12,7 @@ class Input extends Component {
 
   constructor(props) {
     super(props);
+
     this.handleChangeTextInput = this.handleChangeTextInput.bind(this);
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleChangeRadio = this.handleChangeRadio.bind(this);
@@ -35,7 +36,6 @@ class Input extends Component {
   handleChangeTextInput(e) {
     const target = e.target;
     const value = target.value;
-
     this.setState(prevState => {
       prevState.currentValue = value;
       return prevState;
@@ -46,7 +46,7 @@ class Input extends Component {
     this.setState((prevState) => {
       prevState.currentValue = date;
       return prevState;
-    })
+    });
   }
 
   handleChangeRadio(e) {

@@ -69,8 +69,19 @@ class StepForm extends Component {
         </ProgressBar>
         <main>
           { pages }
-          <Button className='float-left' onClick={ this.previousPage }>Previous</Button>
-          <Button className='float-right' onClick={ this.nextPage }>Next</Button>
+          {this.state.currentPage !== 1 ?
+            <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}
+          {this.state.currentPage !== pages.length ?
+            <Button className='float-right' onClick={ this.nextPage }>Next</Button> : ''}
+          {this.state.currentPage === pages.length ?
+            <Button
+              onClick={ this.submit }
+              size='lg'
+              variant='success'>
+              Submit
+            </Button>
+            : ''
+          }
         </main>
       </div>
     );
