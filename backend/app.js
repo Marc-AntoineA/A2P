@@ -1,9 +1,9 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var cors = require('cors');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-var app = express();
-var port = process.env.PORT || 3000;
+const app = express();
+const port = process.env.PORT || 3001;
 
 app.all('*', function(req, res, next) {
      var origin = req.get('origin');
