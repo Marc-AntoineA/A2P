@@ -29,14 +29,14 @@ class StepForm extends Component {
   }
 
   handleKeyDown(e) {
-    if (e.key == 'ArrowRight')
+    if (e.key === 'ArrowRight')
       this.nextPage();
-    if (e.key == 'ArrowLeft')
+    if (e.key === 'ArrowLeft')
       this.previousPage();
   }
 
   nextPage() {
-    if (this.state.currentPage == data.length) return;
+    if (this.state.currentPage === data.length) return;
     this.setState((prevState) => {
       prevState.currentPage++;
       return prevState;
@@ -44,7 +44,7 @@ class StepForm extends Component {
   }
 
   previousPage() {
-    if (this.state.currentPage == 1) return;
+    if (this.state.currentPage === 1) return;
     this.setState((prevState) => {
       prevState.currentPage--;
       return prevState;
