@@ -4,8 +4,8 @@ const router = express.Router();
 
 const applicantCtrl = require('../controllers/applicant');
 
-router.post('/:campaign', applicantCtrl.createApplicant);
-router.get('/:id/process', applicantCtrl.getApplicantProcess);
-router.put('/:id/process', applicantCtrl.modifyApplicantProcess);
+router.post('/', applicantCtrl.createApplicant);
+router.get('/:id', applicantCtrl.getApplicantProcess);
+router.put('/:id', applicantCtrl.modifyApplicantProcess);
 
 module.exports = router;
