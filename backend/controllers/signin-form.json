@@ -1,0 +1,50 @@
+[
+  {
+    "id": 0,
+    "label": "Become a Student in Social Hackers Academy",
+    "caption": "Welcome to the application form for the third Social Hackers Academy class. This class will run once per week but will require you to put in up 10 hours of your time a week. The course will run for six months and is completely free. You can see the whole application process here: http://socialhackersacademy.org/application-process/ If you have any questions please email me at: admissions@socialhackersacademy.org",
+    "questions": []
+  },
+  {
+    "id": 2,
+    "label": "Personal information",
+    "caption":"",
+    "questions": [
+      {
+        "id": 0,
+        "label": "Your name",
+        "caption":"",
+        "type": "inline",
+        "mandatory": true
+      },
+      {
+        "id": 1,
+        "label" : "Password",
+        "caption":"",
+        "type": "password",
+        "mandatory": true
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "label": "Contact information",
+    "caption":"",
+    "questions": [
+      {
+        "id": 3,
+        "label": "Your email address",
+        "caption":"",
+        "type": "email",
+        "mandatory": true
+      },
+      {
+        "id": 4,
+        "label": "Your phone number",
+        "caption": "we'll only contact you through WhatsApp",
+        "type": "phone",
+        "mandatory": true
+      }
+    ]
+  }
+]

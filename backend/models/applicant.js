@@ -6,6 +6,7 @@ const processSchema = require('./process').schema;
 
 const applicantSchema = mongoose.Schema({
   mailAddress: { type: String, required: true, unique: true },
+  phoneNumber: { type: String, required: true },
   password: { type: String, required: true },
   campaign: { type: String, required: true },
   status: { type: String, required: true }, // TODO rejected, accepted class X...,

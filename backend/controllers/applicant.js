@@ -3,6 +3,13 @@
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 
+const signinForm = require('./signin-form.json');
+
+// TODO
+exports.getSigninForm = (req, res, next) => {
+    res.status(201).json(signinForm);
+};
+
 // TODO
 exports.createApplicant = (req, res, next) => {
   // TODO crypt password

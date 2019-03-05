@@ -8,11 +8,10 @@ const applicantRoutes = require('./routes/applicant');
 
 const app = express();
 
-let MONGODB_URL = 'mongodb://' + settings.DB_USERNAME + ':';
+let MONGODB_URL = 'mongodb+srv://' + settings.DB_USERNAME + ':';
 MONGODB_URL += settings.DB_PASSWORD + '@';
-MONGODB_URL += settings.DB_HOST + ':';
-MONGODB_URL += settings.DB_PORT + '/';
-MONGODB_URL += settings.DB_NAME;
+MONGODB_URL += settings.DB_HOST + '/';
+MONGODB_URL += settings.DB_NAME + '?retryWrites=true';
 
 mongoose.connect(MONGODB_URL, { useNewUrlParser: true })
   .then(() => {
