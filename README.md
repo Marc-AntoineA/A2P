@@ -1,7 +1,11 @@
 # A2P
 Automated Application Process
 
-## Applicant-frontent
+## Prerequisites
+* `node.js` [NodeJS](https://nodejs.org/en/)
+* `npm`
+
+## Applicant-frontend
 
 ### Installation
 
@@ -9,11 +13,13 @@ Automated Application Process
 
 `npm start`
 
-## Superviser-frontent
+## Superviser-frontend
 
 ## Backend
 
-Installing `MongoDB` on your computer: [MongoDb]https://www.mongodb.com/download-center/community
+### Installation
+Installing `MongoDB` on your computer:
+* On **windows**:  [MongoDb](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
 `npm install`
 

@@ -7,9 +7,10 @@ import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
 import './styles.css';
 
 import { Button, ProgressBar } from 'react-bootstrap';
+import ApiRequests from '../../Providers/ApiRequests.js';
 
 // TODO do this for tests only
-const data = require('../../dataExamples/step1.json');
+const EXAMPLE_DATA = require('../../dataExamples/step1.json');
 
 class StepForm extends Component {
   constructor(props) {
@@ -20,19 +21,45 @@ class StepForm extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.submitForm = this.submitForm.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.getFormData = this.getFormData.bind(this);
 
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
-      'answers': {}
+      'answers': {},
+      'data': []
     };
   }
 
-  componentWillMount(){
-      document.addEventListener("keydown", this.handleKeyDown);
+  getFormData() {
+    console.log(this.props);
+    if (this.props.user.username === "" || this.props.user.token === "") {
+      ApiRequests.getSigninForm()
+        .then((data) => {
+          this.setState((prevState) => {
+            prevState.data = data;
+            return prevState;
+          });
+        }).catch((err) => {
+          this.props.handleError(err);
+        });
+      } else {
+        this.setState((prevState) => {
+          prevState.data = EXAMPLE_DATA;
+          return prevState;
+        });
+      }
   }
 
-  componentWillUnMount(){
+  componentWillMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  componentDidMount() {
+    this.getFormData();
+  }
+
+  componentWillUnMount() {
       document.removeEventListener("keydown", this.handleKeyDown);
   }
 
@@ -44,7 +71,7 @@ class StepForm extends Component {
   }
 
   nextPage() {
-    if (this.state.currentPage === data.length) return;
+    if (this.state.currentPage >= this.state.data.length) return;
     this.setState((prevState) => {
       prevState.currentPage++;
       return prevState;
@@ -66,13 +93,27 @@ class StepForm extends Component {
     });
   }
 
+  // TODO
+  checkRequiredQuestions() {
+    return true;
+  }
+  // TODO
   submitForm() {
+    if (this.checkRequiredQuestions()) {
+      // TODO
+      console.log('OK');
+    } else {
+      // TODO
+      console.log('NOT OK');
+    }
+    // TODO handle if no users
+    ApiRequests.postSigninForm(this.state.answers);
     console.log(this.state.answers);
   }
 
   render() {
     const pages = [];
-    data.forEach((page, index) => {
+    this.state.data.forEach((page, index) => {
       pages.push(
         <QuestionPage
           key={ page.id }

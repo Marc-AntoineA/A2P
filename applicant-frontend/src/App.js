@@ -10,14 +10,33 @@ import StepForm from './Pages/StepForm/StepForm.jsx';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 class App extends Component {
+
+  constructor(props) {
+      super(props);
+      this.state = {user: {
+        username: "",
+        token: ""
+      }};
+      this.signin = this.signin.bind(this);
+  }
+
+  // TODO
+  handleError(err) {
+  }
+
+  signin() {
+    return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
+  }
+
   render() {
     return (
       <Router>
         <div className="App">
-          <Route exact path='/' component={Welcome}/>
-          <Route exact path='/login' component={Login}/>
-          <Route exact path='/summary' component={Summary}/>
-          <Route exact path='/nextStep' component={StepForm}/>
+          <Route exact path='/' component={ Welcome }/>
+          <Route exact path='/login' component={ Login }/>
+          <Route exact path='/summary' component={ Summary }/>
+          <Route exact path='/signin' component={ this.signin }/>
+          <Route exact path='/nextStep' component={ StepForm }/>
         </div>
       </Router>
     );

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMobileAlt, faCalendarAlt, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faMobileAlt, faCalendarAlt, faPen, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Form } from 'react-bootstrap';
@@ -126,6 +126,22 @@ class Input extends Component {
       </div>);
   }
 
+  renderPassword() {
+    return (
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+        <span class='input-group-text'>
+          <FontAwesomeIcon icon={faUnlockAlt} />
+        </span>
+        </div>
+        <input type="password"
+          class="form-control"
+          placeholder="password"
+          onChange={this.handleChangeTextInput}
+          value={this.state.currentValue}/>
+      </div>);
+  }
+
   renderRadio() {
     const choices = [];
     this.props.data.choices.forEach((choice, index) => {
@@ -158,6 +174,8 @@ class Input extends Component {
         return this.renderPhone();
       case 'radio':
         return this.renderRadio();
+      case 'password':
+        return this.renderPassword();
       default:
         throw new Error(`undefined input type ${this.props.type}`);
     }
