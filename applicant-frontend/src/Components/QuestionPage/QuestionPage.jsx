@@ -12,8 +12,8 @@ class QuestionPage extends Component {
     this.handleChangeValue = this.handleChangeValue.bind(this);
   }
 
-  handleChangeValue(questionId, value) {
-    this.props.onChange(questionId, value);
+  handleChangeValue(questionIndex, value) {
+    this.props.onChange(this.props.pageIndex, questionIndex, value);
   }
 
   componentDidMount() {
@@ -22,13 +22,13 @@ class QuestionPage extends Component {
 
   render() {
     const data = this.props.data;
-
     const questions = [];
-    data.questions.forEach((question) => {
+    data.questions.forEach((question, index) => {
       questions.push(
         <Question
           key={ question.id }
           data={ question }
+          questionIndex = { index }
           onChange={this.handleChangeValue}>
         </Question>);
     });

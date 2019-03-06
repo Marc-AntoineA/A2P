@@ -6,6 +6,18 @@
     "questions": []
   },
   {
+    "id": 1,
+    "label": "Where do you want to become a student?",
+    "questions": [
+      {
+        "id": 18,
+        "label": "Please select one country",
+        "type": "radio",
+        "choices": ["Athens", "Berlin", "Cap", "Madrid", "Crete"]
+      }
+    ]
+  },
+  {
     "id": 2,
     "label": "Personal information",
     "caption":"",

@@ -16,12 +16,16 @@ exports.getSigninForm = function() {
 };
 
 exports.postSigninForm = function(data) {
-  console.log('post data ', data);
+  console.log('post data ', JSON.stringify(data));
   return new Promise((resolve, reject) => {
     const url = API_PATH + settings.POST_SIGNIN_FORM;
     fetch(url, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      mode: 'cors',
+      headers:{
+       'Content-Type': 'application/json'
+     }
     }).then((results) => {
       if (results.status != 201) reject();
       resolve(results.json());

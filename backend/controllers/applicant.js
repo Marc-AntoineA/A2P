@@ -5,23 +5,32 @@ const ApplicantStatusEnum = require('../models/applicantStatus');
 
 const signinForm = require('./signin-form.json');
 
-// TODO
+// TODO add dynamically the choices for the campaign
 exports.getSigninForm = (req, res, next) => {
     res.status(201).json(signinForm);
 };
 
 // TODO
 exports.createApplicant = (req, res, next) => {
+  const body = req.body;
+  console.log(body);
+  const campaign = body[1].questions[0].answer;
+  const name = body[2].questions[0].answer;
+  const password = body[2].questions[1].answer;
+  const mailAddress = body[3].questions[0].answer;
+  const phoneNumber = body[3].questions[1].answer;
+
   // TODO crypt password
   // TODO add process corresponding to this campaign
-  const body = req.body;
   const applicant = new Applicant({
-    "mailAddress": body.mailAddress,
-    "password": body.password,
-    "campaign": body.campaign,
+    "campaign": campaign,
+    "name": name,
+    "password": password,
+    "mailAddress": mailAddress,
+    "phoneNumber": phoneNumber,
     "status": 'pending'
   });
-
+  console.log(applicant);
   applicant.save()
     .then(() => {
       res.status(201).json({

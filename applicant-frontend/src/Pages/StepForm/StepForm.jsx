@@ -26,8 +26,7 @@ class StepForm extends Component {
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
-      'answers': {},
-      'data': []
+      'step': []
     };
   }
 
@@ -35,9 +34,9 @@ class StepForm extends Component {
     console.log(this.props);
     if (this.props.user.username === "" || this.props.user.token === "") {
       ApiRequests.getSigninForm()
-        .then((data) => {
+        .then((step) => {
           this.setState((prevState) => {
-            prevState.data = data;
+            prevState.step = step;
             return prevState;
           });
         }).catch((err) => {
@@ -45,7 +44,7 @@ class StepForm extends Component {
         });
       } else {
         this.setState((prevState) => {
-          prevState.data = EXAMPLE_DATA;
+          prevState.step = EXAMPLE_DATA;
           return prevState;
         });
       }
@@ -71,7 +70,7 @@ class StepForm extends Component {
   }
 
   nextPage() {
-    if (this.state.currentPage >= this.state.data.length) return;
+    if (this.state.currentPage >= this.state.step.length) return;
     this.setState((prevState) => {
       prevState.currentPage++;
       return prevState;
@@ -86,10 +85,15 @@ class StepForm extends Component {
     });
   }
 
-  handleChangeValue(questionId, value) {
-    console.log("New answer: ", questionId, value);
+  handleChangeValue(pageIndex, questionIndex, value) {
     this.setState((prevState) => {
-      prevState.answers[questionId] = value;
+      if (prevState.step.length < pageIndex) return prevState;
+      if (prevState.step[pageIndex].questions.length < questionIndex) return prevState;
+      console.log("ligne 92");
+      console.log(pageIndex, questionIndex);
+      console.log(prevState.step[pageIndex]);
+      prevState.step[pageIndex].questions[questionIndex].answer = value;
+      return prevState;
     });
   }
 
@@ -107,16 +111,17 @@ class StepForm extends Component {
       console.log('NOT OK');
     }
     // TODO handle if no users
-    ApiRequests.postSigninForm(this.state.answers);
-    console.log(this.state.answers);
+    ApiRequests.postSigninForm(this.state.step);
+    console.log(this.state.step);
   }
 
   render() {
     const pages = [];
-    this.state.data.forEach((page, index) => {
+    this.state.step.forEach((page, index) => {
       pages.push(
         <QuestionPage
           key={ page.id }
+          pageIndex={ index }
           data={ page }
           hidden={ index + 1 !== this.state.currentPage }
           onChange={this.handleChangeValue}>

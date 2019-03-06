@@ -14,7 +14,7 @@ class Question extends Component {
   }
 
   handleChangeValue(value) {
-    this.props.onChange(this.props.data.id, value);
+    this.props.onChange(this.props.questionIndex, value);
   }
 
   render() {
