@@ -45,13 +45,19 @@ exports.createApplicant = (req, res, next) => {
 };
 
 // TODO
-exports.getApplicantProcess = (req, res, next) => {
-  console.log('TODO get applicant process');
+exports.getApplicant = (req, res, next) => {
+  console.log('TODO get applicant');
   res.status(200)
 };
 
 // TODO
-exports.modifyApplicantProcess = (req, res, next) => {
-  console.log('TODO modify applicant process');
+exports.editApplicantStep = (req, res, next) => {
+  console.log('TODO edit applicant step');
   res.status(200);
-}
+};
+
+// TODO
+exports.getApplicantStep = (req, res, next) => {
+  console.log('TODO get applicant step');
+  res.status(200);
+};

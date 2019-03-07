@@ -1,5 +1,5 @@
 {
   "API_PATH": "http://localhost:3300/applicant-api",
-  "GET_SIGNIN_FORM": "/signin-form",
+  "GET_SIGNIN_FORM": "/",
   "POST_SIGNIN_FORM": "/"
 }

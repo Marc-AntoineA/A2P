@@ -4,9 +4,10 @@ const router = express.Router();
 
 const applicantCtrl = require('../controllers/applicant');
 
+router.get('/', applicantCtrl.getSigninForm);
 router.post('/', applicantCtrl.createApplicant);
-router.get('/signin-form', applicantCtrl.getSigninForm);
-router.get('/:id', applicantCtrl.getApplicantProcess);
-router.put('/:id', applicantCtrl.modifyApplicantProcess);
+router.get('/:id', applicantCtrl.getApplicant);
+router.get('/:id/:step', applicantCtrl.getApplicantStep);
+router.put('/:id/:step', applicantCtrl.editApplicantStep);
 
 module.exports = router;
