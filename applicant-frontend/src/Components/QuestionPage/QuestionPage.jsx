@@ -28,8 +28,8 @@ class QuestionPage extends Component {
         <Question
           key={ question.id }
           data={ question }
-          questionIndex = { index }
-          onChange={this.handleChangeValue}>
+          questionIndex={ index }
+          onChange={ this.handleChangeValue }>
         </Question>);
     });
 

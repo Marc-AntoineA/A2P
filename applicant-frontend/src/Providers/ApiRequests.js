@@ -26,9 +26,10 @@ exports.postSigninForm = function(data) {
       headers:{
        'Content-Type': 'application/json'
      }
-    }).then((results) => {
-      if (results.status != 201) reject();
-      resolve(results.json());
+   }).then((response) => {
+      response.json().then((x) => console.log(x));
+      if (response.status !== 201) reject();
+      resolve();
     }).catch((err) => {
       reject(err);
     });

@@ -5,7 +5,7 @@ const questionSchema = require('./question').schema;
 
 const stepPageSchema = mongoose.Schema({
   label: { type: String, required: true },
-  caption: { type: String, required: true },
+  caption: { type: String, required: false },
   questions: {type: [questionSchema], required: true}
 });
 

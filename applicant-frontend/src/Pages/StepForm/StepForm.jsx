@@ -6,7 +6,7 @@ import Header from '../../Components/Header/Header.jsx';
 import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
 import './styles.css';
 
-import { Button, ProgressBar } from 'react-bootstrap';
+import { Button, ProgressBar, Modal } from 'react-bootstrap';
 import ApiRequests from '../../Providers/ApiRequests.js';
 
 // TODO do this for tests only
@@ -22,11 +22,14 @@ class StepForm extends Component {
     this.submitForm = this.submitForm.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
+    this.handleClose = this.handleClose.bind(this);
 
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
-      'step': []
+      'step': [],
+      'displayErrorModal': false,
+      'errorMessage': ''
     };
   }
 
@@ -89,9 +92,6 @@ class StepForm extends Component {
     this.setState((prevState) => {
       if (prevState.step.length < pageIndex) return prevState;
       if (prevState.step[pageIndex].questions.length < questionIndex) return prevState;
-      console.log("ligne 92");
-      console.log(pageIndex, questionIndex);
-      console.log(prevState.step[pageIndex]);
       prevState.step[pageIndex].questions[questionIndex].answer = value;
       return prevState;
     });
@@ -105,14 +105,28 @@ class StepForm extends Component {
   submitForm() {
     if (this.checkRequiredQuestions()) {
       // TODO
-      console.log('OK');
     } else {
       // TODO
-      console.log('NOT OK');
     }
     // TODO handle if no users
-    ApiRequests.postSigninForm(this.state.step);
+    ApiRequests.postSigninForm(this.state.step).then(() => {
+      console.log('Great!');
+    }).catch((err) => {
+      console.log(err);
+      this.setState((prevState) => {
+        prevState.errorMessage = err;
+        prevState.displayErrorModal = true;
+        return prevState;
+      });
+    })
     console.log(this.state.step);
+  }
+
+  handleClose() {
+    this.setState((prevState) => {
+      prevState.displayErrorModal = false;
+      return prevState;
+    });
   }
 
   render() {
@@ -128,6 +142,22 @@ class StepForm extends Component {
         </QuestionPage>);
     });
 
+    const modal = (
+      <Modal show={this.state.displayErrorModal} >
+        <Modal.Header closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{ this.state.errorMessage }</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={this.handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={this.handleClose}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>);
+
     return (
       <div>
         <Header/>
@@ -137,6 +167,7 @@ class StepForm extends Component {
           label={`${this.state.currentPage}/${pages.length}`}>
         </ProgressBar>
         <main>
+          { modal }
           { pages }
           {this.state.currentPage !== 1 ?
             <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}

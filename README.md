@@ -24,3 +24,7 @@ Installing `MongoDB` on your computer:
 `npm install`
 
 `npm start`
+
+### Populate
+
+`npm populate/populate`

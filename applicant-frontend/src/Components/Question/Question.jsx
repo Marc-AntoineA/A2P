@@ -21,7 +21,7 @@ class Question extends Component {
     const data = this.props.data;
     return (
       <div>
-        <label className='question-label' htmlFor={ data.id }>{ data.label }</label>
+        <label className='question-label' htmlFor={ data.id }>{ data.label }{data.mandatory ? '*' : ''}</label>
         <Input
           id={ data. id}
           type={ data.type }

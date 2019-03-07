@@ -2,11 +2,11 @@
 
 const mongoose = require('mongoose');
 
-const stepPage = require('./stepPage').schema;
+const stepSchema = require('./step').schema;
 
 const processSchema = mongoose.Schema({
   label: { type: String, required: true },
-  steps: { type: [stepPage], required: true }
+  steps: { type: [stepSchema], required: true }
 });
 
 module.exports.schema = processSchema;
