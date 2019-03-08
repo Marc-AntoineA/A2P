@@ -7,7 +7,9 @@ import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Router, Route, Link } from 'react-router-dom';
+
+import history from './history';
 
 class App extends Component {
 
@@ -30,7 +32,7 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
+      <Router history={ history }>
         <div className="App">
           <Route exact path='/' component={ Welcome }/>
           <Route exact path='/login' component={ Login }/>

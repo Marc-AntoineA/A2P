@@ -16,7 +16,6 @@ exports.getSigninForm = function() {
 };
 
 exports.postSigninForm = function(data) {
-  console.log('post data ', JSON.stringify(data));
   return new Promise((resolve, reject) => {
     const url = API_PATH + settings.POST_SIGNIN_FORM;
     fetch(url, {
@@ -27,9 +26,7 @@ exports.postSigninForm = function(data) {
        'Content-Type': 'application/json'
      }
    }).then((response) => {
-      response.json().then((x) => console.log(x));
-      if (response.status !== 201) reject();
-      resolve();
+      resolve(response);
     }).catch((err) => {
       reject(err);
     });

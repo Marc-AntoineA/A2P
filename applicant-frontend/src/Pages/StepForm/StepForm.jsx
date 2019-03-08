@@ -4,10 +4,13 @@ import React, { Component } from 'react';
 
 import Header from '../../Components/Header/Header.jsx';
 import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
+import ApiRequests from '../../Providers/ApiRequests.js';
+import history from '../../history';
 import './styles.css';
 
 import { Button, ProgressBar, Modal } from 'react-bootstrap';
-import ApiRequests from '../../Providers/ApiRequests.js';
+import { withRouter } from "react-router-dom";
+
 
 // TODO do this for tests only
 const EXAMPLE_DATA = require('../../dataExamples/step1.json');
@@ -108,18 +111,28 @@ class StepForm extends Component {
     } else {
       // TODO
     }
+
     // TODO handle if no users
-    ApiRequests.postSigninForm(this.state.step).then(() => {
-      console.log('Great!');
+    ApiRequests.postSigninForm(this.state.step).then(response => {
+      if (response.status === 201) {
+        history.push('/summary');
+        return;
+      }
+      response.json().then((responseJson) => {
+        const errorMessage = responseJson.error.message;
+        this.setState((prevState) => {
+          prevState.errorMessage = errorMessage;
+          prevState.displayErrorModal = true;
+          return prevState;
+        });
+      });
     }).catch((err) => {
-      console.log(err);
       this.setState((prevState) => {
         prevState.errorMessage = err;
         prevState.displayErrorModal = true;
         return prevState;
       });
-    })
-    console.log(this.state.step);
+    });
   }
 
   handleClose() {
@@ -130,6 +143,22 @@ class StepForm extends Component {
   }
 
   render() {
+    const modal = (
+      <Modal show={this.state.displayErrorModal} >
+        <Modal.Header className="text-black" closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-black">{ this.state.errorMessage }</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={this.handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={this.handleClose}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>);
+
     const pages = [];
     this.state.step.forEach((page, index) => {
       pages.push(
@@ -141,22 +170,6 @@ class StepForm extends Component {
           onChange={this.handleChangeValue}>
         </QuestionPage>);
     });
-
-    const modal = (
-      <Modal show={this.state.displayErrorModal} >
-        <Modal.Header closeButton>
-          <Modal.Title>Error</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{ this.state.errorMessage }</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={this.handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>);
 
     return (
       <div>
@@ -188,4 +201,4 @@ class StepForm extends Component {
   }
 }
 
-export default StepForm;
+export default withRouter(StepForm);

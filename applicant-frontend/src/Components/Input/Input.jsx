@@ -69,14 +69,14 @@ class Input extends Component {
 
   renderInline() {
     return (
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class='input-group-text'>
+        <div className="input-group mb-3">
+          <div className="input-group-prepend">
+            <span className='input-group-text'>
               <FontAwesomeIcon icon={faPen} />
             </span>
           </div>
           <input type="text"
-           class="form-control"
+           className="form-control"
            onChange={this.handleChangeTextInput}
            value={this.state.currentValue}/>
         </div>);
@@ -84,9 +84,9 @@ class Input extends Component {
 
   renderDate() {
     return (
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class='input-group-text'>
+      <div className="input-group mb-3">
+        <div className="input-group-prepend">
+          <span className='input-group-text'>
             <FontAwesomeIcon icon={faCalendarAlt} />
           </span>
         </div>
@@ -98,12 +98,12 @@ class Input extends Component {
 
   renderEmail() {
     return (
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text">@</span>
+      <div className="input-group mb-3">
+        <div className="input-group-prepend">
+          <span className="input-group-text">@</span>
         </div>
         <input type="text"
-          class="form-control"
+          className="form-control"
           placeholder="mail address"
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
@@ -112,14 +112,14 @@ class Input extends Component {
 
   renderPhone() {
     return (
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class='input-group-text'>
+      <div className="input-group mb-3">
+        <div className="input-group-prepend">
+          <span className='input-group-text'>
             <FontAwesomeIcon icon={faMobileAlt} />
           </span>
         </div>
         <input type="text"
-          class="form-control"
+          className="form-control"
           placeholder="phone number"
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
@@ -128,14 +128,14 @@ class Input extends Component {
 
   renderPassword() {
     return (
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-        <span class='input-group-text'>
+      <div className="input-group mb-3">
+        <div className="input-group-prepend">
+        <span className='input-group-text'>
           <FontAwesomeIcon icon={faUnlockAlt} />
         </span>
         </div>
         <input type="password"
-          class="form-control"
+          className="form-control"
           placeholder="password"
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
@@ -146,14 +146,14 @@ class Input extends Component {
     const choices = [];
     this.props.data.choices.forEach((choice, index) => {
       choices.push(
-        <div className='custom-control custom-checkbox'>
+        <div className='custom-control custom-checkbox' key={ index }>
           <Form.Check
             type='radio'
-            label={choice}
-            id={this.props.id + '-' + index}
-            data-index={index}
-            name={this.props.id}
-            onChange={this.handleChangeRadio}
+            label={ choice }
+            id={ this.props.id + '-' + index }
+            data-index={ index}
+            name={ this.props.id }
+            onChange={ this.handleChangeRadio }
           />
         </div>);
     });
