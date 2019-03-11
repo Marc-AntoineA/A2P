@@ -15,9 +15,9 @@ exports.getSigninForm = function() {
   });
 };
 
-exports.postSigninForm = function(data) {
+function postData(data, url) {
+  console.log(data);
   return new Promise((resolve, reject) => {
-    const url = API_PATH + settings.POST_SIGNIN_FORM;
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -31,4 +31,12 @@ exports.postSigninForm = function(data) {
       reject(err);
     });
   });
+}
+
+exports.postSigninForm = function(data) {
+  return postData(data, API_PATH + settings.POST_SIGNIN_FORM);
 };
+
+exports.postLogin = function(data) {
+  return postData(data, API_PATH + settings.POST_LOGIN);
+}

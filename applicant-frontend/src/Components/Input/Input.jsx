@@ -77,6 +77,7 @@ class Input extends Component {
           </div>
           <input type="text"
            className="form-control"
+           placeholder={this.props.placeholder}
            onChange={this.handleChangeTextInput}
            value={this.state.currentValue}/>
         </div>);

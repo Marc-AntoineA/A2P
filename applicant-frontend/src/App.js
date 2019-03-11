@@ -16,18 +16,35 @@ class App extends Component {
   constructor(props) {
       super(props);
       this.state = {user: {
-        username: "",
+        name: "",
+        id: "",
         token: ""
       }};
       this.signin = this.signin.bind(this);
+      this.summary = this.summary.bind(this);
+      this.stepForm = this.stepForm.bind(this)
+      this.login = this.login.bind(this);
   }
 
-  // TODO
+  // TODO ??
   handleError(err) {
+  }
+
+  login() {
+    return (<Login user={ this.state.user }></Login>);
   }
 
   signin() {
     return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
+  }
+
+  stepForm() {
+    return (<StepForm user={ this.state.user }></StepForm>);
+  }
+
+  summary() {
+    console.log("Hého??");
+    return (<Summary user={ this.state.user }></Summary>);
   }
 
   render() {
@@ -35,10 +52,10 @@ class App extends Component {
       <Router history={ history }>
         <div className="App">
           <Route exact path='/' component={ Welcome }/>
-          <Route exact path='/login' component={ Login }/>
-          <Route exact path='/summary' component={ Summary }/>
+          <Route exact path='/login' component={ this.login }/>
+          <Route exact path='/summary' component={ this.summary }/>
           <Route exact path='/signin' component={ this.signin }/>
-          <Route exact path='/nextStep' component={ StepForm }/>
+          <Route exact path='/nextStep' component={ this.stepForm }/>
         </div>
       </Router>
     );
