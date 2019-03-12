@@ -2,6 +2,8 @@
 
 const bcrypt = require('bcrypt');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
+const jwt = require('jsonwebtoken');
+const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
@@ -50,31 +52,33 @@ exports.createApplicant = (req, res, next) => {
 };
 
 // TODO generate token
+// 401 Unauthorized error
 exports.login = (req, res, next) => {
-  const email = req.body.email;
+  console.log(req.body);
+  const mailAddress = req.body.mail;
   const password = req.body.password;
   Applicant.findOne({
-    email: email
+    mailAddress: mailAddress
   }).then((applicant) => {
     if (!applicant) {
-      console.log(new Error('User or password are incorrect'));
       return res.status(401).json({
-        error: new Error('User or password are incorrect')
+        error: 'User or password is incorrect'
       });
     }
-
     bcrypt.compare(password, applicant.password).then((valid) => {
       if (!valid) {
-        console.log(new Error('incorrect password'));
         return res.status(401).json({
-          error: new Error('Incorrect password!')
+          error: 'User or password is incorrect'
         });
-        }
-        res.status(200).json({
-          id: applicant._id,
-          token: 'token'
-        });
-      } ).catch((error) => {
+      }
+
+      const token = jwt.sign({ applicantId: applicant._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+
+      res.status(200).json({
+        id: applicant._id,
+        token: token
+      });
+    }).catch((error) => {
       res.status(500).json({
         error: error
       });

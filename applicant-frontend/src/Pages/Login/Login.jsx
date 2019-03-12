@@ -29,7 +29,7 @@ class Login extends Component {
 
   handleChangeMail(value) {
     this.setState((prevState) => {
-      prevState.password = value;
+      prevState.mail = value;
       return prevState;
     });
   }
