@@ -1,5 +1,6 @@
 {
-  "label": "Athens",
+  "label": "Athens 1",
+  "deadline": "2020-01-01T00:00:00Z",
   "steps": [
     {
       "label": "Personal Information",

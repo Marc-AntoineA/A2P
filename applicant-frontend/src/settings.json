@@ -2,5 +2,6 @@
   "API_PATH": "http://localhost:3300/applicant-api",
   "GET_SIGNIN_FORM": "/",
   "POST_SIGNIN_FORM": "/",
-  "POST_LOGIN": "/login"
+  "POST_LOGIN": "/login",
+  "GET_PROCESS": "/"
 }

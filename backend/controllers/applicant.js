@@ -7,46 +7,64 @@ const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
+const Process = require('../models/process').model;
 
 const signinForm = require('./signin-form.json');
 
 // TODO add dynamically the choices for the campaign
 exports.getSigninForm = (req, res, next) => {
-    res.status(201).json(signinForm);
+  const today = new Date();
+  Process.find({
+    deadline: {$gt : today }
+  }).then((processes) => {
+    const campaigns = processes.map(p => p.label);
+    signinForm[1].questions[0].choices = campaigns;
+  });
+  res.status(201).json(signinForm);
 };
 
 // TODO
 exports.createApplicant = (req, res, next) => {
   const body = req.body;
-  const campaign = body[1].questions[0].answer;
+  const campaignIndex = body[1].questions[0].answer;
+  const campaign = body[1].questions[0].choices[campaignIndex];
   const name = body[2].questions[0].answer;
   const password = body[2].questions[1].answer;
   const mailAddress = body[3].questions[0].answer;
   const phoneNumber = body[3].questions[1].answer;
-  bcrypt.hash(password, BCRYPT_SALTROUNDS).then((hash) => {
-    // TODO crypt password
-    // TODO add process corresponding to this campaign
-    const applicant = new Applicant({
-      "campaign": campaign,
-      "name": name,
-      "password": hash,
-      "mailAddress": mailAddress,
-      "phoneNumber": phoneNumber,
-      "status": 'pending'
-    });
 
-    applicant.save().then(() => {
-      res.status(201).json({
-        message: 'Applicant created successfully'
+  Process.findOne({
+    label: campaign
+  }).then(process => {
+    bcrypt.hash(password, BCRYPT_SALTROUNDS).then((hash) => {
+      // TODO crypt password
+      // TODO add process corresponding to this campaign
+      const applicant = new Applicant({
+        campaign: campaign,
+        name: name,
+        password: hash,
+        mailAddress: mailAddress,
+        phoneNumber: phoneNumber,
+        status: 'pending',
+        process: process,
+      });
+      applicant.save().then(() => {
+        res.status(201).json({
+          message: 'Applicant created successfully'
+        });
+      }).catch((error) => {
+        res.status(500).json({
+          error: error
+        });
       });
     }).catch((error) => {
-      res.status(500).json({
-        error: error
+      res.status(503).json({
+        error: {message: "An unknown error occured. Please contact the administrator of this website."}
       });
     });
   }).catch((error) => {
     res.status(503).json({
-      error: {message: "An unknown error occured. Please contact the administrator of this website"}
+      error: {message: "An unknown error occured. Please contact the administrator of this website."}
     });
   });
 };
@@ -71,9 +89,7 @@ exports.login = (req, res, next) => {
           error: {message: 'User or password is incorrect'}
         });
       }
-
       const token = jwt.sign({ applicantId: applicant._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
-
       res.status(200).json({
         id: applicant._id,
         token: token
@@ -90,10 +106,17 @@ exports.login = (req, res, next) => {
   });
 };
 
-// TODO
 exports.getApplicant = (req, res, next) => {
-  console.log('TODO get applicant');
-  res.status(200)
+  Applicant.findOne({
+    _id: req.params.id
+  }).then((applicant) => {
+    applicant.password = undefined;
+    res.status(200).json(applicant);
+  }).catch((error) => {
+    res.status(500).json({
+      error: error
+    });
+  });
 };
 
 // TODO

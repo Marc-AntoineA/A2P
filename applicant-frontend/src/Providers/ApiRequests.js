@@ -3,9 +3,8 @@
 const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
-exports.getSigninForm = function() {
+function getData(url) {
   return new Promise((resolve, reject) => {
-    const url = API_PATH + settings.GET_SIGNIN_FORM;
     fetch(url)
       .then((results) => {
         resolve(results.json());
@@ -13,10 +12,17 @@ exports.getSigninForm = function() {
         reject(err);
       });
   });
+}
+
+exports.getSigninForm = function() {
+  return getData(API_PATH + settings.GET_SIGNIN_FORM);
 };
 
+exports.getProcess = function(id) {
+  return getData(API_PATH + settings.GET_PROCESS + id);
+}
+
 function postData(data, url) {
-  console.log(data);
   return new Promise((resolve, reject) => {
     fetch(url, {
       method: 'POST',

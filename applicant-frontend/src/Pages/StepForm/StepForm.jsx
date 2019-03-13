@@ -34,10 +34,8 @@ class StepForm extends Component {
   }
 
   getFormData() {
-    console.log(this.props);
     if (this.props.user.username === "" || this.props.user.token === "") {
-      ApiRequests.getSigninForm()
-        .then((step) => {
+      ApiRequests.getSigninForm().then((step) => {
           this.setState((prevState) => {
             prevState.step = step;
             return prevState;

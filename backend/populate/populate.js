@@ -18,10 +18,8 @@ MONGODB_URL += settings.DB_NAME + '?retryWrites=true';
 mongoose.connect(MONGODB_URL, { useNewUrlParser: true })
   .then(() => {
     console.log('Population...');
-    console.log(processExample);
 
     const process = new Process(processExample);
-    console.log(process);
     process.save()
       .then(() => {
         console.log('population done');
