@@ -34,7 +34,7 @@ class StepForm extends Component {
   }
 
   getFormData() {
-    if (this.props.user.username === "" || this.props.user.token === "") {
+    if (this.props.index === undefined) {
       ApiRequests.getSigninForm().then((step) => {
           this.setState((prevState) => {
             prevState.step = step;
@@ -44,9 +44,13 @@ class StepForm extends Component {
           this.props.handleError(err);
         });
       } else {
-        this.setState((prevState) => {
-          prevState.step = EXAMPLE_DATA;
-          return prevState;
+        ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
+          this.setState((prevState) => {
+            prevState.step = step;
+            return prevState;
+          });
+        }).catch((err) => {
+          this.props.handleError(err);
         });
       }
   }
@@ -101,15 +105,12 @@ class StepForm extends Component {
   }
   // TODO
   submitForm() {
-    if (this.checkRequiredQuestions()) {
-      // TODO
-    } else {
-      // TODO
-    }
+    const promise = this.props.index === undefined ?
+      ApiRequests.postSigninForm(this.state.step)
+      : ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step);
 
-    // TODO handle if no users
-    ApiRequests.postSigninForm(this.state.step).then(response => {
-      if (response.status === 201) {
+    promise.then(response => {
+      if (response.status === 201 || response.status === 204) {
         history.push('/summary');
         return;
       }

@@ -1,0 +1,19 @@
+.status-color {
+  margin-right: 10px;
+}
+
+.rejected {
+  color: red;
+}
+
+.validated {
+  color: green;
+}
+
+.todo {
+  color: black,
+}
+
+.pending {
+  color: orange;
+}

@@ -46,12 +46,12 @@ class App extends Component {
     return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
   }
 
-  stepForm() {
-    return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
+  stepForm(params) {
+    const index = params.match.params.index;
+    return (<StepForm user={ this.state.user } handleError={ this.handleError } index={ index }></StepForm>);
   }
 
   summary() {
-    console.log("Hého??");
     return (<Summary user={ this.state.user }></Summary>);
   }
 
@@ -104,7 +104,7 @@ class App extends Component {
           <Route exact path='/login' component={ this.login }/>
           <Route exact path='/summary' component={ this.summary }/>
           <Route exact path='/signin' component={ this.signin }/>
-          <Route exact path='/nextStep' component={ this.stepForm }/>
+          <Route exact path='/step/:index' component={ this.stepForm }/>
         </div>
       </Router>
     );

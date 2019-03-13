@@ -63,8 +63,12 @@ class Input extends Component {
     this.props.onChange(value);
   }
 
+  getAnswer() {
+    return this.props.data.answer === undefined ? '' : this.props.data.answer;
+  }
+
   renderText() {
-    return (<textarea onChange={this.handleChangeTextInput}></textarea>);
+    return (<textarea onChange={this.handleChangeTextInput}>{ this.getAnswer() }</textarea>);
   }
 
   renderInline() {
