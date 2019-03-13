@@ -8,6 +8,7 @@ import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 
 import { Router, Route, Link } from 'react-router-dom';
+import { Button, Modal } from 'react-bootstrap';
 
 import history from './history';
 
@@ -15,23 +16,28 @@ class App extends Component {
 
   constructor(props) {
       super(props);
-      this.state = {user: {
-        name: "",
-        id: "",
-        token: ""
-      }};
+      this.state = {
+        user: {
+          id: "",
+          token: ""
+        },
+        errorModal: {
+          display: false,
+          message: ''
+        }
+      };
       this.signin = this.signin.bind(this);
       this.summary = this.summary.bind(this);
       this.stepForm = this.stepForm.bind(this)
       this.login = this.login.bind(this);
-  }
 
-  // TODO ??
-  handleError(err) {
+      this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
+      this.handleError = this.handleError.bind(this);
+      this.handleLogin = this.handleLogin.bind(this);
   }
 
   login() {
-    return (<Login user={ this.state.user }></Login>);
+    return (<Login user={ this.state.user } handleError={ this.handleError } handleLogin={ this.handleLogin }></Login>);
   }
 
   signin() {
@@ -39,7 +45,7 @@ class App extends Component {
   }
 
   stepForm() {
-    return (<StepForm user={ this.state.user }></StepForm>);
+    return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
   }
 
   summary() {
@@ -47,8 +53,49 @@ class App extends Component {
     return (<Summary user={ this.state.user }></Summary>);
   }
 
+  handleCloseErrorModal() {
+    this.setState((prevState) => {
+      prevState.errorModal.display = false;
+      return prevState;
+    });
+  }
+
+  handleError(errorMessage) {
+    this.setState((prevState) => {
+      prevState.errorModal = {
+        display: true,
+        message: errorMessage
+      };
+      console.log(prevState);
+      return prevState;
+    });
+  }
+
+  handleLogin(user) {
+    console.log("handleLogin!!!");
+    this.setState((prevState) => {
+      prevState.user = user;
+      history.push('/summary')
+      return prevState;
+    });
+  }
+
   render() {
-    return (
+    const modal = (
+      <Modal show={ this.state.errorModal.display } onHide={ this.handleCloseErrorModal }>
+        <Modal.Header className="text-black" closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-black">{ this.state.errorModal.message }</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={ this.handleCloseErrorModal }>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+
+    const router = (
       <Router history={ history }>
         <div className="App">
           <Route exact path='/' component={ Welcome }/>
@@ -58,6 +105,13 @@ class App extends Component {
           <Route exact path='/nextStep' component={ this.stepForm }/>
         </div>
       </Router>
+    );
+
+    return (
+      <div>
+        { modal }
+        { router }
+      </div>
     );
   }
 }

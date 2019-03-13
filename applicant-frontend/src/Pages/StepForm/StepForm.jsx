@@ -25,14 +25,11 @@ class StepForm extends Component {
     this.submitForm = this.submitForm.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
-    this.handleClose = this.handleClose.bind(this);
 
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
-      'step': [],
-      'displayErrorModal': false,
-      'errorMessage': ''
+      'step': []
     };
   }
 
@@ -120,45 +117,14 @@ class StepForm extends Component {
       }
       response.json().then((responseJson) => {
         const errorMessage = responseJson.error.message;
-        this.setState((prevState) => {
-          prevState.errorMessage = errorMessage;
-          prevState.displayErrorModal = true;
-          return prevState;
-        });
+        this.props.handleError(errorMessage);
       });
     }).catch((err) => {
-      this.setState((prevState) => {
-        prevState.errorMessage = err;
-        prevState.displayErrorModal = true;
-        return prevState;
-      });
-    });
-  }
-
-  handleClose() {
-    this.setState((prevState) => {
-      prevState.displayErrorModal = false;
-      return prevState;
+      this.props.handleError(err);
     });
   }
 
   render() {
-    const modal = (
-      <Modal show={this.state.displayErrorModal} >
-        <Modal.Header className="text-black" closeButton>
-          <Modal.Title>Error</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="text-black">{ this.state.errorMessage }</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={this.handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>);
-
     const pages = [];
     this.state.step.forEach((page, index) => {
       pages.push(
@@ -180,7 +146,6 @@ class StepForm extends Component {
           label={`${this.state.currentPage}/${pages.length}`}>
         </ProgressBar>
         <main>
-          { modal }
           { pages }
           {this.state.currentPage !== 1 ?
             <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}

@@ -62,13 +62,13 @@ exports.login = (req, res, next) => {
   }).then((applicant) => {
     if (!applicant) {
       return res.status(401).json({
-        error: 'User or password is incorrect'
+        error: {message: 'User or password is incorrect'}
       });
     }
     bcrypt.compare(password, applicant.password).then((valid) => {
       if (!valid) {
         return res.status(401).json({
-          error: 'User or password is incorrect'
+          error: {message: 'User or password is incorrect'}
         });
       }
 

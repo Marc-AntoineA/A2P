@@ -6,6 +6,7 @@ import { Button, Form } from 'react-bootstrap';
 import Header from '../../Components/Header/Header.jsx';
 import { postLogin } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
+import history from '../../history';
 
 class Login extends Component {
   constructor(props) {
@@ -20,10 +21,17 @@ class Login extends Component {
   }
 
   login() {
-    postLogin({mail: this.state.mail, password: this.state.password}).then((res) => {
-      console.log(res);
+    postLogin({mail: this.state.mail, password: this.state.password}).then((response) => {
+      if (response.status === 200) {
+        response.json().then((responseJson) => this.props.handleLogin(responseJson));
+        return;
+      }
+      response.json().then((responseJson) => {
+        const errorMessage = responseJson.error.message;
+        this.props.handleError(errorMessage);
+      })
     }).catch((err) => {
-      console.log(err);
+      this.props.handleError(err);
     });
   }
 
