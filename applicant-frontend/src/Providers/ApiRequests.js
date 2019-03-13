@@ -3,6 +3,18 @@
 const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
+exports.saveLogin = (id, token) => {
+  localStorage.setItem('id', id);
+  localStorage.setItem('token', token);
+};
+
+exports.getLogin = () => {
+  return {
+    id: localStorage.getItem('id'),
+    token: localStorage.getItem('token')
+  };
+};
+
 function getData(url) {
   return new Promise((resolve, reject) => {
     fetch(url)

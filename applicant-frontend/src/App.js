@@ -6,21 +6,18 @@ import Welcome from './Pages/Welcome/Welcome.jsx';
 import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
+import history from './history';
+import ApiRequests from './Providers/ApiRequests';
 
 import { Router, Route, Link } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
-
-import history from './history';
 
 class App extends Component {
 
   constructor(props) {
       super(props);
       this.state = {
-        user: {
-          id: "",
-          token: ""
-        },
+        user: ApiRequests.getLogin(),
         errorModal: {
           display: false,
           message: ''
@@ -34,6 +31,11 @@ class App extends Component {
       this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
       this.handleError = this.handleError.bind(this);
       this.handleLogin = this.handleLogin.bind(this);
+  }
+
+  // bug : use componentDidUpdate?
+  componentDidMount(){
+    // ???
   }
 
   login() {
@@ -72,7 +74,7 @@ class App extends Component {
   }
 
   handleLogin(user) {
-    console.log("handleLogin!!!");
+    ApiRequests.saveLogin(user.id, user.token);
     this.setState((prevState) => {
       prevState.user = user;
       history.push('/summary')

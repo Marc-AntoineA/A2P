@@ -18,7 +18,9 @@ class Summary extends Component {
   }
 
   componentDidMount() {
-    if (this.props.user === undefined || this.props.user.id === "") {
+    console.log(this.props.user);
+    const user = this.props.user;
+    if (user === undefined || user.token === undefined) {
       history.push('/');
       return;
     }
@@ -41,7 +43,6 @@ class Summary extends Component {
 
   render() {
     const personalData = this.state.process;
-
     const steps = this.state.process.steps === undefined ? [] : this.state.process.steps.map((step) => (<li>step.label</li>));
 
     return (
