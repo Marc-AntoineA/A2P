@@ -11,7 +11,6 @@ import './styles.css';
 import { Button, ProgressBar, Modal } from 'react-bootstrap';
 import { withRouter } from "react-router-dom";
 
-
 // TODO do this for tests only
 const EXAMPLE_DATA = require('../../dataExamples/step1.json');
 
@@ -103,6 +102,7 @@ class StepForm extends Component {
   checkRequiredQuestions() {
     return true;
   }
+
   // TODO
   submitForm() {
     const promise = this.props.index === undefined ?

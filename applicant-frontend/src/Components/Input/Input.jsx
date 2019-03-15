@@ -64,7 +64,7 @@ class Input extends Component {
   }
 
   getAnswer() {
-    return this.props.data.answer === undefined ? '' : this.props.data.answer;
+    return this.props.data.answer === undefined ? '' :    this.props.data.answer;
   }
 
   renderText() {
@@ -156,7 +156,7 @@ class Input extends Component {
             type='radio'
             label={ choice }
             id={ this.props.id + '-' + index }
-            data-index={ index}
+            data-index={ index }
             name={ this.props.id }
             onChange={ this.handleChangeRadio }
           />

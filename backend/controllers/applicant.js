@@ -23,7 +23,6 @@ exports.getSigninForm = (req, res, next) => {
   res.status(201).json(signinForm);
 };
 
-// TODO
 exports.createApplicant = (req, res, next) => {
   const body = req.body;
   const campaignIndex = body[1].questions[0].answer;
@@ -37,8 +36,6 @@ exports.createApplicant = (req, res, next) => {
     label: campaign
   }).then(process => {
     bcrypt.hash(password, BCRYPT_SALTROUNDS).then((hash) => {
-      // TODO crypt password
-      // TODO add process corresponding to this campaign
       const applicant = new Applicant({
         campaign: campaign,
         name: name,
@@ -69,7 +66,6 @@ exports.createApplicant = (req, res, next) => {
   });
 };
 
-// TODO generate token
 // 401 Unauthorized error
 exports.login = (req, res, next) => {
   console.log(req.body);
@@ -119,14 +115,48 @@ exports.getApplicant = (req, res, next) => {
   });
 };
 
-// TODO
+// TODO -- avoid repetitions with getApplicantStep
+// TODO check construction of this step
 exports.editApplicantStep = (req, res, next) => {
-  console.log('TODO edit applicant step');
-  res.status(200);
+  const userId = req.params.id;
+  const stepIndex = req.params.step;
+  Applicant.findOne({_id: userId }).then((applicant) => {
+    const steps = applicant.process.steps;
+    if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
+      /*res.status(404).json({
+        error: {message: "The step " + stepIndex + " doesn't exist."}
+      });*/
+      return;
+    }
+
+    applicant.process.steps[stepIndex].pages = req.body;
+    applicant.save().then(() => {
+      res.status(204).json({message: "Applicant updated successfully."});
+      return;
+    }).catch((err) => {
+      res.status(500).json({error: err });
+      return;
+    });
+  }).catch((err) => {
+    console.log(err);
+    res.status(500).json({error: err});
+    return;
+  });
 };
 
-// TODO
 exports.getApplicantStep = (req, res, next) => {
-  console.log('TODO get applicant step');
-  res.status(200);
+  const userId = req.params.id;
+  const stepIndex = req.params.step;
+  Applicant.findOne({
+    _id: userId
+  }).then((applicant) => {
+    const steps = applicant.process.steps;
+    if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
+      res.status(404).json({
+        error: {message: "The step " + stepIndex + " doesn't exist."}
+      });
+      return;
+    }
+    res.status(200).json(steps[stepIndex].pages);
+  });
 };
