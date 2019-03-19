@@ -1,21 +1,15 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <header class="header">
+      <nav class="inner">
+        <router-link to='/' exact>
+          <img class='logo' src='./assets/images/logo.jpg'/>
+        </router-link>
+      </nav>
+    </header>
   </div>
 </template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
+s
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
