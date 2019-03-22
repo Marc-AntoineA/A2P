@@ -1,25 +1,8 @@
 <template>
   <div id="app">
-    <el-container>
-      <aap-header></aap-header>
-      <el-container>
-        <el-aside>
-          <el-menu>
-            <el-menu-item>Campaign Overview</el-menu-item>
-            <el-menu-item>Edit Mail Templates</el-menu-item>
-            <el-menu-item>Close this Campaign</el-menu-item>
-          </el-menu>
-        </el-aside>
-        <el-main>
-          <h2> Main </h2>
-        </el-main>
-      </el-container>
-      </el-container>
-      <el-footer>
-        FOOTER
-        <el-button>Hello</el-button>
-      </el-footer>
-    </el-container>
+
+    <router-view class="view"></router-view>
+    
   </div>
 </template>
 

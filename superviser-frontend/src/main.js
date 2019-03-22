@@ -8,10 +8,6 @@ import { createStore } from './store';
 import { createRouter } from './router';
 import './plugins/element.js'
 
-// TODO remove
-import AapHeader from './components/common/AapHeader.vue';
-
-Vue.use(AapHeader);
 Vue.use('ElementUI');
 
 export function createApp() {
