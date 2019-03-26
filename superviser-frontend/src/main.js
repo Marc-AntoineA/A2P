@@ -14,6 +14,7 @@ export function createApp() {
   const router = createRouter();
   const store = createStore();
   sync(store, router);
+  console.log(store);
 
   const app = new Vue({
     router,

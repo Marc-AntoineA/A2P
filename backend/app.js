@@ -4,7 +4,9 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const settings = require('./settings.json');
+
 const applicantRoutes = require('./routes/applicant');
+const superviserRoutes = require('./routes/superviser');
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/applicant-api/', applicantRoutes);
+app.use('/superviser-api/', superviserRoutes);
 
 app.listen(port);
 

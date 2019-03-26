@@ -19,8 +19,8 @@ exports.getSigninForm = (req, res, next) => {
   }).then((processes) => {
     const campaigns = processes.map(p => p.label);
     signinForm[1].questions[0].choices = campaigns;
+    res.status(201).json(signinForm);
   });
-  res.status(201).json(signinForm);
 };
 
 exports.createApplicant = (req, res, next) => {

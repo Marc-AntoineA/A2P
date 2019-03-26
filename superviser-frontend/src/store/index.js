@@ -6,9 +6,16 @@ import mutations from './mutations';
 
 Vue.use(Vuex);
 
+/*
+ * Notation:
+ * { [id: number]: Process } means a dict of ProcessES indexed by id
+ */
+
 export function createStore() {
   return new Vuex.Store({
-    state: {},
+    state: {
+      processes: {/* [id: number]: Process */}
+    },
     actions,
     mutations,
     getters

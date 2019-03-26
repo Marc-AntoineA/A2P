@@ -6,7 +6,8 @@ Vue.use(Router);
 // import pages
 const LoginView = () => import('../views/LoginView.vue');
 const WelcomeView = () => import('../views/WelcomeView.vue');
-const CampaignsView = () => import('../views/CampaignsView.vue');
+const ProcessesView = () => import('../views/ProcessesView.vue');
+const TmpView = () => import('../views/TemplateView.vue');
 
 export function createRouter() {
   return new Router({
@@ -16,7 +17,8 @@ export function createRouter() {
     routes: [
       { path: '/login', component: LoginView },
       { path: '/', component: WelcomeView },
-      { path: '/campaigns', component: CampaignsView }
+      { path: '/processes', component: ProcessesView },
+      { path: '/tmp', component: TmpView }, // TODO remove
     ]
   });
 }
