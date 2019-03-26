@@ -1,10 +1,10 @@
 <template>
-  <h1>TODO: Login view</h1>
+  <h1>TODO: Welcome View</h1>
 </template>
 
 <script>
 export default {
-  name: 'Login',
+  name: 'Welcome',
   props: {
   }
 }
