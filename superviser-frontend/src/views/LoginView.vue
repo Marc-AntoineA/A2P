@@ -1,12 +1,20 @@
 <template>
-  <h1>TODO: Login view</h1>
+  <el-container direction='vertical'>
+    <el-main>
+      <h1>TODO: Login view</h1>
+    </el-main>
+    <aap-footer></aap-footer>
+  </el-container>
 </template>
 
 <script>
+
+import AapFooter from '../components/Footer.vue';
+
 export default {
   name: 'Login',
-  props: {
-  }
+  props: {},
+  components: { AapFooter }
 }
 </script>
 

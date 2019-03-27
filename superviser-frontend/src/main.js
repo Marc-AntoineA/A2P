@@ -6,15 +6,16 @@ import './plugins/loadElement';
 import { sync } from 'vuex-router-sync';
 import { createStore } from './store';
 import { createRouter } from './router';
-import './plugins/element.js'
+import './plugins/element.js';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use('ElementUI');
 
 export function createApp() {
   const router = createRouter();
   const store = createStore();
   sync(store, router);
-  console.log(store);
 
   const app = new Vue({
     router,
