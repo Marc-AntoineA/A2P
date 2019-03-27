@@ -8,6 +8,21 @@
           <h2>TODO: campaigns list</h2>
           <aap-spinner :show="loading"></aap-spinner>
           <aap-broken v-show="broken"></aap-broken>
+
+          <el-table v-if='!loading' :data='processes'>
+            <el-table-column label='Label'></el-table-column>
+            <el-table-column label='Location'></el-table-column>
+            <el-table-column label='Status'></el-table-column>
+            <el-table-column label='Deadline'>
+              <template slot-scope="scope">
+                <i class="el-icon-time"></i>
+                <span style="margin-left: 10px">{{ scope.row.deadline }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label='Number of applications'></el-table-column>
+            <el-table-column label='Operations'></el-table-column> <!-- edit, show students... -->
+          </el-table>
+
           <ul v-if="!loading">
             <li v-for="(process, id) in processes" :key="id" :id="id">
               {{ process.label }}
@@ -36,7 +51,7 @@ export default {
     broken: true
   }),
   computed: {
-    processes() { console.log(this.$store.state.processes); return this.$store.state.processes; }
+    processes() { return this.$store.state.processes; }
   },
   beforeMount() { this.fetchProcesses() },
   methods: {
