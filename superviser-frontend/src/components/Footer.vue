@@ -23,7 +23,7 @@ library.add(faGithub);
 
 export default {
   name: 'aap-footer',
-  props: ['fixed'],
+  props: [],
 }
 </script>
 

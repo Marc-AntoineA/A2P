@@ -62,6 +62,7 @@ export default {
         this.loading = false;
       }).catch((error) => {
         this.broken = true;
+        this.loading = false;
         this.$alert(error.message, 'Error while downloading processes', {
           confirmButtonText: 'OK'
         });
