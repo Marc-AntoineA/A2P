@@ -14,7 +14,8 @@ Vue.use(Vuex);
 export function createStore() {
   return new Vuex.Store({
     state: {
-      processes: {/* [id: number]: Process */}
+      processes: {/* [id: number]: Process */},
+      user: {/* {id, username, token} */}
     },
     actions,
     mutations,

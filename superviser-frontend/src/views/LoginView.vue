@@ -3,7 +3,7 @@
     <el-main class='boxed'>
       <img src='../assets/images/logo.jpg'/>
       <h1>Login Credentials</h1>
-      <el-form>
+      <el-form @submit.prevent='onSubmit'>
         <el-form-item label='Mail address'>
           <el-input placeholder="Mail address" v-model='username'></el-input>
         </el-form-item>
@@ -11,7 +11,10 @@
           <el-input placeholder="Password" v-model='password' show-password></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click='onSubmit'>Login</el-button>
+          <el-button type="submit" @click='onSubmit'>Login</el-button>
+        </el-form-item>
+        <el-form-item v-if='loading'>
+          <aap-spinner></aap-spinner>
         </el-form-item>
       </el-form>
     </el-main>
@@ -20,20 +23,35 @@
 </template>
 
 <script>
-
 import AapFooter from '../components/Footer.vue';
+import AapSpinner from '../components/Spinner.vue';
 
 export default {
   name: 'Login',
   props: {},
-  components: { AapFooter },
+  components: { AapSpinner, AapFooter },
   data: () => ({
     username: '',
-    password: ''
+    password: '',
+    loading: false
   }),
   methods: {
     onSubmit() {
       console.log(`submittons for ${this.username} and ${this.password}`);
+      this.loading = true;
+      this.$store.dispatch('LOGIN', {
+        username: this.username,
+        password: this.password
+      }).then(() => {
+        this.loading = false;
+        this.$router.push('/');
+      }).catch((error) => {
+        console.log("error !", error.message);
+        this.loading = false;
+        this.$alert(error.message, 'Login Error', {
+          confirmButtonText: 'OK'
+        });
+      });
     }
   }
 }

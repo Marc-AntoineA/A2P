@@ -16,7 +16,35 @@ function fetchData(path) {
   });
 }
 
-export function fetchProcesses(ids){
-  console.log("hello bis");
+// TODO add token
+function postData(path, token, data) {
+  if (LOG_REQUESTS) console.log(`post ${path}: ${JSON.stringify(data)} with token ${token}`);
+  return new Promise((resolve, reject) => {
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+      mode: 'cors',
+      headers:{
+       'Content-Type': 'application/json'
+     }
+   }).then((response) => {
+      resolve(response.json());
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}
+
+export function fetchProcesses(){
   return fetchData(API_PATH + settings.GET_ALL_PROCESSES);
+}
+
+export function login(userCredentials){
+  return new Promise((resolve, reject) => {
+    postData(API_PATH + settings.LOGIN, undefined, userCredentials).then((response) => {
+      console.log(response);
+      if (response.error) reject(response.error);
+      resolve(response);
+    })
+  });
 }
