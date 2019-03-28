@@ -59,7 +59,8 @@ exports.loginSuperviser = (req, res, next) => {
       const token = jwt.sign({ superviserId: superviser._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       res.status(200).json({
         id: superviser._id,
-        token: token
+        token: token,
+        username: username
       });
     }).catch((error) => {
       res.status(500).json({

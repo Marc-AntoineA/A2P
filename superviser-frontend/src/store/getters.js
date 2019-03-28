@@ -4,6 +4,6 @@ export default {
     return state.processes;
   },
   isLoggedIn(state, getters) {
-    
+    return state.user !== {};
   }
 }
