@@ -42,9 +42,14 @@ export function fetchProcesses(){
 export function login(userCredentials){
   return new Promise((resolve, reject) => {
     postData(API_PATH + settings.LOGIN, undefined, userCredentials).then((response) => {
-      console.log(response);
-      if (response.error) reject(response.error);
-      resolve(response);
-    })
+      console.log('response', response, ' <-- response');
+      if (response.error !== undefined) {
+        reject(response.error);
+      } else {
+        resolve(response);
+      }
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }

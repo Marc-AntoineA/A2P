@@ -9,8 +9,18 @@ export default {
     });
   },
   LOGIN: ({ commit, state }, credentials) => {
-    return login(credentials).then((user) => {
-      commit('SET_USER', { user });
+    return new Promise((resolve, reject) => {
+      login(credentials).then((user) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        commit('SET_USER', { user });
+        resolve(user);
+      }).catch((err) => {
+        localStorage.removeItem('user');
+        reject(err);
+      });
     });
+  },
+  LOGOUT: ({ commit, state }) => {
+
   }
 }

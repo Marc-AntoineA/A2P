@@ -14,7 +14,7 @@
           <el-button type="submit" @click='onSubmit'>Login</el-button>
         </el-form-item>
         <el-form-item v-if='loading'>
-          <aap-spinner></aap-spinner>
+          <aap-spinner :show="loading"></aap-spinner>
         </el-form-item>
       </el-form>
     </el-main>
@@ -37,7 +37,6 @@ export default {
   }),
   methods: {
     onSubmit() {
-      console.log(`submittons for ${this.username} and ${this.password}`);
       this.loading = true;
       this.$store.dispatch('LOGIN', {
         username: this.username,
@@ -46,8 +45,8 @@ export default {
         this.loading = false;
         this.$router.push('/');
       }).catch((error) => {
-        console.log("error !", error.message);
         this.loading = false;
+        this.password = '';
         this.$alert(error.message, 'Login Error', {
           confirmButtonText: 'OK'
         });
