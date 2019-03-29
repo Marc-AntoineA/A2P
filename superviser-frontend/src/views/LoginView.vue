@@ -44,6 +44,10 @@ export default {
       }).then(() => {
         this.loading = false;
         this.$router.push('/');
+        this.$message({
+          type: 'success',
+          message: 'You are now connected'
+        });
       }).catch((error) => {
         this.loading = false;
         this.password = '';
@@ -52,6 +56,14 @@ export default {
         });
       });
     }
+  },
+  beforeMount() {
+    if (!this.$store.getters.isLoggedIn) return;
+    this.$store.dispatch('LOGOUT');
+    this.$message({
+      type: 'info',
+      message: 'You are now disconnected'
+    });
   }
 }
 </script>
