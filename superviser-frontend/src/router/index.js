@@ -15,10 +15,26 @@ export function createRouter() {
     fallback: false,
     scrollBehavior: () => ({ y: 0}),
     routes: [
-      { path: '/login', component: LoginView },
-      { path: '/', component: WelcomeView },
-      { path: '/processes', component: ProcessesView },
-      { path: '/tmp', component: TmpView }, // TODO remove
+      {
+        path: '/login',
+        component: LoginView,
+        meta: { requiresAuth: false }
+      },
+      {
+        path: '/',
+        component: WelcomeView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/processes',
+        component: ProcessesView,
+        meta: { requiresAuth: true }
+      },
+      { // TODO REMOVE
+        path: '/tmp',
+        component: TmpView,
+        meta: { requiresAuth: true }
+      },
     ]
   });
 }

@@ -15,6 +15,20 @@ Vue.use('ElementUI');
 export function createApp() {
   const router = createRouter();
   const store = createStore();
+
+  router.beforeEach((to, from, next) => {
+    console.log("beforeEach");
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      if (store.getters.isLoggedIn) {
+        next();
+        return;
+      }
+      next('/login');
+    } else {
+      next();
+    }
+  });
+
   sync(store, router);
 
   const app = new Vue({

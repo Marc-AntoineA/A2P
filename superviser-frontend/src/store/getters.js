@@ -4,6 +4,7 @@ export default {
     return state.processes;
   },
   isLoggedIn(state, getters) {
-    return state.user !== {};
+    return !(Object.entries(state.user).length === 0
+      && state.user.constructor === Object);
   }
 }
