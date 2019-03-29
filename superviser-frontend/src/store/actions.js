@@ -4,7 +4,7 @@ console.log(fetchProcesses);
 
 export default {
   FETCH_PROCESSES: ({ commit, state }) => {
-    return fetchProcesses().then((processes) => {
+    return fetchProcesses(state.user.token).then((processes) => {
       commit('SET_PROCESSES', { processes });
     });
   },

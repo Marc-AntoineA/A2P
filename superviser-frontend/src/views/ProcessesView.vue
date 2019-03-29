@@ -58,7 +58,7 @@ export default {
     fetchProcesses() {
       this.loading = true;
       this.broken = false;
-      this.$store.dispatch('FETCH_PROCESSES', {}).then(() => {
+      this.$store.dispatch('FETCH_PROCESSES').then(() => {
         this.loading = false;
       }).catch((error) => {
         this.broken = true;

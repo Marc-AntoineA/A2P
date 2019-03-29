@@ -35,9 +35,8 @@ class Summary extends Component {
   }
 
   getProcessData() {
-    const id = this.props.user.id;
-    ApiRequests.getProcess(id).then((process) => {
-      console.log(process);
+    const user = this.props.user;
+    ApiRequests.getProcess(user).then((process) => {
       this.setState((prevState) => {
         prevState.process = process;
         return prevState;

@@ -4,45 +4,39 @@ const API_PATH = settings.API_PATH;
 
 const LOG_REQUESTS = true;
 
-// TODO handling cache?
-function fetchData(path) {
-  if (LOG_REQUESTS) console.log(`fetching ${path}`);
+function request({url, data, token}, method) {
   return new Promise((resolve, reject) => {
-    fetch(path).then((results) => {
-        resolve(results.json());
-      }).catch((err) => {
-        reject(err);
-      });
-  });
-}
-
-// TODO add token
-function postData(path, token, data) {
-  if (LOG_REQUESTS) console.log(`post ${path}: ${JSON.stringify(data)} with token ${token}`);
-  return new Promise((resolve, reject) => {
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
+    fetch(url, {
+      method: method,
+      body: data ? JSON.stringify(data) : undefined,
       mode: 'cors',
-      headers:{
-       'Content-Type': 'application/json'
-     }
-   }).then((response) => {
-      resolve(response.json());
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    }).then((results) => {
+      resolve(results.json());
     }).catch((err) => {
       reject(err);
     });
   });
 }
 
-export function fetchProcesses(){
-  return fetchData(API_PATH + settings.GET_ALL_PROCESSES);
-}
+export function fetchProcesses(token, userId){
+  return request({
+    url: API_PATH + settings.GET_ALL_PROCESSES,
+    data: undefined,
+    token: token
+  }, 'get');
+};
 
 export function login(userCredentials){
   return new Promise((resolve, reject) => {
-    postData(API_PATH + settings.LOGIN, undefined, userCredentials).then((response) => {
-      console.log('response', response, ' <-- response');
+    request({
+      url: API_PATH + settings.LOGIN,
+      data: userCredentials,
+      token: ''
+    }, 'post').then((response) => {
       if (response.error !== undefined) {
         reject(response.error);
       } else {

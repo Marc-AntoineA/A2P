@@ -11,9 +11,6 @@ import './styles.css';
 import { Button, ProgressBar, Modal } from 'react-bootstrap';
 import { withRouter } from "react-router-dom";
 
-// TODO do this for tests only
-const EXAMPLE_DATA = require('../../dataExamples/step1.json');
-
 class StepForm extends Component {
   constructor(props) {
     super(props);

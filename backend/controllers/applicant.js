@@ -85,7 +85,7 @@ exports.login = (req, res, next) => {
           error: {message: 'User or password is incorrect'}
         });
       }
-      const token = jwt.sign({ applicantId: applicant._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       res.status(200).json({
         id: applicant._id,
         token: token
@@ -104,7 +104,7 @@ exports.login = (req, res, next) => {
 
 exports.getApplicant = (req, res, next) => {
   Applicant.findOne({
-    _id: req.params.id
+    _id: req.params.userId
   }).then((applicant) => {
     applicant.password = undefined;
     res.status(200).json(applicant);
@@ -118,7 +118,7 @@ exports.getApplicant = (req, res, next) => {
 // TODO -- avoid repetitions with getApplicantStep
 // TODO check construction of this step
 exports.editApplicantStep = (req, res, next) => {
-  const userId = req.params.id;
+  const userId = req.params.userId;
   const stepIndex = req.params.step;
   Applicant.findOne({_id: userId }).then((applicant) => {
     const steps = applicant.process.steps;
@@ -145,7 +145,7 @@ exports.editApplicantStep = (req, res, next) => {
 };
 
 exports.getApplicantStep = (req, res, next) => {
-  const userId = req.params.id;
+  const userId = req.params.userId;
   const stepIndex = req.params.step;
   Applicant.findOne({
     _id: userId
