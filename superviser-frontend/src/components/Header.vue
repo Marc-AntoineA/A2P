@@ -9,7 +9,7 @@
       </el-menu-item>
       <el-menu-item index='2'>Create a new campaign</el-menu-item>
       <el-menu-item index='3'>About this website</el-menu-item>
-      <el-menu-item index='/logout' route='/login'>Logout</el-menu-item>
+      <el-menu-item index='/login' route='/login'>Logout</el-menu-item>
     </el-menu>
   </el-header>
 </template>

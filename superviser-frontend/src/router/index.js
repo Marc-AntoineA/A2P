@@ -32,6 +32,12 @@ export function createRouter() {
         meta: { requiresAuth: true }
       },
       {
+        path: '/process',
+        name: 'process-new',
+        component: ProcessView,
+        meta: { requiresAuth: true }
+      },
+      {
         path: '/process/:processId',
         name: 'process',
         component: ProcessView,

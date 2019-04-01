@@ -8,12 +8,12 @@
           <aap-spinner :show="loading"></aap-spinner>
           <aap-broken v-show="broken"></aap-broken>
 
-          <div v-if='!loading' class='toolbar'>
+          <div v-if='!loading && !broken' class='toolbar'>
             <el-button>Create new process</el-button>
           </div>
-          <el-table v-if='!loading' :data='processes'>
-            <el-table-column label='Label' prop='label'>
-            </el-table-column>
+
+          <el-table v-if='!loading && !broken' :data='processes'>
+            <el-table-column label='Label' prop='label'></el-table-column>
             <el-table-column label='Location' prop='location'></el-table-column>
             <el-table-column label='Status'>
               <template slot-scope='scope'>
@@ -65,14 +65,16 @@ export default {
     broken: true
   }),
   computed: {
-    processes() {return Object.values(this.$store.state.processes); }
+    processes() {console.log('processes - computed', Object.values(this.$store.state.processes)); return Object.values(this.$store.state.processes); }
   },
   beforeMount() { this.fetchProcesses() },
   methods: {
     fetchProcesses() {
+      console.log(this.$store.state.user);
       this.loading = true;
       this.broken = false;
       this.$store.dispatch('FETCH_PROCESSES').then(() => {
+        console.log('fetch processes');
         this.loading = false;
       }).catch((error) => {
         this.broken = true;

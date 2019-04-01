@@ -9,8 +9,10 @@ export default {
   },
   SET_USER: (state, { user }) => {
     if (user) Vue.set(state.user, user);
+    console.log('set user', user, state.user);
   },
   REMOVE_USER: (state) => {
     Vue.set(state.user, {});
+    Vue.set(state.processes, {});
   }
 }

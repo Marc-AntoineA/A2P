@@ -4,7 +4,7 @@
       <aap-header></aap-header>
       <el-container>
         <el-main>
-          <h2> Process view for id: {{ $route.params.processId }} </h2>
+          <h2 v-if='!isNewProcess()'> Process view for id: {{ $route.params.processId }} </h2>
         </el-main>
       </el-container>
     </el-container>
@@ -22,10 +22,38 @@ export default {
   name: 'Process',
   props: {},
   components: { AapSpinner, AapFooter, AapHeader },
+  data: () => ({
+    loading: true
+  }),
+  methods: {
+    isNewProcess: function(){ return !this.$route.params.processId; },
+    getProcess: function(){
+      const processId = this.$route.params.processId;
+      if (this.isNewProcess()) return;
+      const process = this.$store.state.processes[processId];
+      return process;
+    }
+  },
   beforeMount() {
     const processId = this.$route.params.processId;
+    if (this.isNewProcess()) return;
+
     const process = this.$store.state.processes[processId];
-    if (!process) this.$router.push('/404-error');
+    if (this.getProcess()) return;
+
+    this.loading = true;
+    this.$store.dispatch('FETCH_PROCESS', processId).then(() => {
+      this.loading = false;
+    }).catch((error) => {
+      console.log(error);
+      this.loading = false;
+      this.$alert(error.message, 'Error while downloading process ' + processId, {
+        confirmButtonText: 'OK'
+      });
+
+    });
+
+    //this.$router.push('/404-error');
   }
 }
 </script>

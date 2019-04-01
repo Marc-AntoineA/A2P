@@ -2,8 +2,6 @@
 const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
-const LOG_REQUESTS = true;
-
 function request({url, data, token}, method) {
   return new Promise((resolve, reject) => {
     fetch(url, {
@@ -15,6 +13,12 @@ function request({url, data, token}, method) {
         'Authorization': 'Bearer ' + token
       }
     }).then((results) => {
+      if (results.status !== 200 && results.status !== 201 && results.status.status !== 304) {
+        results.json()
+          .then((response) => reject(response.error))
+          .catch((error) => reject(error));
+          return;
+      }
       resolve(results.json());
     }).catch((err) => {
       reject(err);
@@ -22,9 +26,17 @@ function request({url, data, token}, method) {
   });
 }
 
-export function fetchProcesses(token, userId){
+export function fetchProcesses(token){
   return request({
-    url: API_PATH + settings.GET_ALL_PROCESSES,
+      url: API_PATH + settings.GET_ALL_PROCESSES,
+      data: undefined,
+      token: token
+    }, 'get');
+};
+
+export function fetchProcess(token, processId) {
+  return request({
+    url: API_PATH + settings.GET_ONE_PROCESS + processId,
     data: undefined,
     token: token
   }, 'get');
@@ -37,12 +49,9 @@ export function login(userCredentials){
       data: userCredentials,
       token: ''
     }, 'post').then((response) => {
-      if (response.error !== undefined) {
-        reject(response.error);
-      } else {
-        resolve(response);
-      }
+      resolve(response);
     }).catch((err) => {
+      console.log(err);
       reject(err);
     });
   });

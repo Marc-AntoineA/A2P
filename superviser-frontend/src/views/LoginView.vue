@@ -42,8 +42,10 @@ export default {
         username: this.username,
         password: this.password
       }).then(() => {
+        console.log('login ok');
         this.loading = false;
-        this.$router.push('/');
+        console.log('push /processes');
+        setTimeout(() => this.$router.push('/processes'), 5000); // TODO - WARNING back to '/'
         this.$message({
           type: 'success',
           message: 'You are now connected'
