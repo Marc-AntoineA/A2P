@@ -45,7 +45,7 @@ export default {
         console.log('login ok');
         this.loading = false;
         console.log('push /processes');
-        setTimeout(() => this.$router.push('/processes'), 5000); // TODO - WARNING back to '/'
+        this.$router.push('/processes'); // TODO - WARNING back to '/'
         this.$message({
           type: 'success',
           message: 'You are now connected'
