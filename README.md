@@ -7,6 +7,8 @@ Automated Application Process
 
 ## Applicant-frontend
 
+Made with `react` and `bootstrap-react`
+
 ### Installation
 
 `npm install`
@@ -15,11 +17,13 @@ Automated Application Process
 
 ## Superviser-frontend
 
+Made with `Vuejs` and `elementUI`.
+
 ## Backend
 
+Made with `NodeJS` (with `express`) and `MongoDB` (and `mongoose`).
+
 ### Installation
-Installing `MongoDB` on your computer:
-* On **windows**:  [MongoDb](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
 
 `npm install`
 
