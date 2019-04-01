@@ -3,31 +3,44 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
-        <aap-aside-menu></aap-aside-menu>
         <el-main>
-          <h2>TODO: campaigns list</h2>
+          <h2>List of all processes</h2>
           <aap-spinner :show="loading"></aap-spinner>
           <aap-broken v-show="broken"></aap-broken>
 
+          <div v-if='!loading' class='toolbar'>
+            <el-button>Create new process</el-button>
+          </div>
           <el-table v-if='!loading' :data='processes'>
-            <el-table-column label='Label'></el-table-column>
-            <el-table-column label='Location'></el-table-column>
-            <el-table-column label='Status'></el-table-column>
-            <el-table-column label='Deadline'>
-              <template slot-scope="scope">
-                <i class="el-icon-time"></i>
-                <span style="margin-left: 10px">{{ scope.row.deadline }}</span>
+            <el-table-column label='Label' prop='label'>
+            </el-table-column>
+            <el-table-column label='Location' prop='location'></el-table-column>
+            <el-table-column label='Status'>
+              <template slot-scope='scope'>
+                TODO
               </template>
             </el-table-column>
-            <el-table-column label='Number of applications'></el-table-column>
-            <el-table-column label='Operations'></el-table-column> <!-- edit, show students... -->
+            <el-table-column label='Deadline'>
+              <template slot-scope='scope'>
+                <i class='el-icon-time'></i>
+                <span style='margin-left: 10px'>{{ scope.row.deadline | dateFormatter }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label='Number of applications'>
+              <template slot-scope='scope'>
+                TODO
+              </template>
+            </el-table-column>
+            <el-table-column label='Operations'>
+              <template slot-scope='scope'>
+                <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
+                  <i class='el-icon-search'></i><!-- TODO go to view process page -->
+                </router-link>
+                <i class='el-icon-edit'></i><!-- TODO go to edit process page -->
+                <i class='el-icon-delete'></i><!-- TODO go to edit process page with delete link -->
+              </template>
+            </el-table-column>
           </el-table>
-
-          <ul v-if="!loading">
-            <li v-for="(process, id) in processes" :key="id" :id="id">
-              {{ process.label }}
-            </li>
-          </ul>
         </el-main>
       </el-container>
     </el-container>
@@ -36,6 +49,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import AapSpinner from '../components/Spinner.vue';
 import AapHeader from '../components/Header.vue';
 import AapFooter from '../components/Footer.vue';
@@ -51,7 +65,7 @@ export default {
     broken: true
   }),
   computed: {
-    processes() { return this.$store.state.processes; }
+    processes() {return Object.values(this.$store.state.processes); }
   },
   beforeMount() { this.fetchProcesses() },
   methods: {
@@ -67,6 +81,13 @@ export default {
           confirmButtonText: 'OK'
         });
       });
+    }
+  },
+  filters: {
+    dateFormatter: function (value) {
+      if (!value) return '';
+      const m = moment(value);
+      return m.format('DD/MM/YY, h:mm:ss a');
     }
   }
 }

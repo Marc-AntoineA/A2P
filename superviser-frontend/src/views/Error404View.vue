@@ -1,0 +1,24 @@
+<template>
+  <el-container direction='vertical'>
+    <el-main>
+      <img src='../assets/images/logo.jpg'/>
+      <h1>Error 404, this page doesn't exist.</h1>
+      <p> TODO add the url </p>
+    </el-main>
+    <aap-footer :fixed='true'></aap-footer>
+  </el-container>
+</template>
+
+<script>
+import AapFooter from '../components/Footer.vue';
+
+export default {
+  name: 'Error404',
+  props: {},
+  components: { AapFooter }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+</style>

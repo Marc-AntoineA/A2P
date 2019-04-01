@@ -7,7 +7,8 @@ Vue.use(Router);
 const LoginView = () => import('../views/LoginView.vue');
 const WelcomeView = () => import('../views/WelcomeView.vue');
 const ProcessesView = () => import('../views/ProcessesView.vue');
-const TmpView = () => import('../views/TemplateView.vue');
+const ProcessView = () => import('../views/ProcessView.vue');
+const Error404View = () => import('../views/Error404View.vue');
 
 export function createRouter() {
   return new Router({
@@ -30,11 +31,17 @@ export function createRouter() {
         component: ProcessesView,
         meta: { requiresAuth: true }
       },
-      { // TODO REMOVE
-        path: '/tmp',
-        component: TmpView,
+      {
+        path: '/process/:processId',
+        name: 'process',
+        component: ProcessView,
         meta: { requiresAuth: true }
       },
+      {// MUST BE AT THE END
+        path: '*',
+        component: Error404View,
+        meta: { requiresAuth: false }
+      }
     ]
   });
 }
