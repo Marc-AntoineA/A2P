@@ -15,6 +15,7 @@ exports.getAllProcesses = (req, res, next) => {
 exports.getProcessById = (req, res, next) => {
   const processId = req.params.processId;
   Process.findOne({ _id: processId }).then((process) => {
+    if (!process) res.status(404).json({ error: { message: `Process ${processId} doesn't exist`}});
     res.status(200).json(process);
   }).catch((error) => {
     res.status(404).json({ error: error });
@@ -39,6 +40,24 @@ exports.createEmptyProcess = (req, res, next) => {
       error: error
     });
   });
+};
+
+// TODO remove associated applicants?
+// Add check on status process: only draft or closed can be deleted
+exports.deleteProcessById = (req, res, next) => {
+  const processId = req.params.processId;
+  Process.findOneAndDelete({_id: processId})
+    .then((process) => {
+      if (!process) res.status(404).json({error: { message: `process ${processId} doesn't exist.`}});
+      console.log(process);
+      res.status(200).json({
+        message: `Process ${processId} deleted successfully`
+      });
+    }).catch((error) => {
+      res.status(500).json({
+        error: error
+      });
+    });
 };
 
 exports.copyProcessById = (req, res, next) => {

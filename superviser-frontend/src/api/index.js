@@ -2,7 +2,7 @@
 const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
-function request({url, data, token}, method) {
+function request({url, data, token}, method, cache) {
   return new Promise((resolve, reject) => {
     fetch(url, {
       method: method,
@@ -11,7 +11,8 @@ function request({url, data, token}, method) {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
-      }
+      },
+      cache: cache ? cache : 'default'
     }).then((results) => {
       if (results.status !== 200 && results.status !== 201 && results.status.status !== 304) {
         results.json()
@@ -31,7 +32,7 @@ export function fetchProcesses(token){
       url: API_PATH + settings.GET_ALL_PROCESSES,
       data: undefined,
       token: token
-    }, 'get');
+    }, 'get', 'no-cache');
 };
 
 export function fetchProcess(token, processId) {
@@ -39,7 +40,7 @@ export function fetchProcess(token, processId) {
     url: API_PATH + settings.GET_ONE_PROCESS + processId,
     data: undefined,
     token: token
-  }, 'get');
+  }, 'get', 'no-cache');
 };
 
 export function login(userCredentials){
@@ -56,6 +57,7 @@ export function login(userCredentials){
   });
 };
 
+// TODO call this function through an action
 export function createEmptyProcessAndReturnId(token) {
   return new Promise((resolve, reject) => {
     request({
@@ -64,6 +66,20 @@ export function createEmptyProcessAndReturnId(token) {
       token: token,
     }, 'post').then((response) => {
       resolve(response._id);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+};
+
+export function deleteProcessById(token, processId) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: API_PATH + settings.DELETE_PROCESS + processId,
+      data: undefined,
+      token: token
+    }, 'delete').then((response) => {
+      resolve(response);
     }).catch((err) => {
       reject(err);
     });

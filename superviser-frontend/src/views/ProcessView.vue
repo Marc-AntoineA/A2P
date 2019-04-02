@@ -4,7 +4,7 @@
       <aap-header></aap-header>
       <el-container>
         <el-main>
-          <h2 v-if='!isNewProcess()'> Process view for id: {{ $route.params.processId }} </h2>
+          <h2> Process view for id: {{ $route.params.processId }} </h2>
         </el-main>
       </el-container>
     </el-container>
@@ -26,18 +26,14 @@ export default {
     loading: true
   }),
   methods: {
-    isNewProcess: function(){ return !this.$route.params.processId; },
     getProcess: function(){
       const processId = this.$route.params.processId;
-      if (this.isNewProcess()) return;
       const process = this.$store.state.processes[processId];
       return process;
     }
   },
   beforeMount() {
     const processId = this.$route.params.processId;
-    if (this.isNewProcess()) return;
-
     this.loading = true;
     this.$store.dispatch('FETCH_PROCESS', processId).then(() => {
       this.loading = false;

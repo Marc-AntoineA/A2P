@@ -1,4 +1,9 @@
-import { fetchProcesses, fetchProcess, login } from '../api';
+import {
+  fetchProcesses,
+  fetchProcess,
+  login,
+  deleteProcessById
+ } from '../api';
 
 export default {
   FETCH_PROCESSES: ({ commit, state }) => {
@@ -17,6 +22,17 @@ export default {
       }).catch((err) => {
         reject(err);
       });
+    });
+  },
+  DELETE_PROCESS: ({ commit, state }, processId) => {
+    return new Promise((resolve, reject) => {
+      deleteProcessById(state.user.token, processId)
+        .then((result) => {
+          commit('REMOVE_PROCESSES', [processId]);
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
     });
   },
   LOGIN: ({ commit, state }, credentials) => {

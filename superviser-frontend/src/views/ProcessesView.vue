@@ -51,7 +51,7 @@
                   <i class='el-icon-search'></i><!-- TODO go to view process page -->
                 </router-link>
                 <i class='el-icon-edit'></i><!-- TODO go to edit process page -->
-                <i class='el-icon-delete'></i><!-- TODO go to edit process page with delete link -->
+                <i class='el-icon-delete' @click='deleteProcess(scope.row._id)'></i><!-- TODO go to edit process page with delete link -->
               </template>
             </el-table-column>
           </el-table>
@@ -85,6 +85,29 @@ export default {
   },
   beforeMount() { this.fetchProcesses() },
   methods: {
+    deleteProcess(processId) {
+      this.$confirm('This will permanently delete the process. Continue?', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DELETE_PROCESS', processId).then(() => {
+            this.$message({
+              type: 'success',
+              message: 'Delete completed'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, 'Error while deleted process', {
+              confirmButtonText: 'OK'
+            });
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Delete canceled'
+          });
+        });
+    },
     fetchProcesses() {
       this.loading = true;
       this.broken = false;
@@ -102,7 +125,8 @@ export default {
       createEmptyProcessAndReturnId(this.$store.state.user.token)
         .then((id) => {
           this.$router.push('/process/' + id);
-        }).catch((err) => {
+        })
+        .catch((err) => {
           this.$alert(error.message, 'Error while creating a new process', {
             confirmButtonText: 'OK'
           });
