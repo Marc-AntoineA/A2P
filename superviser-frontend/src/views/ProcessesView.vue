@@ -9,7 +9,7 @@
           <aap-broken v-show="broken"></aap-broken>
 
           <div v-if='!loading && !broken' class='toolbar'>
-            <el-button @click='createNewProcess'>
+            <el-button @click='createProcess'>
               Create new process
             </el-button>
           </div>
@@ -69,9 +69,6 @@ import AapFooter from '../components/Footer.vue';
 import AapAsideMenu from '../components/AsideMenu.vue';
 import AapBroken from '../components/Broken.vue';
 
-import moment from 'moment';
-import { createEmptyProcessAndReturnId } from '../api';
-
 export default {
   name: 'Processes',
   components: { AapSpinner, AapHeader, AapFooter, AapAsideMenu, AapBroken },
@@ -121,23 +118,17 @@ export default {
         });
       });
     },
-    createNewProcess() {
-      createEmptyProcessAndReturnId(this.$store.state.user.token)
-        .then((id) => {
-          this.$router.push('/process/' + id);
+    createProcess() {
+      this.$store.dispatch('CREATE_PROCESS')
+        .then((process) => {
+          const processId = process._id;
+          this.$router.push('/process/' + processId);
         })
         .catch((err) => {
           this.$alert(error.message, 'Error while creating a new process', {
             confirmButtonText: 'OK'
           });
         });
-    }
-  },
-  filters: {
-    dateFormatter: function (value) {
-      if (!value) return '';
-      const m = moment(value);
-      return m.format('DD/MM/YY, h:mm:ss a');
     }
   }
 }

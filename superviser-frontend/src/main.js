@@ -8,9 +8,11 @@ import { createStore } from './store';
 import { createRouter } from './router';
 import './plugins/element.js';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { dateFormatter } from './filters';
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use('ElementUI');
+Vue.filter('dateFormatter', dateFormatter);
 
 export function createApp() {
   const router = createRouter();

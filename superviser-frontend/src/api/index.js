@@ -58,14 +58,14 @@ export function login(userCredentials){
 };
 
 // TODO call this function through an action
-export function createEmptyProcessAndReturnId(token) {
+export function createEmptyProcess(token) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.CREATE_EMPTY_PROCESS,
       data: undefined,
       token: token,
     }, 'post').then((response) => {
-      resolve(response._id);
+      resolve(response);
     }).catch((err) => {
       reject(err);
     });

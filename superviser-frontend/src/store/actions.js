@@ -1,6 +1,7 @@
 import {
   fetchProcesses,
   fetchProcess,
+  createEmptyProcess,
   login,
   deleteProcessById
  } from '../api';
@@ -16,12 +17,24 @@ export default {
   },
   FETCH_PROCESS: ({ commit, state }, processId) => {
     return new Promise((resolve, reject) => {
-      fetchProcess(state.user.token, processId).then((process) => {
-        commit('SET_PROCESSES', { processes: [process] });
-        resolve(process);
-      }).catch((err) => {
-        reject(err);
-      });
+      fetchProcess(state.user.token, processId)
+        .then((process) => {
+          commit('SET_PROCESSES', { processes: [process] });
+          resolve(process);
+        }).catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  CREATE_PROCESS: ({ commit, state }) => {
+    return new Promise((resolve, reject) => {
+      createEmptyProcess(state.user.token)
+        .then((process) => {
+          commit('SET_PROCESSES', { processes: [process]});
+          resolve(process);
+        }).catch((err) => {
+          reject(err);
+        });
     });
   },
   DELETE_PROCESS: ({ commit, state }, processId) => {
