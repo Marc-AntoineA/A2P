@@ -30,7 +30,7 @@ exports.createSuperviser = (req, res, next) => {
       res.status(500).json({
         error: error
       });
-    })
+    });
   }).catch((error) => {
     res.status(503).json({
       error: { message: 'An unknow error occured. Please contact the admnistrator of this website' }

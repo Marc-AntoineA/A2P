@@ -38,22 +38,16 @@ export default {
     const processId = this.$route.params.processId;
     if (this.isNewProcess()) return;
 
-    const process = this.$store.state.processes[processId];
-    if (this.getProcess()) return;
-
     this.loading = true;
     this.$store.dispatch('FETCH_PROCESS', processId).then(() => {
       this.loading = false;
     }).catch((error) => {
-      console.log(error);
       this.loading = false;
-      this.$alert(error.message, 'Error while downloading process ' + processId, {
+      this.$alert(error.message, `Error while downloading process ${processId}`, {
         confirmButtonText: 'OK'
       });
-
+      this.$router.push('/404-error');
     });
-
-    //this.$router.push('/404-error');
   }
 }
 </script>

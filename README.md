@@ -9,25 +9,21 @@ Automated Application Process
 
 Made with `react` and `bootstrap-react`
 
-### Installation
-
-`npm install`
-
-`npm start`
+* `npm install`
+* `npm start`
 
 ## Superviser-frontend
 
 Made with `Vuejs` and `elementUI`.
+* `npm install`
+* `npm start`
 
 ## Backend
 
 Made with `NodeJS` (with `express`) and `MongoDB` (and `mongoose`).
 
-### Installation
-
-`npm install`
-
-`npm start`
+* `npm install`
+* `npm start`
 
 ### Populate
 

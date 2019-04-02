@@ -9,7 +9,9 @@
           <aap-broken v-show="broken"></aap-broken>
 
           <div v-if='!loading && !broken' class='toolbar'>
-            <el-button>Create new process</el-button>
+            <el-button @click='createNewProcess'>
+              Create new process
+            </el-button>
           </div>
 
           <el-table v-if='!loading && !broken' :data='processes'>
@@ -31,6 +33,18 @@
                 TODO
               </template>
             </el-table-column>
+            <el-table-column label='Created At'>
+              <template slot-scope='scope'>
+                <i class='el-icon-time'></i>
+                <span style='margin-left: 10px'>{{ scope.row.createdAt | dateFormatter }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label='Updated At'>
+              <template slot-scope='scope'>
+                <i class='el-icon-time'></i>
+                <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label='Operations'>
               <template slot-scope='scope'>
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
@@ -49,12 +63,14 @@
 </template>
 
 <script>
-import moment from 'moment';
 import AapSpinner from '../components/Spinner.vue';
 import AapHeader from '../components/Header.vue';
 import AapFooter from '../components/Footer.vue';
 import AapAsideMenu from '../components/AsideMenu.vue';
 import AapBroken from '../components/Broken.vue';
+
+import moment from 'moment';
+import { createEmptyProcessAndReturnId } from '../api';
 
 export default {
   name: 'Processes',
@@ -65,16 +81,14 @@ export default {
     broken: true
   }),
   computed: {
-    processes() {console.log('processes - computed', Object.values(this.$store.state.processes)); return Object.values(this.$store.state.processes); }
+    processes() { return Object.values(this.$store.state.processes); }
   },
   beforeMount() { this.fetchProcesses() },
   methods: {
     fetchProcesses() {
-      console.log(this.$store.state.user);
       this.loading = true;
       this.broken = false;
       this.$store.dispatch('FETCH_PROCESSES').then(() => {
-        console.log('fetch processes');
         this.loading = false;
       }).catch((error) => {
         this.broken = true;
@@ -83,6 +97,16 @@ export default {
           confirmButtonText: 'OK'
         });
       });
+    },
+    createNewProcess() {
+      createEmptyProcessAndReturnId(this.$store.state.user.token)
+        .then((id) => {
+          this.$router.push('/process/' + id);
+        }).catch((err) => {
+          this.$alert(error.message, 'Error while creating a new process', {
+            confirmButtonText: 'OK'
+          });
+        });
     }
   },
   filters: {

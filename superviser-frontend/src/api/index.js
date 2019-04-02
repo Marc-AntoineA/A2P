@@ -51,8 +51,21 @@ export function login(userCredentials){
     }, 'post').then((response) => {
       resolve(response);
     }).catch((err) => {
-      console.log(err);
       reject(err);
     });
   });
-}
+};
+
+export function createEmptyProcessAndReturnId(token) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: API_PATH + settings.CREATE_EMPTY_PROCESS,
+      data: undefined,
+      token: token,
+    }, 'post').then((response) => {
+      resolve(response._id);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+};

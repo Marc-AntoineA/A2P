@@ -3,10 +3,8 @@ import { fetchProcesses, fetchProcess, login } from '../api';
 export default {
   FETCH_PROCESSES: ({ commit, state }) => {
     return new Promise((resolve, reject) => {
-      console.log('state into fetch_processes', state.user.token);
       fetchProcesses(state.user.token).then((processes) => {
         commit('SET_PROCESSES', { processes });
-        console.log("resolve fetch processes");
         resolve(processes);
       }).catch((err) => reject(err));
     });
