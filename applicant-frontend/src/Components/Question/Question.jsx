@@ -1,7 +1,6 @@
 'using strict';
 
 import React, { Component } from 'react';
-
 import Input from '../../Components/Input/Input.jsx';
 
 import './styles.css';

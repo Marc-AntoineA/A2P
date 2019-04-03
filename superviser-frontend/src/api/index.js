@@ -33,7 +33,7 @@ export function fetchProcesses(token){
       data: undefined,
       token: token
     }, 'get', 'no-cache');
-};
+}
 
 export function fetchProcess(token, processId) {
   return request({
@@ -41,7 +41,7 @@ export function fetchProcess(token, processId) {
     data: undefined,
     token: token
   }, 'get', 'no-cache');
-};
+}
 
 export function login(userCredentials){
   return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ export function login(userCredentials){
       reject(err);
     });
   });
-};
+}
 
 // TODO call this function through an action
 export function createEmptyProcess(token) {
@@ -70,7 +70,7 @@ export function createEmptyProcess(token) {
       reject(err);
     });
   });
-};
+}
 
 export function deleteProcessById(token, processId) {
   return new Promise((resolve, reject) => {
@@ -84,4 +84,4 @@ export function deleteProcessById(token, processId) {
       reject(err);
     });
   });
-};
+}

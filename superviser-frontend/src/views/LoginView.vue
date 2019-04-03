@@ -59,11 +59,15 @@ export default {
   },
   beforeMount() {
     if (!this.$store.getters.isLoggedIn) return;
-    this.$store.dispatch('LOGOUT');
-    this.$message({
-      type: 'info',
-      message: 'You are now disconnected'
-    });
+    this.$store.dispatch('LOGOUT')
+      .then(() => {
+        this.$message({
+          type: 'info',
+          message: 'You are now disconnected'
+        });
+      }).catch((err) => {
+        console.log("Error");
+      });
   }
 }
 </script>

@@ -80,7 +80,7 @@ export default {
   computed: {
     processes() { return Object.values(this.$store.state.processes); }
   },
-  beforeMount() { this.fetchProcesses() },
+  beforeMount() { console.log("beforMount");this.fetchProcesses() },
   methods: {
     deleteProcess(processId) {
       this.$confirm('This will permanently delete the process. Continue?', 'Warning', {
@@ -124,9 +124,9 @@ export default {
           const processId = process._id;
           this.$router.push('/process/' + processId);
         })
-        .catch((err) => {
+        .catch((error) => {
           this.$alert(error.message, 'Error while creating a new process', {
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK'
           });
         });
     }

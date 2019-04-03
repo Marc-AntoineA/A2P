@@ -23,9 +23,12 @@
                 <el-tab-pane v-for='(page, pageIndex) in step.pages'
                   :label="page.label">
                   <p>{{ page.caption }}</p>
-                  <ul>
-                    <aap-question v-for='(question, questionIndex) in page.questions' :question='question'/>
-                  </ul>
+                  <ol class='question-list'>
+                    <aap-question v-for='(question, questionIndex) in page.questions'
+                      :question='question'
+                      :settings='settings'
+                      :editable='true'/>
+                  </ol>
                 </el-tab-pane>
               </el-tabs>
               <h3>Email answers</h3>
@@ -44,13 +47,15 @@ import AapSpinner from '../components/Spinner.vue';
 import AapHeader from '../components/Header.vue';
 import AapQuestion from '../components/Question.vue';
 
-// TODO. bug - if going to process without /processes, they are not fetched?
+const settings = require('../settings.json');
+
 export default {
   name: 'Process',
   props: {},
   components: { AapSpinner, AapFooter, AapHeader, AapQuestion },
   data: () => ({
-    loading: true
+    loading: true,
+    settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS }
   }),
   methods: {
     getProcess: function(){
@@ -77,5 +82,26 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.question-list {
+  list-style: none;
+}
 
+li.question-element::before {
+  content: "Question " counter(step-counter) ".";
+  margin-right: 5px;
+  font-size: 95%;
+  background-color: teal;
+  color: white;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+li.question-element {
+  counter-increment: step-counter;
+  border: solid 1px teal;
+  margin: 10px 5px;
+  padding: 10px;
+  border-radius: 7px;
+}
 </style>

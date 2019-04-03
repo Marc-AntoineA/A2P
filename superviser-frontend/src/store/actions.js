@@ -9,10 +9,13 @@ import {
 export default {
   FETCH_PROCESSES: ({ commit, state }) => {
     return new Promise((resolve, reject) => {
+      console.log("fetchProcesses for " + state.user.username);
       fetchProcesses(state.user.token).then((processes) => {
         commit('SET_PROCESSES', { processes });
         resolve(processes);
-      }).catch((err) => reject(err));
+      }).catch((err) => {
+        reject(err)
+      });
     });
   },
   FETCH_PROCESS: ({ commit, state }, processId) => {
