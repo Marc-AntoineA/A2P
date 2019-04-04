@@ -1,5 +1,7 @@
 import Vue from 'vue';
 
+import { getProcess, getStep, getPage } from './utils.js';
+
 export default {
   SET_PROCESSES: (state, { processes }) => {
     processes.forEach((process) => {
@@ -18,7 +20,29 @@ export default {
     state.user = {};
     state.processes = {};
   },
-  REMOVE_QUESTION: (state, { processId, stepIndex, pageIndex, questionIndex}) => {
-    Vue.delete(state.processes[processId].steps[stepIndex].pages[pageIndex].questions, questionIndex);
+  REMOVE_QUESTION: (state, identifier) => {
+    Vue.delete(getPage(state, identifier).questions, identifier.questionIndex);
+  },
+  MOVE_QUESTION: (state, {identifier, up}) => {
+    if (up !== 1 && up !== -1)
+      throw new Error(`Error in MOVE_QUESTION: up should be +/-1, ${up} found`);
+
+    const questions = getPage(state, identifier).questions;
+    const startLocation = identifier.questionIndex;
+    const finalLocation = identifier.questionIndex - up;
+    if (finalLocation >= questions.length || finalLocation < 0) return;
+
+    const tmp = questions[startLocation];
+    Vue.set(questions, startLocation, questions[finalLocation]);
+    Vue.set(questions, finalLocation, tmp);
+  },
+  ADD_QUESTION: (state, identifier) => {
+    const questions = getPage(state, identifier).questions;
+    Vue.set(questions, questions.length, {
+      label: 'New question',
+      choices: [],
+      mandatory: false,
+      type: "text"
+    });
   }
 }

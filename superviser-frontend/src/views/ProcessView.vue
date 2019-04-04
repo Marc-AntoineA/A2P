@@ -18,7 +18,8 @@
           <el-collapse>
             <el-collapse-item v-for='(step, stepIndex) in getProcess().steps'
               :key='stepIndex'
-              :title="'Step ' + stepIndex + ': ' + step.label" name="1">
+              :title="'Step ' + stepIndex + ': ' + step.label"
+              :name='stepIndex'>
               <h3>Questions</h3>
               <el-tabs type="border-card">
                 <el-tab-pane v-for='(page, pageIndex) in step.pages'

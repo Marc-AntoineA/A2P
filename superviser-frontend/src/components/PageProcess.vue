@@ -14,6 +14,8 @@
           questionIndex: questionIndex
           }'/>
     </ol>
+    <el-button class="full" type="primary" plain
+      @click='addNewQuestion'>New question</el-button>
   </div>
 </template>
 
@@ -27,6 +29,11 @@ export default {
   components: { AapQuestion },
   props: ['page', 'settings', 'editable', 'state-key'],
   beforeMount() {
+  },
+  methods: {
+    addNewQuestion() {
+      this.$store.commit('ADD_QUESTION', this.stateKey);
+    }
   }
 }
 </script>
@@ -34,6 +41,7 @@ export default {
 <style>
 .question-list {
   list-style: none;
+  padding-left: 0px;
 }
 
 li.question-element::before {
@@ -53,5 +61,9 @@ li.question-element {
   margin: 10px 5px;
   padding: 10px;
   border-radius: 7px;
+}
+
+.full {
+  width: 100%;
 }
 </style>

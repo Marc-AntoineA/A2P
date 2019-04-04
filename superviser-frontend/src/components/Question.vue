@@ -1,15 +1,24 @@
 <template>
   <li class='question-element'>
-    <h4>{{ question.label }}</h4>
+    <el-input class='label-input'
+      v-model='question.label'
+      :disabled='!editable'></el-input>
     <span class='vertical-toolbar float-right'>
         <i class='el-icon-close round-boxed big'
           @click='deleteQuestion'>
         </i>
-        <i class='el-icon-arrow-up round-boxed big'></i>
-        <i class='el-icon-arrow-down round-boxed big'></i>
+        <i class='el-icon-arrow-up round-boxed big'
+          @click='moveQuestionUp'>
+        </i>
+        <i class='el-icon-arrow-down round-boxed big'
+          @click='moveQuestionDown'>
+        </i>
     </span>
-    <div class='row'>
+    <el-form :inline="true" class="demo-form-inline">
+      <el-form-item>
         <el-switch v-model="question.mandatory" :disabled='!editable'></el-switch>
+      </el-form-item>
+      <el-form-item>
         <el-select v-model="question.type" placeholder="Type" :disabled='!editable'>
           <el-option
             v-for="option in settings.types"
@@ -18,7 +27,8 @@
             :value="option.value">
           </el-option>
         </el-select>
-
+      </el-form-item>
+      <el-form-item>
         <el-select v-model="question.validator" placeholder="Validator" :disabled='!editable'>
           <el-option
             v-for="option in settings.validators"
@@ -27,25 +37,29 @@
             :value="option.value">
           </el-option>
         </el-select>
-      </div>
-      <ul>
-        <li v-for='(choice, index) in question.choices'
-          :key='index'
-          class='choice'>
-          {{ choice }}
-        </li>
-      </ul>
+      </el-form-item>
+    </el-form>
+    <ul>
+      <aap-choice v-for='(choice, index) in question.choices'
+        :key='index'
+        :choice='choice'
+        :editable='editable'
+        />
+    </ul>
   </li>
 </template>
+
 <script>
+
+import AapChoice from './Choice.vue';
 
 // TODO handling types in settings.json
 export default {
   name: 'aap-question',
   props: ['question', 'settings', 'editable', 'state-key'],
+  components: { AapChoice },
   beforeMount() {
-      console.log(this.stateKey)
-    //console.log(this.settings.types);
+    console.log(this.question);
   },
   methods: {
     deleteQuestion() {
@@ -53,6 +67,15 @@ export default {
       this.$store.commit('REMOVE_QUESTION', this.stateKey);
       console.log('deleteQuestion');
     },
+    moveQuestionUp() {
+      if (!this.editable) return;
+      this.$store.commit('MOVE_QUESTION', {identifier: this.stateKey, up: 1});
+    },
+    moveQuestionDown() {
+      if (!this.editable) return;
+      this.$store.commit('MOVE_QUESTION', {identifier: this.stateKey, up:-1});
+    }
+
   }
 }
 </script>
@@ -102,5 +125,13 @@ i.round-boxed:hover {
 .disabled i.round-boxed {
   color: #cfd6d9;
   cursor: not-allowed;
+}
+
+.label-input {
+  width: 600px;
+  margin: 10px;
+  font-size: larger;
+  font-weight: bold;
+  padding: 10px;
 }
 </style>
