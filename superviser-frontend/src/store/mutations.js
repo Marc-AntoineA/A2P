@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-import { getProcess, getStep, getPage } from './utils.js';
+import { getProcess, getStep, getPage, getQuestion } from './utils.js';
 
 export default {
   SET_PROCESSES: (state, { processes }) => {
@@ -44,5 +44,14 @@ export default {
       mandatory: false,
       type: "text"
     });
+  },
+  REMOVE_CHOICE: (state, identifier) => {
+    const question = getQuestion(state, identifier);
+    Vue.delete(question.choices, identifier.choiceIndex);
+  },
+  ADD_CHOICE: (state, { identifier, value }) => {
+    if (value === '') return;
+    const choices = getQuestion(state, identifier).choices;
+    Vue.set(choices, choices.length, value);
   }
 }

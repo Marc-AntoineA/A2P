@@ -40,11 +40,22 @@
       </el-form-item>
     </el-form>
     <ul>
-      <aap-choice v-for='(choice, index) in question.choices'
-        :key='index'
+      <aap-choice v-for='(choice, choiceIndex) in question.choices'
+        :key='choiceIndex'
         :choice='choice'
         :editable='editable'
-        />
+        :state-key='{
+          processId: stateKey.processId,
+          stepIndex: stateKey.stepIndex,
+          pageIndex: stateKey.pageIndex,
+          questionIndex: stateKey.questionIndex,
+          choiceIndex: choiceIndex
+          }'/>
+      <li class='choice new-choice'>
+        <el-input v-model='newChoice'/>
+        <i class='el-icon-plus round-boxed small'
+          @click='addNewChoice'></i>
+      </li>
     </ul>
   </li>
 </template>
@@ -57,6 +68,9 @@ import AapChoice from './Choice.vue';
 export default {
   name: 'aap-question',
   props: ['question', 'settings', 'editable', 'state-key'],
+  data: () => ({
+    newChoice: ''
+  }),
   components: { AapChoice },
   beforeMount() {
     console.log(this.question);
@@ -74,8 +88,18 @@ export default {
     moveQuestionDown() {
       if (!this.editable) return;
       this.$store.commit('MOVE_QUESTION', {identifier: this.stateKey, up:-1});
+    },
+    addNewChoice() {
+      if (!this.editable) return;
+      if (this.question.choices.indexOf(this.newChoice) !== -1) {
+        this.$alert(`${this.newChoice} is already a possibility`, 'Invalid choice', {
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+      this.$store.commit('ADD_CHOICE', { identifier: this.stateKey, value: this.newChoice });
+      this.newChoice = '';
     }
-
   }
 }
 </script>
@@ -83,16 +107,6 @@ export default {
 
 <style>
 /* TODO: understand how to use the global variable var(--color-primary); for background-color*/
-li.choice {
-  list-style: none;
-  border: solid 1px teal;
-  margin: 6px;
-  display: inline-block;
-  padding: 2px 11px;
-  border-radius: 20px;
-  background-color: #eaeaea;
-}
-
 .question-element h4 {
     display: inline-block;
     font-size: 16px;
@@ -109,7 +123,6 @@ i.big {
 i.round-boxed {
   border: 1px solid transparent;
   border-radius: 100%;
-  margin-bottom: 6px;
   padding: 2px;
 }
 
@@ -134,4 +147,37 @@ i.round-boxed:hover {
   font-weight: bold;
   padding: 10px;
 }
+
+li.choice {
+  height: 30px;
+  font-size: 13px;
+  line-height: 30px;
+}
+
+li.new-choice {
+  background-color: white;
+}
+
+li.new-choice .el-input {
+  width: auto;
+}
+
+li.new-choice .el-input input {
+  height: 29px;
+  border: none;
+}
+
+li.new-choice .el-input input:focus {
+  border: none;
+}
+
+li.new-choice {
+  border-color: #DCDFE6;
+}
+
+li.new-choice:focus-within {
+  border-color: teal;
+}
+
+
 </style>

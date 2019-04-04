@@ -1,6 +1,9 @@
 <template>
     <li class='choice'>
       {{ choice }}
+      <i class='el-icon-close round-boxed small'
+        @click='deleteChoice'>
+      </i>
     </li>
 </template>
 
@@ -12,6 +15,9 @@ export default {
     console.log(this.question);
   },
   methods: {
+    deleteChoice() {
+      this.$store.commit('REMOVE_CHOICE', this.stateKey)
+    }
   }
 }
 </script>
@@ -27,5 +33,9 @@ li.choice {
   padding: 2px 11px;
   border-radius: 20px;
   background-color: #eaeaea;
+}
+
+i.small {
+  margin: 0px;
 }
 </style>
