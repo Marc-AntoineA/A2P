@@ -85,3 +85,17 @@ export function deleteProcessById(token, processId) {
     });
   });
 }
+
+export function updateProcessById(token, processId, process) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: API_PATH + settings.GET_ONE_PROCESS + processId,
+      data: process,
+      token: token
+    }, 'put').then((response) => {
+      resolve(response);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}

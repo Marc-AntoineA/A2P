@@ -33,6 +33,7 @@ exports.createEmptyProcess = (req, res, next) => {
     updatedAt: today.format(),
     steps: []
   });
+
   process.save().then(() => {
     res.status(201).json(process);
   }).catch((error) => {
@@ -53,6 +54,22 @@ exports.deleteProcessById = (req, res, next) => {
       res.status(200).json({
         message: `Process ${processId} deleted successfully`
       });
+    }).catch((error) => {
+      res.status(500).json({
+        error: error
+      });
+    });
+};
+
+exports.updateProcessById = (req, res, next) => {
+  const processId = req.params.processId;
+  const process = req.body;
+  if (processId !== process._id)
+    res.status(500).json({ error: { message: `${processId} and ${process._id} are not corresponding` }});
+
+  Process.findOneAndUpdate({ _id: processId}, process)
+    .then(() => {
+      res.status(200).json(process);
     }).catch((error) => {
       res.status(500).json({
         error: error

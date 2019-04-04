@@ -4,15 +4,15 @@
       <aap-header></aap-header>
       <el-container>
         <el-main v-if='getProcess()'>
-          <ul>
-            <li>Created at: {{ getProcess().createdAt }}</li>
-            <li>Updated at: {{ getProcess().updatedAt }}</li>
+          <ul class='inline-list small'>
+            <li>Created at: {{ getProcess().createdAt | dateFormatter }}</li>
+            <li>Updated at: {{ getProcess().updatedAt | dateFormatter }}</li>
           </ul>
           <h1> {{ getProcess().label }} </h1>
-          <ul>
+          <ul class='inline-list'>
             <li>Location: {{ getProcess().location }}</li>
             <li>Deadline: {{ getProcess().deadline | dateFormatter}}</li>
-            <li>Status: {{ getProcess().status }}</li>
+            <li><span :class='getProcess().status'>&#11044;</span> Status: {{ getProcess().status }}</li>
           </ul>
 
           <el-collapse>
@@ -72,7 +72,19 @@ export default {
       return process;
     },
     saveProcess: function() {
-      this.unsavedModifications = 0;
+      const processId = this.getProcess()._id;
+      this.$store.dispatch('PUT_PROCESS', processId)
+        .then(() => {
+          this.$message({
+            type: 'info',
+            message: 'Your modifications have been saved'
+          });
+          this.unsavedModifications = 0;
+        }).catch((error) => {
+          this.$alert(error.message, `Error while saving process ${processId}.`, {
+            confirmButtonText: 'OK'
+          });
+        });
     },
     incrementModifications: function() {
       this.unsavedModifications++;
@@ -123,4 +135,29 @@ export default {
   width: 100%;
 }
 
+.inline-list {
+  display: flex;
+  justify-content: space-around;
+}
+
+.inline-list li {
+   list-style: none;
+}
+
+.draft {
+  color: gray;
+}
+
+.running {
+  color: orange;
+}
+
+.finished {
+  color: red;
+}
+
+.inline-list.small {
+  font-size: 12px;
+  color: gray;
+}
 </style>
