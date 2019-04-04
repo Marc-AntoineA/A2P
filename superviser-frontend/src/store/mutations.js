@@ -17,5 +17,8 @@ export default {
   REMOVE_USER: (state) => {
     state.user = {};
     state.processes = {};
+  },
+  REMOVE_QUESTION: (state, { processId, stepIndex, pageIndex, questionIndex}) => {
+    Vue.delete(state.processes[processId].steps[stepIndex].pages[pageIndex].questions, questionIndex);
   }
 }

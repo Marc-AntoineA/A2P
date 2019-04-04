@@ -1,12 +1,18 @@
 <template>
   <div>
     <p>{{ page.caption }}</p>
-    <ol class='question-list'>
+    <ol v-bind:class='["question-list", editable ? "" : "disabled"]'>
       <aap-question v-for='(question, questionIndex) in page.questions'
         :key='questionIndex'
         :question='question'
         :settings='settings'
-        :editable='true'/>
+        :editable='editable'
+        :state-key='{
+          processId: stateKey.processId,
+          stepIndex: stateKey.stepIndex,
+          pageIndex: stateKey.pageIndex,
+          questionIndex: questionIndex
+          }'/>
     </ol>
   </div>
 </template>
@@ -19,9 +25,8 @@ import AapQuestion from './Question.vue';
 export default {
   name: 'aap-page-process',
   components: { AapQuestion },
-  props: ['page', 'settings', 'editable'],
+  props: ['page', 'settings', 'editable', 'state-key'],
   beforeMount() {
-    console.log('page', this.page);
   }
 }
 </script>

@@ -26,7 +26,8 @@
                   <aap-page-process
                     :page='page'
                     :editable='true'
-                    :settings='settings'/>
+                    :settings='settings'
+                    :stateKey='{ processId: getProcess()._id, stepIndex: stepIndex, pageIndex: pageIndex }'/>
                 </el-tab-pane>
               </el-tabs>
               <h3>Email answers</h3>

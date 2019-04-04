@@ -2,13 +2,14 @@
   <li class='question-element'>
     <h4>{{ question.label }}</h4>
     <span class='vertical-toolbar float-right'>
-        <i class='el-icon-close round-boxed big'></i>
+        <i class='el-icon-close round-boxed big'
+          @click='deleteQuestion'>
+        </i>
         <i class='el-icon-arrow-up round-boxed big'></i>
         <i class='el-icon-arrow-down round-boxed big'></i>
     </span>
     <div class='row'>
-        <el-switch v-model="question.mandatory"></el-switch>
-
+        <el-switch v-model="question.mandatory" :disabled='!editable'></el-switch>
         <el-select v-model="question.type" placeholder="Type" :disabled='!editable'>
           <el-option
             v-for="option in settings.types"
@@ -18,7 +19,7 @@
           </el-option>
         </el-select>
 
-        <el-select v-model="question.validator" placeholder="Validator">
+        <el-select v-model="question.validator" placeholder="Validator" :disabled='!editable'>
           <el-option
             v-for="option in settings.validators"
             :key="option.value"
@@ -41,9 +42,17 @@
 // TODO handling types in settings.json
 export default {
   name: 'aap-question',
-  props: ['question', 'settings', 'editable'],
+  props: ['question', 'settings', 'editable', 'state-key'],
   beforeMount() {
+      console.log(this.stateKey)
     //console.log(this.settings.types);
+  },
+  methods: {
+    deleteQuestion() {
+      if (!this.editable) return;
+      this.$store.commit('REMOVE_QUESTION', this.stateKey);
+      console.log('deleteQuestion');
+    },
   }
 }
 </script>
@@ -88,5 +97,10 @@ i.round-boxed:hover {
 
 .vertical-toolbar i {
   display: block;
+}
+
+.disabled i.round-boxed {
+  color: #cfd6d9;
+  cursor: not-allowed;
 }
 </style>
