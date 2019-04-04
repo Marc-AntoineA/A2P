@@ -28,6 +28,7 @@
                     :page='page'
                     :editable='true'
                     :settings='settings'
+                    :on-modification='incrementModifications'
                     :stateKey='{ processId: getProcess()._id, stepIndex: stepIndex, pageIndex: pageIndex }'/>
                 </el-tab-pane>
               </el-tabs>
@@ -37,7 +38,13 @@
         </el-main>
       </el-container>
     </el-container>
-    <aap-footer></aap-footer>
+    <aap-footer/>
+    <div class='save-bar' v-if='this.unsavedModifications > 0'>
+      <el-badge :value='this.unsavedModifications' class='item big'>
+        <el-button type='success' round
+          @click='saveProcess'>Save</el-button>
+      </el-badge>
+    </div>
   </el-container>
 </template>
 
@@ -55,13 +62,20 @@ export default {
   components: { AapSpinner, AapFooter, AapHeader, AapPageProcess },
   data: () => ({
     loading: true,
-    settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS }
+    settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS },
+    unsavedModifications: 0
   }),
   methods: {
     getProcess: function(){
       const processId = this.$route.params.processId;
       const process = this.$store.state.processes[processId];
       return process;
+    },
+    saveProcess: function() {
+      this.unsavedModifications = 0;
+    },
+    incrementModifications: function() {
+      this.unsavedModifications++;
     }
   },
   beforeMount() {
@@ -76,11 +90,37 @@ export default {
       });
       this.$router.push('/404-error');
     });
+  },
+  beforeDestroy() {
+    if (this.unsavedModifications === 0) return;
+    this.$alert(`You lost ${this.unsavedModifications} unsaved modifications`, 'Warning', {
+      confirmButtonText: 'Ok',
+    });
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.save-bar {
+  position: fixed;
+  height: 50px;
+  width: 100%;
+  bottom: 0;
+  z-index: 999;
+  background-color: #dedede;
+  margin: 0;
+  left: 0;
+  border-top: 1px solid teal;
+  padding: 12px;
+}
+
+.el-badge.big {
+  width: 300px;
+}
+
+.el-badge.big button {
+  width: 100%;
+}
 
 </style>

@@ -7,6 +7,7 @@
         :question='question'
         :settings='settings'
         :editable='editable'
+        :on-modification='onModification'
         :state-key='{
           processId: stateKey.processId,
           stepIndex: stateKey.stepIndex,
@@ -27,12 +28,13 @@ import AapQuestion from './Question.vue';
 export default {
   name: 'aap-page-process',
   components: { AapQuestion },
-  props: ['page', 'settings', 'editable', 'state-key'],
+  props: ['page', 'settings', 'editable', 'state-key', 'on-modification'],
   beforeMount() {
   },
   methods: {
     addNewQuestion() {
       this.$store.commit('ADD_QUESTION', this.stateKey);
+      this.onModification();
     }
   }
 }

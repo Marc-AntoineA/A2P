@@ -10,13 +10,14 @@
 <script>
 export default {
   name: 'aap-choice',
-  props: ['choice', 'editable', 'state-key'],
+  props: ['choice', 'editable', 'state-key', 'on-modification'],
   beforeMount() {
     console.log(this.question);
   },
   methods: {
     deleteChoice() {
-      this.$store.commit('REMOVE_CHOICE', this.stateKey)
+      this.$store.commit('REMOVE_CHOICE', this.stateKey);
+      this.onModification();
     }
   }
 }

@@ -2,6 +2,7 @@
   <li class='question-element'>
     <el-input class='label-input'
       v-model='question.label'
+      @change='onModification'
       :disabled='!editable'></el-input>
     <span class='vertical-toolbar float-right'>
         <i class='el-icon-close round-boxed big'
@@ -16,10 +17,14 @@
     </span>
     <el-form :inline="true" class="demo-form-inline">
       <el-form-item>
-        <el-switch v-model="question.mandatory" :disabled='!editable'></el-switch>
+        <el-switch v-model="question.mandatory"
+          @change='onModification'
+          :disabled='!editable'></el-switch>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="question.type" placeholder="Type" :disabled='!editable'>
+        <el-select v-model="question.type" placeholder="Type"
+          :disabled='!editable'
+          @change='onModification'>
           <el-option
             v-for="option in settings.types"
             :key="option.value"
@@ -29,7 +34,9 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="question.validator" placeholder="Validator" :disabled='!editable'>
+        <el-select v-model="question.validator" placeholder="Validator"
+          :disabled='!editable'
+          @change='onModification'>
           <el-option
             v-for="option in settings.validators"
             :key="option.value"
@@ -44,6 +51,7 @@
         :key='choiceIndex'
         :choice='choice'
         :editable='editable'
+        :on-modification='onModification'
         :state-key='{
           processId: stateKey.processId,
           stepIndex: stateKey.stepIndex,
@@ -67,7 +75,7 @@ import AapChoice from './Choice.vue';
 // TODO handling types in settings.json
 export default {
   name: 'aap-question',
-  props: ['question', 'settings', 'editable', 'state-key'],
+  props: ['question', 'settings', 'editable', 'state-key', 'on-modification'],
   data: () => ({
     newChoice: ''
   }),
@@ -79,18 +87,21 @@ export default {
     deleteQuestion() {
       if (!this.editable) return;
       this.$store.commit('REMOVE_QUESTION', this.stateKey);
-      console.log('deleteQuestion');
+      this.onModification();
     },
     moveQuestionUp() {
       if (!this.editable) return;
       this.$store.commit('MOVE_QUESTION', {identifier: this.stateKey, up: 1});
+      this.onModification();
     },
     moveQuestionDown() {
       if (!this.editable) return;
       this.$store.commit('MOVE_QUESTION', {identifier: this.stateKey, up:-1});
+      this.onModification();
     },
     addNewChoice() {
       if (!this.editable) return;
+      if (this.newChoice === '') return;
       if (this.question.choices.indexOf(this.newChoice) !== -1) {
         this.$alert(`${this.newChoice} is already a possibility`, 'Invalid choice', {
           confirmButtonText: 'OK'
@@ -98,6 +109,7 @@ export default {
         return;
       }
       this.$store.commit('ADD_CHOICE', { identifier: this.stateKey, value: this.newChoice });
+      this.onModification();
       this.newChoice = '';
     }
   }

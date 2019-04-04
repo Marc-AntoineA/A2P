@@ -28,7 +28,7 @@ export function createApp() {
     } else {
       next();
     }
-  });
+  })
 
   sync(store, router);
 
