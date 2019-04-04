@@ -15,11 +15,31 @@
             <li><span :class='getProcess().status'>&#11044;</span> Status: {{ getProcess().status }}</li>
           </ul>
 
+          <el-button
+            @click='addNewStep'>
+            Create new step
+          </el-button>
+
           <el-collapse>
             <el-collapse-item v-for='(step, stepIndex) in getProcess().steps'
-              :key='stepIndex'
-              :title="'Step ' + stepIndex + ': ' + step.label"
-              :name='stepIndex'>
+              :key='stepIndex' :name='stepIndex'>
+              <template slot="title">
+                <span class='horizontal-toolbar'>
+                  <i class='el-icon-close round-boxed big'
+                    @click.stop='deleteStep(stepIndex)'>
+                  </i>
+                  <i class='el-icon-arrow-up round-boxed big'
+                    @click.stop='moveStepUp(stepIndex)'>
+                  </i>
+                  <i class='el-icon-arrow-down round-boxed big'
+                    @click.stop='moveStepDown(stepIndex)'>
+                  </i>
+                </span>
+                <span class='step-label'>
+                  <span class='step-prefix'>Step {{ stepIndex}}:</span>
+                  <el-input v-model='step.label'/>
+                </span>
+              </template>
               <h3>Questions</h3>
               <el-tabs type="border-card">
                 <el-tab-pane v-for='(page, pageIndex) in step.pages'
@@ -88,6 +108,24 @@ export default {
     },
     incrementModifications: function() {
       this.unsavedModifications++;
+    },
+    moveStepDown(stepIndex) {
+      console.log("TODO move down step");
+    },
+    moveStepUp(stepIndex) {
+      console.log("TODO move step");
+    },
+    deleteStep(stepIndex) {
+      console.log(stepIndex);
+      this.$store.commit('REMOVE_STEP', {
+        processId: this.getProcess()._id,
+        stepIndex: stepIndex
+      });
+      this.incrementModifications();
+    },
+    addNewStep() {
+      this.$store.commit('ADD_STEP', { processId: this.getProcess()._id });
+      this.incrementModifications();
     }
   },
   beforeMount() {
@@ -159,5 +197,13 @@ export default {
 .inline-list.small {
   font-size: 12px;
   color: gray;
+}
+
+.horizontal-toolbar {
+  margin-right: 20px;
+}
+
+.step-label {
+  font-size: 17px;
 }
 </style>

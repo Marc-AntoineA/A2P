@@ -50,8 +50,57 @@ export default {
     Vue.delete(question.choices, identifier.choiceIndex);
   },
   ADD_CHOICE: (state, { identifier, value }) => {
-    if (value === '') return;
     const choices = getQuestion(state, identifier).choices;
     Vue.set(choices, choices.length, value);
+  },
+  ADD_STEP: (state, identifier) => {
+    const steps = getProcess(state, identifier).steps;
+    Vue.set(steps, steps.length, {
+      label: 'New step',
+      status: 'todo',
+      pages: []
+    });
+  },
+  MOVE_STEP: (state, { identifier, up }) => {
+    if (up !== 1 && up !== -1)
+      throw new Error(`Error in MOVE_STEP: up should be +/-1, ${up} found`);
+
+    const steps = getProcess(state, identifier).steps;
+    const startLocation = identifier.stepIndex;
+    const finalLocation = identifier.stepIndex - up;
+    if (finalLocation >= steps.length || finalLocation < 0) return;
+
+    const tmp = steps[startLocation];
+    Vue.set(steps, startLocation, steps[finalLocation]);
+    Vue.set(steps, finalLocation, tmp);
+  },
+  REMOVE_STEP: (state, identifier) => {
+    const steps = getProcess(state, identifier).steps;
+    Vue.delete(steps, identifier.stepIndex);
+  },
+  ADD_PAGE: (state, { identifier }) => {
+    const pages = getStep(state, identifier).pages;
+    Vue.set(pages, pages.length, {
+      label: 'New page',
+      caption: 'description',
+      questions: []
+    });
+  },
+  MOVE_PAGE: (state, { identifier, up }) => {
+    if (up !== 1 && up !== -1)
+      throw new Error(`Error in MOVE_PAGE: up should be +/-1, ${up} found`);
+
+    const pages = getStep(state, identifier).pages;
+    const startLocation = identifier.pageIndex;
+    const finalLocation = identifier.pageIndex - up;
+    if (finalLocation >= pages.length || finalLocation < 0) return;
+
+    const tmp = pages[startLocation];
+    Vue.set(pages, startLocation, pages[finalLocation]);
+    Vue.set(pages, finalLocation, tmp);
+  },
+  REMOVE_PAGE: (state, { identifier }) => {
+    const pages = getStep(state, identifier).pages;
+    Vue.delete(pages, identifier.pageIndex);
   }
 }

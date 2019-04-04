@@ -67,6 +67,11 @@ exports.updateProcessById = (req, res, next) => {
   if (processId !== process._id)
     res.status(500).json({ error: { message: `${processId} and ${process._id} are not corresponding` }});
 
+  if (process.status !== 'draft')
+    res.status(500).json({ error: { message: `Process ${processId} cannot be modified in status ${process.status}`}});
+
+  const now = moment();
+  process.updatedAt = now.format();
   Process.findOneAndUpdate({ _id: processId}, process)
     .then(() => {
       res.status(200).json(process);
