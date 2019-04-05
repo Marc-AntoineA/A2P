@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { dateFormatter } from './filters';
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.use('ElementUI');
+
 Vue.filter('dateFormatter', dateFormatter);
 
 export function createApp() {

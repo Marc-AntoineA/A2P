@@ -4,7 +4,8 @@ import {
   createEmptyProcess,
   login,
   deleteProcessById,
-  updateProcessById
+  updateProcessById,
+  openProcessById
  } from '../api';
 
 export default {
@@ -72,6 +73,18 @@ export default {
     return new Promise((resolve, reject) => {
       updateProcessById(state.user.token, processId, state.processes[processId])
         .then((process) => {
+          commit('SET_PROCESSES', { processes: [process]});
+          resolve(process);
+        }).catch((err) => {
+          reject(err);
+        });
+    });
+  },
+  OPEN_PROCESS: ({ commit, state }, processId) => {
+    return new Promise((resolve, reject) => {
+      openProcessById(state.user.token, processId, state.processes[processId])
+        then((process) => {
+          console.log('after open', process);
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch((err) => {

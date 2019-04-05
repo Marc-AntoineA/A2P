@@ -64,11 +64,15 @@ exports.deleteProcessById = (req, res, next) => {
 exports.updateProcessById = (req, res, next) => {
   const processId = req.params.processId;
   const process = req.body;
-  if (processId !== process._id)
+  if (processId !== process._id) {
     res.status(500).json({ error: { message: `${processId} and ${process._id} are not corresponding` }});
+    return;
+  }
 
-  if (process.status !== 'draft')
+  if (process.status !== 'draft') {
     res.status(500).json({ error: { message: `Process ${processId} cannot be modified in status ${process.status}`}});
+    return;
+  }
 
   const now = moment();
   process.updatedAt = now.format();
@@ -81,6 +85,26 @@ exports.updateProcessById = (req, res, next) => {
       });
     });
 };
+
+exports.openProcessById = (req, res, next) => {
+  const processId = req.params.processId;
+  Process.findOne({ _id: processId }).then((process) => {
+    if (!process) res.status(404).json({error: { message: `process ${processId} doesn't exist.`}});
+    if (process.status !== 'draft')
+      res.status(500).json(
+        { error: { message: `Process ${processId} is in status ${process.status} and cannot be opened`}});
+    process.status = 'open';
+    process.save().then(() => {
+      res.status(200).json(process);
+    }).catch((error) => {
+      res.status(500).json({error: error});
+    })
+  }).catch((error) => {
+    res.status(500).json({
+      error: error
+    });
+  });
+}
 
 exports.copyProcessById = (req, res, next) => {
   // TODO

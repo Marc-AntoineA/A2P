@@ -11,6 +11,7 @@ const superviserCtrl = require('../controllers/superviser');
 router.get('/processes', auth, processCtrl.getAllProcesses);
 router.get('/process/:processId', auth, processCtrl.getProcessById);
 router.put('/process/:processId', auth, processCtrl.updateProcessById);
+router.put('/open/process/:processId', auth, processCtrl.openProcessById);
 router.post('/create/process/', auth, processCtrl.createEmptyProcess);
 router.delete('/delete/process/:processId', auth, processCtrl.deleteProcessById);
 router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);

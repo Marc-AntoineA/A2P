@@ -99,3 +99,17 @@ export function updateProcessById(token, processId, process) {
     });
   });
 }
+
+export function openProcessById(token, processId, process) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: API_PATH + settings.OPEN_PROCESS + processId,
+      data: undefined,
+      token: token
+    }, 'put').then((response) => {
+      resolve(response);
+    }).catch((err) => {
+      reject(err);
+    });
+  });
+}

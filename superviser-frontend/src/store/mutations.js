@@ -78,7 +78,7 @@ export default {
     const steps = getProcess(state, identifier).steps;
     Vue.delete(steps, identifier.stepIndex);
   },
-  ADD_PAGE: (state, { identifier }) => {
+  ADD_PAGE: (state, identifier) => {
     const pages = getStep(state, identifier).pages;
     Vue.set(pages, pages.length, {
       label: 'New page',
@@ -99,7 +99,7 @@ export default {
     Vue.set(pages, startLocation, pages[finalLocation]);
     Vue.set(pages, finalLocation, tmp);
   },
-  REMOVE_PAGE: (state, { identifier }) => {
+  REMOVE_PAGE: (state, identifier) => {
     const pages = getStep(state, identifier).pages;
     Vue.delete(pages, identifier.pageIndex);
   }
