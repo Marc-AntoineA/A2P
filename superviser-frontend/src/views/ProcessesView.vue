@@ -66,12 +66,11 @@
 import AapSpinner from '../components/Spinner.vue';
 import AapHeader from '../components/Header.vue';
 import AapFooter from '../components/Footer.vue';
-import AapAsideMenu from '../components/AsideMenu.vue';
 import AapBroken from '../components/Broken.vue';
 
 export default {
   name: 'Processes',
-  components: { AapSpinner, AapHeader, AapFooter, AapAsideMenu, AapBroken },
+  components: { AapSpinner, AapHeader, AapFooter, AapBroken },
   props: {},
   data: () => ({
     loading: true,
@@ -80,7 +79,7 @@ export default {
   computed: {
     processes() { return Object.values(this.$store.state.processes); }
   },
-  beforeMount() { console.log("beforMount");this.fetchProcesses() },
+  beforeMount() { this.fetchProcesses() },
   methods: {
     deleteProcess(processId) {
       this.$confirm('This will permanently delete the process. Continue?', 'Warning', {

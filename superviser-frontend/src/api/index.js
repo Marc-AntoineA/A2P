@@ -16,8 +16,8 @@ function request({url, data, token}, method, cache) {
     }).then((results) => {
       if (results.status !== 200 && results.status !== 201 && results.status.status !== 304) {
         results.json()
-          .then((response) => reject(response.error))
-          .catch((error) => reject(error));
+          .then((response) => reject({code: results.status, error: response.error}))
+          .catch((error) => reject({error}));
           return;
       }
       resolve(results.json());

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import App from './App.vue';
-import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './plugins/loadElement';
 import { sync } from 'vuex-router-sync';
@@ -41,6 +40,5 @@ export function createApp() {
   return { app, router, store };
 }
 
-// TODO. see how entry-client.js works
-const { app, router, store } = createApp();
+const { app } = createApp();
 app.$mount('#app');

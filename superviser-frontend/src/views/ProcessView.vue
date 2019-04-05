@@ -3,6 +3,7 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
+        <aap-spinner :show="loading"></aap-spinner>
         <el-main v-if='getProcess()'>
           <ul class='inline-list small'>
             <li>Created at: {{ getProcess().createdAt | dateFormatter }}</li>
@@ -55,7 +56,7 @@
                   </i>
                 </span>
                 <span class='step-label' @click.stop=''>
-                  <span class='prefix'>Step {{ stepIndex }}</span>
+                  <span class='prefix'>Step {{ stepIndex }}</span>
                   <el-input v-model='step.label'
                     @change='incrementModifications'>
                   </el-input>
@@ -170,7 +171,7 @@ export default {
     moveStepDown(stepIndex) {
       if (!this.editable) return;
       const identifier = this.stepIdentifier(stepIndex);
-      this.$store.commit('MOVE_STEP', { identifier, up: -1 });
+      this.$store.commit('MOVE_STEP', { identifier, up: -1 });
       this.incrementModifications();
     },
     moveStepUp(stepIndex) {
@@ -283,11 +284,11 @@ export default {
   color: gray;
 }
 
-.open {
+.running {
   color: orange;
 }
 
-.closed {
+.finished {
   color: red;
 }
 

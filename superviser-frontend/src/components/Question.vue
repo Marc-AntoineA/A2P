@@ -72,7 +72,7 @@
 
 import AapChoice from './Choice.vue';
 
-// TODO handling types in settings.json
+// TODO handling types in settings.json
 export default {
   name: 'aap-question',
   props: ['question', 'settings', 'editable', 'state-key', 'on-modification'],
@@ -81,7 +81,6 @@ export default {
   }),
   components: { AapChoice },
   beforeMount() {
-    console.log(this.question);
   },
   methods: {
     deleteQuestion() {
@@ -190,6 +189,4 @@ li.new-choice {
 li.new-choice:focus-within {
   border-color: teal;
 }
-
-
 </style>

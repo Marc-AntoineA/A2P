@@ -66,7 +66,6 @@ export default {
           message: 'You are now disconnected'
         });
       }).catch((err) => {
-        console.log("Error");
       });
   }
 }
