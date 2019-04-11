@@ -9,9 +9,7 @@ const stepSchema = mongoose.Schema({
   label: { type: String, required: true },
   mark: { type: Number, required: false },
   status: { type: String, required: false },
-  pages: { type: [stepPageSchema], required: true },
-  emailRejected: { type: String, required: true },
-  emailAccepted: { type: String, required: true }
+  pages: { type: [stepPageSchema], required: true }
 });
 
 module.exports.schema = stepSchema;

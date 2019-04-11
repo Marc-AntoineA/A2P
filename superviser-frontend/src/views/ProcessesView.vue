@@ -19,7 +19,8 @@
             <el-table-column label='Location' prop='location'></el-table-column>
             <el-table-column label='Status'>
               <template slot-scope='scope'>
-                TODO
+                <span :class='scope.row.status'>&#11044;</span>
+                {{ scope.row.status }}
               </template>
             </el-table-column>
             <el-table-column label='Deadline'>
@@ -47,11 +48,13 @@
             </el-table-column>
             <el-table-column label='Operations'>
               <template slot-scope='scope'>
+                {{ scope.status }}
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
-                  <i class='el-icon-search'></i><!-- TODO go to view process page -->
+                  <i v-if='scope.row.status === "draft"' class='el-icon-edit round-boxed big'></i>
+                  <i v-if='scope.row.status !== "draft"' class='el-icon-search round-boxed big'></i>
                 </router-link>
-                <i class='el-icon-edit'></i><!-- TODO go to edit process page -->
-                <i class='el-icon-delete' @click='deleteProcess(scope.row._id)'></i><!-- TODO go to edit process page with delete link -->
+                <i class='el-icon-delete round-boxed big'
+                  @click='deleteProcess(scope.row._id)'></i>
               </template>
             </el-table-column>
           </el-table>
@@ -134,5 +137,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
+
+
 </style>

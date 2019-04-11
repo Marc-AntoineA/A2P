@@ -9,12 +9,18 @@
             <li>Created at: {{ getProcess().createdAt | dateFormatter }}</li>
             <li>Updated at: {{ getProcess().updatedAt | dateFormatter }}</li>
           </ul>
-          <h1> {{ getProcess().label }} </h1>
 
+        <el-input v-model='getProcess().label' class='process-label'
+          @change='incrementModifications()' :disabled='!editable'>
+           {{ getProcess().label }}
+        </el-input>
+
+        <el-input v-model='getProcess().location'
           <el-form :inline="true" class="option-form">
             <el-form-item label="Location:">
               <el-input v-model='getProcess().location'
-                @change='incrementModifications()'/>
+                @change='incrementModifications()'
+                :disabled='!editable'/>
             </el-form-item>
 
             <el-form-item label='Deadline'>
@@ -22,7 +28,8 @@
                 v-model='getProcess().deadline'
                 type="datetime"
                 placeholder="Select date and time"
-                default-time="23:00:00">
+                default-time="23:00:00"
+                :disabled='!editable'>
               </el-date-picker>
             </el-form-item>
 
@@ -35,8 +42,7 @@
             </el-form-item>
           </el-form>
 
-          <el-button
-            @click='addNewStep'>
+          <el-button v-if='editable' class='top-button' @click='addNewStep'>
             Create new step
           </el-button>
 
@@ -44,56 +50,57 @@
             <el-collapse-item v-for='(step, stepIndex) in getProcess().steps'
               :key='stepIndex' :name='stepIndex'>
               <template slot="title">
-                <span class='horizontal-toolbar'>
-                  <i class='el-icon-close round-boxed big'
+                <span v-if='editable' class='horizontal-toolbar'>
+                  <i class="el-icon-close round-boxed big"
                     @click.stop='deleteStep(stepIndex)'>
                   </i>
-                  <i class='el-icon-arrow-up round-boxed big'
+                  <i class="el-icon-arrow-up round-boxed big"
                     @click.stop='moveStepUp(stepIndex)'>
                   </i>
-                  <i class='el-icon-arrow-down round-boxed big'
+                  <i class="el-icon-arrow-down round-boxed big"
                     @click.stop='moveStepDown(stepIndex)'>
                   </i>
                 </span>
                 <span class='step-label' @click.stop=''>
                   <span class='prefix'>Step {{ stepIndex }}</span>
                   <el-input v-model='step.label'
-                    @change='incrementModifications'>
+                    @change='incrementModifications'
+                    :disabled='!editable'>
                   </el-input>
                 </span>
-
               </template>
-              <h3>Questions</h3>
-              <el-button @click='addNewPage(stepIndex)'>
-                Add page
-              </el-button>
-              <el-tabs type="border-card">
-                <el-tab-pane v-for='(page, pageIndex) in step.pages'
-                  :key='pageIndex'>
-                  <span slot="label">
-                    {{ page.label }}
-                    <span class='tab-toolbar'>
-                      <i class='el-icon-arrow-left round-boxed big'
-                        @click='movePageLeft(stepIndex, pageIndex)'>
-                      </i>
-                      <i class='el-icon-arrow-right round-boxed big'
-                        @click='movePageRight(stepIndex, pageIndex)'>
-                      </i>
-                      <i class='el-icon-close round-boxed big'
-                        @click='deletePage(stepIndex, pageIndex)'>
-                      </i>
+
+              <div class='process-box'>
+                <h3>Pages</h3>
+                <el-button v-if='editable' class='top-button' @click='addNewPage(stepIndex)'>
+                  Add page
+                </el-button>
+                <el-tabs type="border-card">
+                  <el-tab-pane v-for='(page, pageIndex) in step.pages'
+                    :key='pageIndex'>
+                    <span slot="label">
+                      <span class='page-number'>Page {{ pageIndex}}</span> {{ page.label }}
+                      <span v-if='editable' class='tab-toolbar'>
+                        <i class='el-icon-arrow-left round-boxed big'
+                          @click='movePageLeft(stepIndex, pageIndex)'>
+                        </i>
+                        <i class='el-icon-arrow-right round-boxed big'
+                          @click='movePageRight(stepIndex, pageIndex)'>
+                        </i>
+                        <i class='el-icon-close round-boxed big'
+                          @click='deletePage(stepIndex, pageIndex)'>
+                        </i>
+                      </span>
                     </span>
-                  </span>
-                  <el-input v-model='page.label'/>
-                  <aap-page-process
-                    :page='page'
-                    :editable='editable'
-                    :settings='settings'
-                    :on-modification='incrementModifications'
-                    :stateKey='pageIdentifier(stepIndex, pageIndex)'/>
-                </el-tab-pane>
-              </el-tabs>
-              <h3>Email answers</h3>
+                    <aap-page-process
+                      :page='page'
+                      :editable='editable'
+                      :settings='settings'
+                      :on-modification='incrementModifications'
+                      :stateKey='pageIdentifier(stepIndex, pageIndex)'/>
+                  </el-tab-pane>
+                </el-tabs>
+              </div>
             </el-collapse-item>
           </el-collapse>
         </el-main>
@@ -125,7 +132,7 @@ export default {
     loading: true,
     settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS },
     unsavedModifications: 0,
-    editable: true
+    editable: false
   }),
   methods: {
     getProcess: function(){
@@ -153,6 +160,9 @@ export default {
       });
     },
     incrementModifications: function() {
+      if (!this.editable) {
+        console.log("Forbidden increment modifications");
+      }
       this.unsavedModifications++;
     },
     stepIdentifier(stepIndex) {
@@ -219,7 +229,19 @@ export default {
           type: 'warning'
         }).then(() => {
           this.saveProcess().then(() => {
-            this.$store.dispatch('OPEN_PROCESS', this.getProcess()._id);
+            this.$store.dispatch('OPEN_PROCESS', this.getProcess()._id)
+              .then(() => {
+                this.$message({
+                  type: 'info',
+                  message: 'The process is now in status: "open"'
+                });
+              })
+              .catch((error) => {
+                this.$alert(error.message, 'Error while opening the current process', {
+                  confirmButtonText: 'OK'
+                });
+              });
+          }).catch((error) => {
           });
         }).catch(() => {
 
@@ -229,8 +251,9 @@ export default {
   beforeMount() {
     const processId = this.$route.params.processId;
     this.loading = true;
-    this.$store.dispatch('FETCH_PROCESS', processId).then(() => {
+    this.$store.dispatch('FETCH_PROCESS', processId).then((process)=> {
       this.loading = false;
+      this.editable = (process.status === 'draft');
     }).catch((error) => {
       this.loading = false;
       this.$alert(error.message, `Error while downloading process ${processId}`, {
@@ -249,7 +272,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .save-bar {
   position: fixed;
   height: 50px;
@@ -278,18 +301,6 @@ export default {
 
 .inline-list li {
    list-style: none;
-}
-
-.draft {
-  color: gray;
-}
-
-.running {
-  color: orange;
-}
-
-.finished {
-  color: red;
 }
 
 .inline-list.small {
@@ -325,5 +336,38 @@ export default {
 .option-form {
   display: flex;
   justify-content: space-around;
+}
+
+.process-label {
+  width: 300px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.process-label input {
+	font-weight: bold!important;
+	color: #2c3e50!important;
+	text-align: center!important;
+}
+
+.top-button {
+  margin-bottom: 20px;
+}
+
+.el-input.is-disabled .el-input__inner, .el-textarea.is-disabled .el-textarea__inner {
+  background-color: inherit;
+  border-color: white;
+  color: #2C3E50;
+  cursor: not-allowed;
+}
+
+.page-number {
+	font-size: 9px;
+	text-transform: uppercase;
+	background-color: teal;
+	color: white;
+	padding: 3px 4px;
+	margin-right: 4px;
+	border-radius: 14px;
 }
 </style>

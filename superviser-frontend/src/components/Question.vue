@@ -4,7 +4,7 @@
       v-model='question.label'
       @change='onModification'
       :disabled='!editable'></el-input>
-    <span class='vertical-toolbar float-right'>
+    <span v-if='editable' class='vertical-toolbar float-right'>
         <i class='el-icon-close round-boxed big'
           @click='deleteQuestion'>
         </i>
@@ -59,7 +59,7 @@
           questionIndex: stateKey.questionIndex,
           choiceIndex: choiceIndex
           }'/>
-      <li class='choice new-choice'>
+      <li v-if='editable' class='choice new-choice'>
         <el-input v-model='newChoice'/>
         <i class='el-icon-plus round-boxed small'
           @click='addNewChoice'></i>
@@ -125,21 +125,6 @@ export default {
 
 .float-right {
   float: right;
-}
-
-i.big {
-  font-size: 20px;
-}
-
-i.round-boxed {
-  border: 1px solid transparent;
-  border-radius: 100%;
-  padding: 2px;
-}
-
-i.round-boxed:hover {
-  border-color: teal;
-  background-color: #f8f8f8;
 }
 
 .vertical-toolbar i {

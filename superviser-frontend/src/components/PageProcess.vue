@@ -1,6 +1,21 @@
 <template>
   <div>
-    <p>{{ page.caption }}</p>
+    <el-form>
+      <el-form-item label="Label">
+        <el-input v-model='page.label'
+          @change='onModification'
+          :disabled='!editable'/>
+      </el-form-item>
+      <el-form-item label="Caption">
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 2, maxRows: 8}"
+          v-model="page.caption"
+          @change='onModification'
+          :disabled='!editable'>
+        </el-input>
+      </el-form-item>
+    </el-form>
     <ol v-bind:class='["question-list", editable ? "" : "disabled"]'>
       <aap-question v-for='(question, questionIndex) in page.questions'
         :key='questionIndex'
@@ -15,7 +30,7 @@
           questionIndex: questionIndex
           }'/>
     </ol>
-    <el-button class="full" type="primary" plain
+    <el-button v-if='editable' class="full" type="primary" plain
       @click='addNewQuestion'>New question</el-button>
   </div>
 </template>
@@ -41,6 +56,10 @@ export default {
 </script>
 
 <style>
+.el-textarea__inner {
+  font-family: inherit;
+}
+
 .question-list {
   list-style: none;
   padding-left: 0px;

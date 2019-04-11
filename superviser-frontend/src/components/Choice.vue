@@ -1,7 +1,7 @@
 <template>
     <li class='choice'>
       {{ choice }}
-      <i class='el-icon-close round-boxed small'
+      <i v-if='editable' class='el-icon-close round-boxed small'
         @click='deleteChoice'>
       </i>
     </li>

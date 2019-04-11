@@ -19,4 +19,39 @@
   height: 90%;
 }
 
+.draft {
+  color: orange;
+}
+
+.open {
+  color: green;
+}
+
+.finished {
+  color: red;
+}
+
+i.big {
+  font-size: 20px;
+}
+
+i.round-boxed {
+  border: 1px solid transparent;
+  border-radius: 100%;
+  padding: 2px;
+}
+
+i.round-boxed:hover {
+  border-color: teal;
+  background-color: #f8f8f8;
+}
+
+i.round-boxed.disabled {
+  cursor: not-allowed;
+  color: lightgray;
+}
+
+i.round-boxed.disabled:hover {
+  border-color: gray;
+}
 </style>
