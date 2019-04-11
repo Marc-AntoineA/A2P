@@ -3,7 +3,7 @@
     <el-main>
       <img src='../assets/images/logo.jpg'/>
       <h1>Error 404, this page doesn't exist.</h1>
-      <p> TODO add the url </p>
+      <p> TODO add the url </p>
     </el-main>
     <aap-footer :fixed='true'></aap-footer>
   </el-container>

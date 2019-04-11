@@ -8,6 +8,7 @@ const LoginView = () => import('../views/LoginView.vue');
 const WelcomeView = () => import('../views/WelcomeView.vue');
 const ProcessesView = () => import('../views/ProcessesView.vue');
 const ProcessView = () => import('../views/ProcessView.vue');
+const ApplicantsView = () => import('../views/ApplicantsView.vue');
 const Error404View = () => import('../views/Error404View.vue');
 
 export function createRouter() {
@@ -18,27 +19,37 @@ export function createRouter() {
     routes: [
       {
         path: '/login',
+        name: 'login',
         component: LoginView,
         meta: { requiresAuth: false }
       },
       {
         path: '/',
+        name: 'welcome',
         component: WelcomeView,
         meta: { requiresAuth: true }
       },
       {
         path: '/processes',
+        name: 'processes',
         component: ProcessesView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/process/:processId',
+        path: '/process/:processId/',
         name: 'process',
         component: ProcessView,
         meta: { requiresAuth: true }
       },
-      {// MUST BE AT THE END
+      {
+        path:'/applicants',
+        name: 'applicants',
+        component: ApplicantsView,
+        meta: { requiresAuth: true },
+      },
+      {
         path: '*',
+        name: 'error404',
         component: Error404View,
         meta: { requiresAuth: false }
       }

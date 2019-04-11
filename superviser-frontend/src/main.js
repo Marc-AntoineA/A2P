@@ -20,6 +20,7 @@ export function createApp() {
   const store = createStore();
 
   router.beforeEach((to, from, next) => {
+    console.log('before each', to);
     if (to.matched.some(record => record.meta.requiresAuth)) {
       if (store.getters.isLoggedIn) {
         next();

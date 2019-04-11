@@ -1,6 +1,6 @@
-
+'using strict';
 const settings = require('../settings.json');
-const API_PATH = settings.API_PATH;
+const API_PATH = settings.API_PATH;
 
 function request({url, data, token}, method, cache) {
   return new Promise((resolve, reject) => {

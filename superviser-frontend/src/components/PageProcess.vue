@@ -39,7 +39,7 @@
 
 import AapQuestion from './Question.vue';
 
-// TODO handling types in settings.json
+// TODO handling types in settings.json
 export default {
   name: 'aap-page-process',
   components: { AapQuestion },

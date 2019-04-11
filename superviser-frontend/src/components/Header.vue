@@ -7,7 +7,7 @@
       <el-menu-item index='/processes' route='/processes'>
         Processes
       </el-menu-item>
-      <el-menu-item index='2'>Create a new campaign</el-menu-item>
+      <el-menu-item index='/applicants' route='/applicants'>Applicants</el-menu-item>
       <el-menu-item index='3'>About this website</el-menu-item>
       <el-menu-item index='/login' route='/login'>Logout</el-menu-item>
     </el-menu>
