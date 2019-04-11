@@ -160,3 +160,13 @@ exports.getApplicantStep = (req, res, next) => {
     res.status(200).json(steps[stepIndex].pages);
   });
 };
+
+exports.getAllApplicantsByProcessId = (req, res, next) => {
+  const processId = req.params.processId;
+  Applicant.find({
+    "process._id": processId
+  }).then((applicants) => {
+    console.log(applicants);
+    res.status(200).json(applicants);
+  });
+};

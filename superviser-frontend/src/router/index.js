@@ -42,9 +42,9 @@ export function createRouter() {
         meta: { requiresAuth: true }
       },
       {
-        path:'/applicants',
+        path:'/applicants/:processId',
         name: 'applicants',
-        component: ApplicantsView,
+        component: ApplicantsView,
         meta: { requiresAuth: true },
       },
       {

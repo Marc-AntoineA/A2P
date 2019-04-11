@@ -31,7 +31,9 @@
             </el-table-column>
             <el-table-column label='Number of applications'>
               <template slot-scope='scope'>
-                TODO
+                <router-link :to='{name: "applicants", params: {processId: scope.row._id} }'>
+                  see
+                </router-link>
               </template>
             </el-table-column>
             <el-table-column label='Created At'>

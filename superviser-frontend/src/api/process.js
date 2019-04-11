@@ -2,30 +2,7 @@
 const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
-function request({url, data, token}, method, cache) {
-  return new Promise((resolve, reject) => {
-    fetch(url, {
-      method: method,
-      body: data ? JSON.stringify(data) : undefined,
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
-      },
-      cache: cache ? cache : 'default'
-    }).then((results) => {
-      if (results.status !== 200 && results.status !== 201 && results.status.status !== 304) {
-        results.json()
-          .then((response) => reject({code: results.status, error: response.error}))
-          .catch((error) => reject({error}));
-          return;
-      }
-      resolve(results.json());
-    }).catch((err) => {
-      reject(err);
-    });
-  });
-}
+const { request } = require('./utils.js');
 
 export function fetchProcesses(token){
   return request({
@@ -43,21 +20,6 @@ export function fetchProcess(token, processId) {
   }, 'get', 'no-cache');
 }
 
-export function login(userCredentials){
-  return new Promise((resolve, reject) => {
-    request({
-      url: API_PATH + settings.LOGIN,
-      data: userCredentials,
-      token: ''
-    }, 'post').then((response) => {
-      resolve(response);
-    }).catch((err) => {
-      reject(err);
-    });
-  });
-}
-
-// TODO call this function through an action
 export function createEmptyProcess(token) {
   return new Promise((resolve, reject) => {
     request({

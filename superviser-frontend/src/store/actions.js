@@ -2,11 +2,14 @@ import {
   fetchProcesses,
   fetchProcess,
   createEmptyProcess,
-  login,
   deleteProcessById,
   updateProcessById,
   openProcessById
- } from '../api';
+} from '../api/process.js';
+
+import { login } from '../api/login.js';
+
+import { fetchApplicantsByProcessId } from '../api/applicant.js';
 
 export default {
   FETCH_PROCESSES: ({ commit, state, dispatch }) => {
@@ -90,6 +93,18 @@ export default {
         .then((process) => {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
+        }).catch(({code, error }) => {
+          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          reject(error);
+        });
+    });
+  },
+  FETCH_APPLICANTS_BY_PROCESS_ID: ({ commit, state, dispatch }, processId) => {
+    return new Promise((resolve, reject) => {
+      fetchApplicantsByProcessId(state.user.token, processId)
+        .then((applicants) => {
+          commit('SET_APPLICANTS', applicants);
+          resolve(applicants);
         }).catch(({code, error }) => {
           if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
           reject(error);

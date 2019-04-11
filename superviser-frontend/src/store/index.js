@@ -15,7 +15,8 @@ export function createStore() {
   return new Vuex.Store({
     state: {
       processes: {/* [id: number]: Process */},
-      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},  
+      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
+      applicants: {},
     },
     actions,
     mutations,

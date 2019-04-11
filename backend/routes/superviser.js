@@ -15,6 +15,9 @@ router.put('/open/process/:processId', auth, processCtrl.openProcessById);
 router.post('/create/process/', auth, processCtrl.createEmptyProcess);
 router.delete('/delete/process/:processId', auth, processCtrl.deleteProcessById);
 router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);
+
+router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
+
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);
 

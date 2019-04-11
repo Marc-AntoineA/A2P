@@ -102,5 +102,10 @@ export default {
   REMOVE_PAGE: (state, identifier) => {
     const pages = getStep(state, identifier).pages;
     Vue.delete(pages, identifier.pageIndex);
+  },
+  SET_APPLICANTS: (state, applicants) => {
+    applicants.forEach((applicant) => {
+      if (applicant) Vue.set(state.applicants, applicant._id, applicant);
+    });
   }
 }
