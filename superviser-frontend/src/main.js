@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
+import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './plugins/loadElement';
 import { sync } from 'vuex-router-sync';
@@ -10,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { dateFormatter } from './filters';
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.use(ElementUI);
 
 Vue.filter('dateFormatter', dateFormatter);
 

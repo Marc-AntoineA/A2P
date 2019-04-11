@@ -55,20 +55,22 @@ class Login extends Component {
         <Header/>
         <main>
           <Form>
-            <Form.Group controlId="formGroupEmail">
+            <Form.Group controlId="formGroupEmail" className="input-group mb-3">
               <Form.Label>Email address</Form.Label>
-              <Input id='0' type='inline' onChange={ this.handleChangeMail } placeholder='Your email'>
+              <Input id='0' type='inline' onChange={ this.handleChangeMail }
+                className='form-control' placeholder='Your email'>
               </Input>
             </Form.Group>
-            <Form.Group controlId="formGroupPassword">
+            <Form.Group controlId="formGroupPassword" className='input-group mb-3'>
               <Form.Label>Password</Form.Label>
-              <Input id='1' type='password' onChange={ this.handleChangePassword }></Input>
+              <Input id='1' type='password' onChange={ this.handleChangePassword }
+                className='form-control'></Input>
             </Form.Group>
             <Button onClick={ this.login } variant="primary">
               Submit
             </Button>
           </Form>
-          </main>
+        </main>
       </div>
     );
   }

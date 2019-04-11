@@ -12,7 +12,6 @@ export default {
   name: 'aap-choice',
   props: ['choice', 'editable', 'state-key', 'on-modification'],
   beforeMount() {
-    console.log(this.question);
   },
   methods: {
     deleteChoice() {
