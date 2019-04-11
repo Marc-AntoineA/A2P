@@ -10,12 +10,11 @@
             <li>Updated at: {{ getProcess().updatedAt | dateFormatter }}</li>
           </ul>
 
-        <el-input v-model='getProcess().label' class='process-label'
-          @change='incrementModifications()' :disabled='!editable'>
-           {{ getProcess().label }}
-        </el-input>
+          <el-input v-model='getProcess().label' class='process-label'
+            @change='incrementModifications()' :disabled='!editable'>
+             {{ getProcess().label }}
+          </el-input>
 
-        <el-input v-model='getProcess().location'
           <el-form :inline="true" class="option-form">
             <el-form-item label="Location:">
               <el-input v-model='getProcess().location'
