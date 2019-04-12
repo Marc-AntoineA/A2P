@@ -166,7 +166,7 @@ exports.getAllApplicantsByProcessId = (req, res, next) => {
   Applicant.find({
     "process._id": processId
   }).then((applicants) => {
-    console.log(applicants);
+    applicants.forEach((applicant) => {applicant.password = undefined});
     res.status(200).json(applicants);
   });
 };

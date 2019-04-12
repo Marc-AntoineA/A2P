@@ -1,10 +1,7 @@
 export default {
-  // TODO
-  activeProcesses(state, getters) {
-    return state.processes;
-  },
-  isLoggedIn(state, getters) {
+  isLoggedIn(state) {
     return !(Object.entries(state.user).length === 0
       && state.user.constructor === Object);
-  }
+  },
+
 }

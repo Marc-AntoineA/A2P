@@ -32,13 +32,14 @@
 }
 
 i.big {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 i.round-boxed {
   border: 1px solid transparent;
   border-radius: 100%;
-  padding: 2px;
+  padding: 4px;
+  color: #606266;
 }
 
 i.round-boxed:hover {

@@ -15,40 +15,45 @@
           </div>
 
           <el-table v-if='!loading && !broken' :data='processes'>
-            <el-table-column label='Label' prop='label'></el-table-column>
-            <el-table-column label='Location' prop='location'></el-table-column>
-            <el-table-column label='Status'>
+            <el-table-column label='Label' prop='label' sortable></el-table-column>
+            <el-table-column label='Location' prop='location' sortable>
+              <template slot-scope='scope'>
+                <i class='el-icon-location big'></i>
+                {{ scope.row.location }}
+              </template>
+            </el-table-column>
+            <el-table-column label='Status' prop='status' sortable align='center'>
               <template slot-scope='scope'>
                 <span :class='scope.row.status'>&#11044;</span>
                 {{ scope.row.status }}
               </template>
             </el-table-column>
-            <el-table-column label='Deadline'>
+            <el-table-column label='Deadline' sortable>
               <template slot-scope='scope'>
                 <i class='el-icon-time'></i>
                 <span style='margin-left: 10px'>{{ scope.row.deadline | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Number of applications'>
+            <el-table-column label='Applications' align='center'>
               <template slot-scope='scope'>
                 <router-link :to='{name: "applicants", params: {processId: scope.row._id} }'>
-                  see
+                  <i class='el-icon-tickets big round-boxed'></i>
                 </router-link>
               </template>
             </el-table-column>
-            <el-table-column label='Created At'>
+            <el-table-column label='Created At' prop='createdAt' sortable>
               <template slot-scope='scope'>
                 <i class='el-icon-time'></i>
                 <span style='margin-left: 10px'>{{ scope.row.createdAt | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Updated At'>
+            <el-table-column label='Updated At' prop='updatedAt' sortable>
               <template slot-scope='scope'>
                 <i class='el-icon-time'></i>
                 <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Operations'>
+            <el-table-column label='Operations' align='center'>
               <template slot-scope='scope'>
                 {{ scope.status }}
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
