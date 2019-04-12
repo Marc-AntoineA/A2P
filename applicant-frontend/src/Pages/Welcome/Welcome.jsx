@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import './styles.css';
 
+import ApiRequests from '../../Providers/ApiRequests';
+
 import Header from '../../Components/Header/Header.jsx';
 
 import { Button, Container, Row, Col } from 'react-bootstrap';
@@ -10,13 +12,41 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core';
 library.add(fab);
 
 class Welcome extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      openedProcesses: []
+    };
+    this.getOpenedProcesses = this.getOpenedProcesses.bind(this);
+  }
+
+  getOpenedProcesses() {
+    ApiRequests.getOpenedProcesses().then((processes) => {
+      this.setState((prevState) => {
+        prevState.openedProcesses = processes;
+        return prevState;
+      });
+    }).catch((err) => {
+      this.props.handleError(err);
+    });
+  }
+
+  componentDidMount() {
+    this.getOpenedProcesses();
+  }
 
   render() {
+    const processesElements = this.state.openedProcesses.map((process) => {
+      return (<div className='location'>
+                <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
+                {process.label}
+              </div>);
+    });
+
     return (
       <div>
         <Header></Header>
@@ -44,20 +74,9 @@ class Welcome extends Component {
               </div>
 
               <p className='big'>Free For All Students</p>
-              <h2 class='centered-title'>Opened Locations</h2>
+              <h2 className='centered-title'>Opened Locations</h2>
               <div id='current-locations'>
-                <div className='location'>
-                  <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                  Athens
-                  </div>
-                <div className='location'>
-                  <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                  London
-                </div>
-                <div className='location'>
-                  <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                  Barcelona
-                </div>
+                { processesElements }
               </div>
             </Col>
             <Col className='centered-col'>

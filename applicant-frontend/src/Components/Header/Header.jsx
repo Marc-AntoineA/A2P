@@ -10,7 +10,7 @@ class Header extends Component {
       <header>
         <Navbar className="header" bg="light">
           <Navbar.Brand href="/">
-            <img class='logo' src='/logo.jpg' alt='Logo Social Hackers Academy'/>
+            <img className='logo' src='/logo.jpg' alt='Logo Social Hackers Academy'/>
           </Navbar.Brand>
         </Navbar>
       </header>

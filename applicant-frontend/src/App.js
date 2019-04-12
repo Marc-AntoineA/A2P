@@ -27,6 +27,7 @@ class App extends Component {
       this.summary = this.summary.bind(this);
       this.stepForm = this.stepForm.bind(this)
       this.login = this.login.bind(this);
+      this.welcome = this.welcome.bind(this);
 
       this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
       this.handleError = this.handleError.bind(this);
@@ -36,6 +37,10 @@ class App extends Component {
   // bug : use componentDidUpdate?
   componentDidMount(){
     // ???
+  }
+
+  welcome() {
+    return (<Welcome handleError={ this.handleError }/>);
   }
 
   login() {
@@ -100,7 +105,7 @@ class App extends Component {
     const router = (
       <Router history={ history }>
         <div className="App">
-          <Route exact path='/' component={ Welcome }/>
+          <Route exact path='/' component={ this.welcome }/>
           <Route exact path='/login' component={ this.login }/>
           <Route exact path='/summary' component={ this.summary }/>
           <Route exact path='/signin' component={ this.signin }/>

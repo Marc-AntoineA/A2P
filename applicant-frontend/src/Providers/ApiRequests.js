@@ -79,3 +79,7 @@ exports.putStepForm = function(user, index, data, token) {
 exports.postLogin = function(data) {
   return postData(data, API_PATH + settings.POST_LOGIN);
 };
+
+exports.getOpenedProcesses = function() {
+  return getData(API_PATH + settings.GET_OPENED_PROCESSES);
+}
