@@ -1,0 +1,66 @@
+.centered-col {
+  text-align: center;
+}
+
+#current-locations, #language-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.location {
+  margin: 2px 4px;
+  text-transform: uppercase;
+  color: #444;
+}
+
+.map-icon {
+  margin-right: 3px;
+  color: darkgreen;
+}
+
+.centered-title {
+  text-align: center;
+}
+
+.html {
+  color: darkorange;
+}
+
+.css {
+  color: darkblue;
+}
+
+.javascript {
+  color: yellow;
+}
+
+.node {
+  color: olive;
+}
+
+.react {
+  color: teal;
+}
+
+.database {
+  color: firebrick;
+}
+
+.technology {
+  font-size: 40px;
+}
+
+.citation {
+  font-style: italic;
+  font-size: 17px;
+  margin-bottom: 15px;
+}
+
+.left-citation {
+  text-align: left;
+}
+
+.right-citation {
+  text-align: right;
+}

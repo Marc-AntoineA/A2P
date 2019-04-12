@@ -115,6 +115,11 @@ exports.getApplicant = (req, res, next) => {
   });
 };
 
+// TODO
+function checkAnswer(question, answer) {
+  return true;
+}
+
 // TODO -- avoid repetitions with getApplicantStep
 // TODO check construction of this step
 exports.editApplicantAnswers = (req, res, next) => {
@@ -134,7 +139,6 @@ exports.editApplicantAnswers = (req, res, next) => {
       res.status(500).json({
         error: { message: 'Invalid request' }
       });
-      console.log("exit line 137", pages, answers);
       return;
     }
 
@@ -144,10 +148,12 @@ exports.editApplicantAnswers = (req, res, next) => {
       const questionsAnswers = answers[pageIndex].questions;
       if (questionsAnswers.length != questions.length) {
         res.status(500).json({error: { message: 'Invalid request'}});
-        console.log('exit line 147', pageIndex, questions, questionsAnswers);
       }
       for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
         const question = questions[questionIndex];
+        if (checkAnswer(question, questionsAnswers[questionIndex].answer)) {
+          res.status(500).json({error: { message: 'Invalid request'}});
+        }
         question.answer = questionsAnswers[questionIndex].answer;
       }
     }

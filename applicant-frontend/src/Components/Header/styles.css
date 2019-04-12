@@ -1,0 +1,10 @@
+.logo {
+  height: 80px;
+}
+
+.header {
+  border-color: gray !important;
+  border-bottom: solid 3px;
+  box-shadow: 0px 3px 6px gray;
+  background-color: white!important;
+}
