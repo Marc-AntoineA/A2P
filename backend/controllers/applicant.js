@@ -117,19 +117,40 @@ exports.getApplicant = (req, res, next) => {
 
 // TODO -- avoid repetitions with getApplicantStep
 // TODO check construction of this step
-exports.editApplicantStep = (req, res, next) => {
+exports.editApplicantAnswers = (req, res, next) => {
   const userId = req.params.userId;
   const stepIndex = req.params.step;
+  const answers = req.body;
   Applicant.findOne({_id: userId }).then((applicant) => {
     const steps = applicant.process.steps;
     if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
-      /*res.status(404).json({
+      res.status(404).json({
         error: {message: "The step " + stepIndex + " doesn't exist."}
-      });*/
+      });
+      return;
+    }
+    const pages = steps[stepIndex].pages;
+    if (pages.length != answers.length) {
+      res.status(500).json({
+        error: { message: 'Invalid request' }
+      });
+      console.log("exit line 137", pages, answers);
       return;
     }
 
-    applicant.process.steps[stepIndex].pages = req.body;
+    for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+      const page = pages[pageIndex];
+      const questions = page.questions;
+      const questionsAnswers = answers[pageIndex].questions;
+      if (questionsAnswers.length != questions.length) {
+        res.status(500).json({error: { message: 'Invalid request'}});
+        console.log('exit line 147', pageIndex, questions, questionsAnswers);
+      }
+      for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+        const question = questions[questionIndex];
+        question.answer = questionsAnswers[questionIndex].answer;
+      }
+    }
     applicant.save().then(() => {
       res.status(204).json({message: "Applicant updated successfully."});
       return;

@@ -10,8 +10,8 @@
             <h2>Applicants list</h2>
             <el-table v-if='!loading && !broken' :data='applicants'>
               <el-table-column type='expand'>
-                <template slot-scope="scope">
-
+                <template slot-scope='scope'>
+                  <Aap-process-answers :process='getApplicantProcess(scope.row._id)'/>
                 </template>
               </el-table-column>
               <el-table-column label='Process' prop='campaign' sortable></el-table-column>
@@ -59,10 +59,11 @@ import AapHeader from '../components/Header.vue';
 import AapAsideMenu from '../components/AsideMenu.vue';
 import AapSpinner from '../components/Spinner.vue';
 import AapBroken from '../components/Broken.vue';
+import AapProcessAnswers from '../components/ProcessAnswers';
 
 export default {
   name: 'Applicants',
-  components: { AapHeader, AapAsideMenu, AapBroken, AapSpinner },
+  components: { AapHeader, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
   data: () => ({
     loading: true,
     broken: false
@@ -84,10 +85,16 @@ export default {
           confirmButtonText: 'OK'
         });
       });
+    },
+    getApplicantProcess(applicantId) {
+      const applicant = this.$store.state.applicants[applicantId];
+      return applicant.process;
     }
   },
   computed: {// TODO passer par un getter pour uniquement les applicants qu'on souhaite
-    applicants() { return Object.values(this.$store.state.applicants); }
+    applicants() {
+      return Object.values(this.$store.state.applicants);
+    }
   }
 }
 </script>
