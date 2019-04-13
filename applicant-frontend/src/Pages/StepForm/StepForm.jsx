@@ -8,7 +8,7 @@ import ApiRequests from '../../Providers/ApiRequests.js';
 import history from '../../history';
 import './styles.css';
 
-import { Button, ProgressBar, Modal } from 'react-bootstrap';
+import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
 import { withRouter } from "react-router-dom";
 
 class StepForm extends Component {
@@ -18,6 +18,8 @@ class StepForm extends Component {
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleTouchMove = this.handleTouchMove.bind(this);
+    this.handleTouchStart = this.handleTouchStart.bind(this);
     this.submitForm = this.submitForm.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
@@ -27,7 +29,9 @@ class StepForm extends Component {
       'submissionRunning': false,
       'currentPage': 1,
       'step': [],
-      'mandatoryFailed': false // to display in red mandatory questions failed
+      'mandatoryFailed': false, // to display in red mandatory questions failed
+      'xDown': null,
+      'yDown': null
     };
   }
 
@@ -55,6 +59,8 @@ class StepForm extends Component {
 
   componentWillMount() {
     document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("touchstart", this.handleTouchStart);
+    document.addEventListener("touchmove", this.handleTouchMove);
   }
 
   componentDidMount() {
@@ -63,6 +69,43 @@ class StepForm extends Component {
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("touchstart", this.handleTouchStart);
+    document.removeEventListener("touchmove", this.handleTouchMove);
+  }
+
+  handleTouchStart(e) {
+    const firstTouch = e.touches[0];
+    this.setState((prevState) => {
+      prevState.xDown = firstTouch.clientX;
+      prevState.yDown = firstTouch.clientY;
+      return prevState;
+    });
+  }
+
+  handleTouchMove(e) {
+    const xDown = this.state.xDown;
+    const yDown = this.state.yDown;
+    if(!xDown || !yDown) return;
+
+    const xUp = e.touches[0].clientX;
+    const yUp = e.touches[0].clientY;
+
+    const xDiff = xDown - xUp;
+    const yDiff = yDown - yUp;
+
+    if (Math.abs(xDiff) > Math.abs(yDiff) ) {/*most significant*/
+        if ( xDiff > 0 ) {
+            this.nextPage();
+        } else {
+            this.previousPage();
+        }
+    } else {
+    }
+    this.setState((prevState) => {
+      prevState.xDown = null;
+      prevState.yDown = null;
+      return prevState;
+    });
   }
 
   handleKeyDown(e) {
@@ -163,7 +206,7 @@ class StepForm extends Component {
           max= { pages.length }
           label={`${this.state.currentPage}/${pages.length}`}>
         </ProgressBar>
-        <main>
+        <Container>
           { pages }
           {this.state.currentPage !== 1 ?
             <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}
@@ -178,7 +221,7 @@ class StepForm extends Component {
             </Button>
             : ''
           }
-        </main>
+        </Container>
       </div>
     );
   }
