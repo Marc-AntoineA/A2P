@@ -2,17 +2,17 @@
 
 import React, { Component } from 'react';
 
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { Accordion, AccordionItem, AccordionItemTitle, AccordionItemBody } from 'react-accessible-accordion';
+import { Container, Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faEye, faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import Header from '../../Components/Header/Header.jsx';
 import history from '../../history';
 import ApiRequests from '../../Providers/ApiRequests';
 import './styles.css';
+import Moment from 'moment';
 
 class Summary extends Component {
 
@@ -22,6 +22,14 @@ class Summary extends Component {
       process: {}
     };
     this.getProcessData = this.getProcessData.bind(this);
+  }
+
+  getDeadline() {
+    if (!this.state.process.process) return '';
+
+    const value = this.state.process.process.deadline;
+    const m = Moment(value);
+    return m.format('DD/MM/YY, h:mm a');
   }
 
   componentDidMount() {
@@ -39,6 +47,7 @@ class Summary extends Component {
     ApiRequests.getProcess(user).then((process) => {
       this.setState((prevState) => {
         prevState.process = process;
+        console.log(process);
         return prevState;
       });
     }).catch((err) => {
@@ -53,56 +62,51 @@ class Summary extends Component {
     e.stopPropagation();
   }
 
+  getActionSymbol(status) {
+      switch (status) {
+        case 'todo':
+          return faEdit;
+        case 'pending':
+          return faEdit;
+        case 'validated':
+          return faEye;
+        case 'rejected':
+          return faEdit;
+        default:
+          throw new Error(`getActionSymbol(${status}) is undefined`);
+        break;
+      }
+  }
+
   render() {
     const personalData = this.state.process;
     const steps = this.state.process.process === undefined ? []
       : this.state.process.process.steps.map((step, index) => {
         return (
-          <AccordionItem key={ index }>
-            <AccordionItemTitle>
-              <h3>
+          <li key={ index } className={'step-element ' + step.status}>
+              <span>
+                <FontAwesomeIcon className='edit-button' data-index={ index } onClick={ this.editStep }
+                  icon={this.getActionSymbol(step.status)} />
                { step.label }
-               <OverlayTrigger
-                  placement='bottom'
-                  overlay={
-                    <Tooltip>
-                      Step { step.status }
-                    </Tooltip>
-                  }>
-                <span className= { "float-right status-color " + step.status }>&#11044;</span>
-                </OverlayTrigger>
-               <span className="float-right" data-index={ index } onClick={ this.editStep }>
-                <FontAwesomeIcon icon={faEdit} />
-               </span>
-              </h3>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-              Contents
-            </AccordionItemBody>
-          </AccordionItem>
+              </span>
+          </li>
         );
     });
 
     return (
       <div>
         <Header/>
-        <main>
-          <h2>Your Process Advancement</h2>
-          <div id='personal-data'>
-            <h3> Your personal information</h3>
-            <ul>
-              <li>Your name: { personalData.name }</li>
-              <li>Your mail address: { personalData.mailAddress }</li>
-              <li>Your phone number: { personalData.phoneNumber }</li>
-              <li>Your status: { personalData.status }</li>
-            </ul>
+        <Container>
+          <h2>Your Progress { personalData.name }</h2>
+          <div className='warning-box'>
+            <FontAwesomeIcon icon={faExclamationTriangle} />Deadline { this.getDeadline() }
           </div>
           <div id='process'>
-            <Accordion>
+            <ol className='steps-list'>
               { steps }
-            </Accordion>
+            </ol>
           </div>
-        </main>
+        </Container>
       </div>
     );
   }
