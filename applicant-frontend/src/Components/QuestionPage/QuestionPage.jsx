@@ -29,7 +29,8 @@ class QuestionPage extends Component {
           key={ question.id }
           data={ question }
           questionIndex={ index }
-          onChange={ this.handleChangeValue }>
+          onChange={ this.handleChangeValue }
+          mandatoryFailed={ this.props.mandatoryFailed }>
         </Question>);
     });
 

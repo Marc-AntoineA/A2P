@@ -1,5 +1,18 @@
 .question-label {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
-  margin-top: 15px;
+  margin-top: 8px;
+}
+
+.question-box {
+	background: #f2f2f2;
+	padding: 12px 20px;
+	margin: 20px 5px;
+	border: gray solid 2px;
+	box-shadow: 0px 8px 7px darkgray;
+}
+
+.question-box-failed {
+  border-color: red;
+  box-shadow: 0px 9px 8px firebrick;
 }

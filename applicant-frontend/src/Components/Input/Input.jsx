@@ -8,6 +8,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Form } from 'react-bootstrap';
 
+import './styles.css';
+
 class Input extends Component {
 
   constructor(props) {

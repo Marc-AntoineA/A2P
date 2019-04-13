@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+
 library.add(fab);
 
 class Welcome extends Component {
@@ -31,7 +32,7 @@ class Welcome extends Component {
         return prevState;
       });
     }).catch((err) => {
-      this.props.handleError(err);
+      this.props.handleError(err.toString());
     });
   }
 
@@ -43,9 +44,11 @@ class Welcome extends Component {
     const processesElements = this.state.openedProcesses.map((process) => {
       return (<div className='location'>
                 <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                {process.label}
+                {process.location}
               </div>);
     });
+
+    const canApply = this.state.openedProcesses.length !== 0;
 
     return (
       <div>
@@ -75,15 +78,20 @@ class Welcome extends Component {
 
               <p className='big'>Free For All Students</p>
               <h2 className='centered-title'>Opened Locations</h2>
-              <div id='current-locations'>
-                { processesElements }
-              </div>
+              { canApply ?
+                <div id='current-locations'>
+                  { processesElements }
+                </div>
+                :
+                <p>No locations are currently opened. Please come back in few days</p>
+              }
+
             </Col>
             <Col className='centered-col'>
               <img src='https://socialhackersacademy.org/wp-content/uploads/2018/01/coding-isometric-01.png'
                 width='350px'/>
-              <Button href='/signin' variant='success' block>Apply Now</Button>
-              <Button href='/login' variant='info' block>Already Registered</Button>
+              <Button href='/signin' variant='success' block disabled={!canApply}>Apply Now</Button>
+              <Button href='/login' variant='info' block canApply disabled={!canApply}>Already Registered</Button>
             </Col>
           </Row>
         </Container>

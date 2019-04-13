@@ -8,6 +8,14 @@
   flex-wrap: wrap;
 }
 
+#language-container {
+  margin-bottom: 15px;
+}
+
+.big {
+  font-size: 23px;
+}
+
 .location {
   margin: 2px 4px;
   text-transform: uppercase;
@@ -28,7 +36,7 @@
 }
 
 .css {
-  color: darkblue;
+  color: blue;
 }
 
 .javascript {

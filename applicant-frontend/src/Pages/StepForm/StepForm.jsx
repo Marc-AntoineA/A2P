@@ -21,11 +21,13 @@ class StepForm extends Component {
     this.submitForm = this.submitForm.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
+    this.checkCurrentRequiredQuestions = this.checkCurrentRequiredQuestions.bind(this);
 
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
-      'step': []
+      'step': [],
+      'mandatoryFailed': false // to display in red mandatory questions failed
     };
   }
 
@@ -37,7 +39,7 @@ class StepForm extends Component {
             return prevState;
           });
         }).catch((err) => {
-          this.props.handleError(err);
+          this.props.handleError(err.toString());
         });
       } else {
         ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
@@ -46,7 +48,7 @@ class StepForm extends Component {
             return prevState;
           });
         }).catch((err) => {
-          this.props.handleError(err);
+          this.props.handleError(err.toString());
         });
       }
   }
@@ -72,7 +74,12 @@ class StepForm extends Component {
 
   nextPage() {
     if (this.state.currentPage >= this.state.step.length) return;
+    if (!this.checkCurrentRequiredQuestions()) {
+      this.props.handleError('Please answer the mandatory questions');
+      return;
+    }
     this.setState((prevState) => {
+      prevState.mandatoryFailed = false;
       prevState.currentPage++;
       return prevState;
     });
@@ -82,6 +89,7 @@ class StepForm extends Component {
     if (this.state.currentPage === 1) return;
     this.setState((prevState) => {
       prevState.currentPage--;
+      prevState.mandatoryFailed = false;
       return prevState;
     });
   }
@@ -95,8 +103,21 @@ class StepForm extends Component {
     });
   }
 
-  // TODO
-  checkRequiredQuestions() {
+  checkCurrentRequiredQuestions() {
+    const currentPage = this.state.step[this.state.currentPage - 1];
+    const questions = currentPage.questions;
+    console.log(questions);
+    for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+      const question = questions[questionIndex];
+      if (!question.mandatory) continue;
+      if (question.answer === '' || question.answer === -1) {
+        this.setState((prevState) => {
+          prevState.mandatoryFailed = true;
+          return prevState;
+        });
+        return false;
+      }
+    }
     return true;
   }
 
@@ -129,6 +150,7 @@ class StepForm extends Component {
           pageIndex={ index }
           data={ page }
           hidden={ index + 1 !== this.state.currentPage }
+          mandatoryFailed={ this.state.mandatoryFailed }
           onChange={this.handleChangeValue}>
         </QuestionPage>);
     });

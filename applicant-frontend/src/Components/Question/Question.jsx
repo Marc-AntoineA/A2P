@@ -18,8 +18,10 @@ class Question extends Component {
 
   render() {
     const data = this.props.data;
+    const failed = this.props.mandatoryFailed && (data.answer === '' || data.answer === -1);
+    console.log('failed ?', failed);
     return (
-      <div>
+      <div className={ failed ? 'question-box question-box-failed' : 'question-box'}>
         <label className='question-label' htmlFor={ data.id }>{ data.label }{data.mandatory ? '*' : ''}</label>
         <Input
           id={ data. id}
