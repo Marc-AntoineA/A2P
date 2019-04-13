@@ -57,9 +57,10 @@ class Input extends Component {
   handleChangeRadio(e) {
     const target = e.target;
     const value = target.dataset.index;
-    console.log(value);
+    console.log('radio', value);
     this.setState((prevState) => {
       prevState.currentValue = value;
+      console.log(prevState);
       return prevState;
     });
     this.props.onChange(value);
@@ -151,6 +152,7 @@ class Input extends Component {
 
   renderRadio() {
     const choices = [];
+    console.log(this.state.currentValue);
     this.props.data.choices.forEach((choice, index) => {
       choices.push(
         <div className='custom-control custom-checkbox' key={ index }>
@@ -160,6 +162,7 @@ class Input extends Component {
             id={ this.props.id + '-' + index }
             data-index={ index }
             name={ this.props.id }
+            checked={ this.state.currentValue == index}
             onChange={ this.handleChangeRadio }
           />
         </div>);
