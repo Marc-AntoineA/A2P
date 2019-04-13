@@ -5,9 +5,11 @@ const router = express.Router();
 const auth = require('../middleware/auth.js');
 
 const applicantCtrl = require('../controllers/applicant');
+const processCtrl = require('../controllers/process');
 
 router.get('/', applicantCtrl.getSigninForm);
 router.post('/', applicantCtrl.createApplicant);
+router.get('/processes', processCtrl.getAllOpenedProcesses);
 router.get('/:userId', auth, applicantCtrl.getApplicant);
 router.get('/:userId/:step', auth, applicantCtrl.getApplicantStep);
 router.put('/:userId/:step', auth, applicantCtrl.editApplicantAnswers);

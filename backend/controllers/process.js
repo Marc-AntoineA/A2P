@@ -109,3 +109,20 @@ exports.openProcessById = (req, res, next) => {
 exports.copyProcessById = (req, res, next) => {
   // TODO
 };
+
+exports.getAllOpenedProcesses = (req, res, next) => {
+  const today = new Date();
+  Process.find({
+    deadline: {$gt : today },
+    status: 'open'
+  }).then((processes) => {
+    const campaigns = processes.map(p => ({
+      label: p.label,
+      deadline: p.deadline,
+      location: p.location
+    }));
+    res.status(201).json(processes);
+  }).catch((error) => {
+    res.status(500).json({ error: error });
+  });
+};

@@ -59,8 +59,8 @@ class StepForm extends Component {
     this.getFormData();
   }
 
-  componentWillUnMount() {
-      document.removeEventListener("keydown", this.handleKeyDown);
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   handleKeyDown(e) {
