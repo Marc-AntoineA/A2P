@@ -26,7 +26,8 @@ class Question extends Component {
           id={ data. id}
           type={ data.type }
           data={ data }
-          onChange={this.handleChangeValue}>
+          onChange={ this.handleChangeValue }
+          disabled={ this.props.disabled }>
         </Input>
       </div>
     );

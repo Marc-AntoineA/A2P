@@ -35,7 +35,8 @@ class StepForm extends Component {
       'step': [],
       'mandatoryFailed': false, // to display in red mandatory questions failed
       'xDown': null,
-      'yDown': null
+      'yDown': null,
+      'canBeEdited': true
     };
   }
 
@@ -52,7 +53,9 @@ class StepForm extends Component {
       } else {
         ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
           this.setState((prevState) => {
-            prevState.step = step;
+            prevState.step = step.pages;
+            console.log(step);
+            prevState.canBeEdited = step.status === 'rejected' || step.status === 'todo';
             return prevState;
           });
         }).catch((err) => {
@@ -210,7 +213,8 @@ class StepForm extends Component {
           data={ page }
           hidden={ index + 1 !== this.state.currentPage }
           mandatoryFailed={ this.state.mandatoryFailed }
-          onChange={this.handleChangeValue}>
+          onChange={this.handleChangeValue}
+          disabled={!this.state.canBeEdited}>
         </QuestionPage>);
     });
 
@@ -228,7 +232,7 @@ class StepForm extends Component {
             <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}
           {this.state.currentPage !== pages.length ?
             <Button className='float-right' onClick={ this.nextPage }>Next</Button> : ''}
-          {this.state.currentPage === pages.length ?
+          {this.state.currentPage === pages.length && this.state.canBeEdited ?
             <span>
             {
               this.props.index === undefined ?

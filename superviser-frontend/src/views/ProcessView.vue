@@ -234,6 +234,7 @@ export default {
                   type: 'info',
                   message: 'The process is now in status: "open"'
                 });
+                this.editable = false;
               })
               .catch((error) => {
                 this.$alert(error.message, 'Error while opening the current process', {

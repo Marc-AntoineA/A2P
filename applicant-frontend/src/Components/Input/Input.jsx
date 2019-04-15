@@ -42,6 +42,7 @@ class Input extends Component {
   }
 
   handleChangeTextInput(e) {
+    if (this.props.disabled) return;
     const target = e.target;
     const value = target.value;
     console.log('42', value);
@@ -53,6 +54,7 @@ class Input extends Component {
   }
 
   handleChangeDate(date) {
+    if (this.props.disabled) return;
     this.setState((prevState) => {
       prevState.currentValue = date;
       return prevState;
@@ -61,6 +63,7 @@ class Input extends Component {
   }
 
   handleChangeRadio(e) {
+    if (this.props.disabled) return;
     const target = e.target;
     const value = target.dataset.index;
     console.log('radio', value);
@@ -77,10 +80,12 @@ class Input extends Component {
   }
 
   renderText() {
+    console.log('is disabled ?', this.props.disabled);
     return (
       <Form.Control as="textarea" rows="3"
         onChange={this.handleChangeTextInput}
-        value={this.state.currentValue}/>
+        value={this.state.currentValue}
+        disabled={this.props.disabled}/>
     );
   }
 

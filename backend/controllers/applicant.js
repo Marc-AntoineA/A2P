@@ -121,7 +121,7 @@ function checkAnswer(question, answer) {
 }
 
 // TODO check construction of this step
-function editApplicantAnswers(userId, stepIndex, answers){
+function editApplicantAnswers(userId, stepIndex, answers, confirm){
   return new Promise((resolve, reject) => {
     Applicant.findOne({_id: userId }).then((applicant) => {
       const steps = applicant.process.steps;
@@ -129,10 +129,16 @@ function editApplicantAnswers(userId, stepIndex, answers){
         reject(new Error("The step " + stepIndex + " doesn't exist."));
         return;
       }
-      const pages = steps[stepIndex].pages;
-    if (pages.length != answers.length) {
-        reject(new Error('Invalid request'));
-        return;
+
+      const step = steps[stepIndex];
+      if (step.status !== 'todo' && step.status !== 'rejected') {
+        reject(new Error(`A step in status ${step.status} cannot be edited`));
+      }
+
+      const pages = step.pages;
+      if (pages.length != answers.length) {
+          reject(new Error('Invalid request'));
+          return;
       }
 
       for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
@@ -151,6 +157,13 @@ function editApplicantAnswers(userId, stepIndex, answers){
           question.answer = questionsAnswers[questionIndex].answer;
         }
       }
+
+      // TODO add here automatic validation
+      if (confirm)  {
+        step.status = 'pending';
+        console.log(step.status);
+      }
+
       applicant.save().then(() => {
         resolve();
         return;
@@ -169,13 +182,14 @@ exports.saveApplicantAnswers = (req, res, next) => {
   const userId = req.params.userId;
   const stepIndex = req.params.step;
   const answers = req.body;
-  editApplicantAnswers(userId, stepIndex, answers)
+  const confirm = false;
+  editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
      res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`})
    })
   .catch((error) => {
     console.log('176', error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: { message: error.message } });
   });
 }
 
@@ -183,23 +197,14 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   const userId = req.params.userId;
   const stepIndex = req.params.step;
   const answers = req.body;
-  editApplicantAnswers(userId, stepIndex, answers)
+  const confirm = true;
+  console.log('confirm and save');
+  editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
-    Applicant.findOne({_id: userId }).then((applicant) => {
-      applicant.process.steps[stepIndex].status = 'pending';
-      applicant.save().then(() => {
-        res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
-      }).catch((error) => {
-        console.log('191', error);
-        res.status(500).json({ error: error });
-      });
-   }).catch((error) => {
-     console.log('195', error);
-     res.status(500).json({ error: error });
-   });
+      res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
   }).catch((error) => {
     console.log('199', error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: { message: error.message }});
   });
 }
 
@@ -216,7 +221,7 @@ exports.getApplicantStep = (req, res, next) => {
       });
       return;
     }
-    res.status(200).json(steps[stepIndex].pages);
+    res.status(200).json({ 'pages': steps[stepIndex].pages, 'status': steps[stepIndex].status});
   });
 };
 

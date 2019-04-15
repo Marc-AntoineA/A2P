@@ -67,7 +67,7 @@ class Summary extends Component {
         case 'todo':
           return faEdit;
         case 'pending':
-          return faEdit;
+          return faEye;
         case 'validated':
           return faEye;
         case 'rejected':

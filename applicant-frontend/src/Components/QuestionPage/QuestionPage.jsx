@@ -30,7 +30,8 @@ class QuestionPage extends Component {
           data={ question }
           questionIndex={ index }
           onChange={ this.handleChangeValue }
-          mandatoryFailed={ this.props.mandatoryFailed }>
+          mandatoryFailed={ this.props.mandatoryFailed }
+          disabled={ this.props.disabled }>
         </Question>);
     });
 
