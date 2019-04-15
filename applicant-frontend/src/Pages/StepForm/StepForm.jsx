@@ -10,6 +10,7 @@ import './styles.css';
 
 import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
 import { withRouter } from "react-router-dom";
+import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
 class StepForm extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class StepForm extends Component {
 
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
-    this.checkCurrentRequiredQuestions = this.checkCurrentRequiredQuestions.bind(this);
+    this.checkCurrentRequiredAndFormatQuestions = this.checkCurrentRequiredAndFormatQuestions.bind(this);
 
     this.state = {
       'submissionRunning': false,
@@ -124,7 +125,7 @@ class StepForm extends Component {
 
   nextPage() {
     if (this.state.currentPage >= this.state.step.length) return;
-    if (!this.checkCurrentRequiredQuestions()) {
+    if (!this.checkCurrentRequiredAndFormatQuestions()) {
       this.props.handleError('Please answer the mandatory questions');
       return;
     }
@@ -153,19 +154,46 @@ class StepForm extends Component {
     });
   }
 
-  checkCurrentRequiredQuestions() {
+  checkCurrentRequiredAndFormatQuestions() {
     const currentPage = this.state.step[this.state.currentPage - 1];
     const questions = currentPage.questions;
     console.log(questions);
     for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
       const question = questions[questionIndex];
-      if (!question.mandatory) continue;
-      if (question.answer === '' || question.answer === -1) {
+      if (question.mandatory && (question.answer === '' || question.answer === -1)) {
         this.setState((prevState) => {
           prevState.mandatoryFailed = true;
           return prevState;
         });
         return false;
+      }
+      switch (question.type) {
+        case 'password':
+          if (checkPassword(question.answer)) break;
+          this.setState((prevState) => {
+            prevState.mandatoryFailed = true;
+            return prevState;
+          });
+          return false;
+          break;
+        case 'phone':
+          if (checkPhone(question.answer)) break;
+          this.setState((prevState) => {
+            prevState.mandatoryFailed = true;
+            return prevState;
+          });
+          return false;
+          break;
+        case 'mail':
+          if (checkMailAddress(question.answer)) break;
+          this.setState((prevState) => {
+            prevState.mandatoryFailed = true;
+            return prevState;
+          });
+          return false;
+          break;
+        default:
+          break;
       }
     }
     return true;
@@ -173,7 +201,7 @@ class StepForm extends Component {
 
   // TODO
   sendForm(confirm) {
-    if (!this.checkCurrentRequiredQuestions()) return;
+    if (!this.checkCurrentRequiredAndFormatQuestions()) return;
     const promise = this.props.index === undefined ?
       ApiRequests.postSigninForm(this.state.step)
       : ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step, confirm);
