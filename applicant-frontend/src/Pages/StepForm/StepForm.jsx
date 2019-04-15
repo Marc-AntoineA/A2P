@@ -22,6 +22,9 @@ class StepForm extends Component {
     this.handleTouchMove = this.handleTouchMove.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
 
+    this.openSubmitModal = this.openSubmitModal.bind(this);
+    this.closeSubmitModal = this.closeSubmitModal.bind(this);
+
     this.submitForm = this.submitForm.bind(this);
     this.saveForm = this.saveForm.bind(this);
     this.sendForm = this.sendForm.bind(this);
@@ -37,7 +40,8 @@ class StepForm extends Component {
       'mandatoryFailed': false, // to display in red mandatory questions failed
       'xDown': null,
       'yDown': null,
-      'canBeEdited': true
+      'canBeEdited': true,
+      'submitModalOpened': true,
     };
   }
 
@@ -126,7 +130,7 @@ class StepForm extends Component {
   nextPage() {
     if (this.state.currentPage >= this.state.step.length) return;
     if (!this.checkCurrentRequiredAndFormatQuestions()) {
-      this.props.handleError('Please answer the mandatory questions');
+      this.props.handleError('Please answer correctly to the questions.');
       return;
     }
     this.setState((prevState) => {
@@ -184,7 +188,7 @@ class StepForm extends Component {
           });
           return false;
           break;
-        case 'mail':
+        case 'email':
           if (checkMailAddress(question.answer)) break;
           this.setState((prevState) => {
             prevState.mandatoryFailed = true;
@@ -227,14 +231,40 @@ class StepForm extends Component {
 
   submitForm() {
     const confirm = true;
-    alert('TODO: are you sure?');
     this.sendForm(confirm);
   }
 
+  closeSubmitModal() {
+    this.setState((prevState) => {
+      prevState.submitModalOpened = false;
+    });
+  }
+
+  openSubmitModal() {
+    console.log('opening submit modal');
+    this.setState((prevState) => {
+      prevState.submitModalOpened = true;
+    });
+  }
+
   render() {
-    const pages = [];
-    this.state.step.forEach((page, index) => {
-      pages.push(
+    const submitModal = (<Modal.Dialog>
+      <Modal.Header show={ this.state.submitModalOpened } onHide={ this.closeSubmitModal } closeButton>
+        <Modal.Title>Are you sure to submit your step?</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <p>Once</p>
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary" onClick={ this.closeSubmitModal }>Close</Button>
+        <Button variant="primary" onClick={ this.submitForm }>Save changes</Button>
+      </Modal.Footer>
+    </Modal.Dialog>);
+
+    const pages = this.state.step.map((page, index) => {
+      return(
         <QuestionPage
           key={ page.id }
           pageIndex={ index }
@@ -248,6 +278,7 @@ class StepForm extends Component {
 
     return (
       <div>
+        { submitModal }
         <Header/>
         <ProgressBar animated
           now={ this.state.currentPage }
@@ -274,7 +305,7 @@ class StepForm extends Component {
                 </Button>
             }
             <Button
-              onClick={ this.submitForm }
+              onClick={ this.openSubmitModal }
               size='lg'
               variant='success'>
               Submit

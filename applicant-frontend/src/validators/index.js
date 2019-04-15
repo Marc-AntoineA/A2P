@@ -18,7 +18,7 @@ export function checkPassword(password) {
   }
 
   for (let i = 0; i < checkedCharacters.length; i++) {
-    if(nbOccurences[i] <= 1) return false;
+    if(nbOccurences[i] < 1) return false;
   }
   return true;
 }

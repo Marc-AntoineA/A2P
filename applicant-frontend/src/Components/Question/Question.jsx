@@ -38,7 +38,7 @@ class Question extends Component {
         this.failedMessage = 'Please provide a valid phone number (like +77123123123)';
         return true;
         break;
-      case 'mail':
+      case 'email':
         if (checkMailAddress(data.answer)) break;
         this.failedMessage = 'Please provide a valid maid address';
         return true;
