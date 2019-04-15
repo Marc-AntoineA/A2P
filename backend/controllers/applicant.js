@@ -120,56 +120,88 @@ function checkAnswer(question, answer) {
   return true;
 }
 
-// TODO -- avoid repetitions with getApplicantStep
 // TODO check construction of this step
-exports.editApplicantAnswers = (req, res, next) => {
+function editApplicantAnswers(userId, stepIndex, answers){
+  return new Promise((resolve, reject) => {
+    Applicant.findOne({_id: userId }).then((applicant) => {
+      const steps = applicant.process.steps;
+      if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
+        reject(new Error("The step " + stepIndex + " doesn't exist."));
+        return;
+      }
+      const pages = steps[stepIndex].pages;
+    if (pages.length != answers.length) {
+        reject(new Error('Invalid request'));
+        return;
+      }
+
+      for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+        const page = pages[pageIndex];
+        const questions = page.questions;
+        const questionsAnswers = answers[pageIndex].questions;
+        if (questionsAnswers.length != questions.length) {
+          reject(new Error('Invalid request'));
+        }
+        for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+          const question = questions[questionIndex];
+          if (!checkAnswer(question, questionsAnswers[questionIndex].answer)) {
+            console.log(question, questionsAnswers[questionIndex].answer);
+            reject(new Error('Invalid request'));
+          }
+          question.answer = questionsAnswers[questionIndex].answer;
+        }
+      }
+      applicant.save().then(() => {
+        resolve();
+        return;
+      }).catch((error) => {
+        reject(error);
+        return;
+      });
+    }).catch((error) => {
+      reject(error);
+      return;
+    });
+  });
+};
+
+exports.saveApplicantAnswers = (req, res, next) => {
   const userId = req.params.userId;
   const stepIndex = req.params.step;
   const answers = req.body;
-  Applicant.findOne({_id: userId }).then((applicant) => {
-    const steps = applicant.process.steps;
-    if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
-      res.status(404).json({
-        error: {message: "The step " + stepIndex + " doesn't exist."}
-      });
-      return;
-    }
-    const pages = steps[stepIndex].pages;
-    if (pages.length != answers.length) {
-      res.status(500).json({
-        error: { message: 'Invalid request' }
-      });
-      return;
-    }
-
-    for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-      const page = pages[pageIndex];
-      const questions = page.questions;
-      const questionsAnswers = answers[pageIndex].questions;
-      if (questionsAnswers.length != questions.length) {
-        res.status(500).json({error: { message: 'Invalid request'}});
-      }
-      for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
-        const question = questions[questionIndex];
-        if (checkAnswer(question, questionsAnswers[questionIndex].answer)) {
-          res.status(500).json({error: { message: 'Invalid request'}});
-        }
-        question.answer = questionsAnswers[questionIndex].answer;
-      }
-    }
-    applicant.save().then(() => {
-      res.status(204).json({message: "Applicant updated successfully."});
-      return;
-    }).catch((err) => {
-      res.status(500).json({error: err });
-      return;
-    });
-  }).catch((err) => {
-    console.log(err);
-    res.status(500).json({error: err});
-    return;
+  editApplicantAnswers(userId, stepIndex, answers)
+  .then(() => {
+     res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`})
+   })
+  .catch((error) => {
+    console.log('176', error);
+    res.status(500).json({ error: error });
   });
-};
+}
+
+exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
+  const userId = req.params.userId;
+  const stepIndex = req.params.step;
+  const answers = req.body;
+  editApplicantAnswers(userId, stepIndex, answers)
+  .then(() => {
+    Applicant.findOne({_id: userId }).then((applicant) => {
+      applicant.process.steps[stepIndex].status = 'pending';
+      applicant.save().then(() => {
+        res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
+      }).catch((error) => {
+        console.log('191', error);
+        res.status(500).json({ error: error });
+      });
+   }).catch((error) => {
+     console.log('195', error);
+     res.status(500).json({ error: error });
+   });
+  }).catch((error) => {
+    console.log('199', error);
+    res.status(500).json({ error: error });
+  });
+}
 
 exports.getApplicantStep = (req, res, next) => {
   const userId = req.params.userId;

@@ -72,8 +72,9 @@ exports.postSigninForm = function(data) {
   return postData(data, API_PATH + settings.POST_SIGNIN_FORM);
 };
 
-exports.putStepForm = function(user, index, data, token) {
-  return putData(data, API_PATH + '/' + user.id + '/' + index, user.token);
+exports.putStepForm = function(user, index, data, token, confirm) {
+  const url = `${API_PATH}/${user.id}/${index}/${confirm ? 'confirm' : 'save'}`;
+  return putData(data, url, user.token);
 };
 
 exports.postLogin = function(data) {

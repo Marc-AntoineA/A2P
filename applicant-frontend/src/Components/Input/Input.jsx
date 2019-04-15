@@ -23,6 +23,11 @@ class Input extends Component {
   }
 
   initState(type) {
+    if (this.props.data.answer !== undefined) {
+      this.state = { 'currentValue': this.props.data.answer };
+      return;
+    }
+
     switch (type) {
       case 'date':
         this.state = {'currentValue': new Date()};
@@ -39,6 +44,7 @@ class Input extends Component {
   handleChangeTextInput(e) {
     const target = e.target;
     const value = target.value;
+    console.log('42', value);
     this.setState(prevState => {
       prevState.currentValue = value;
       return prevState;
@@ -71,7 +77,11 @@ class Input extends Component {
   }
 
   renderText() {
-    return (<textarea onChange={this.handleChangeTextInput}>{ this.getAnswer() }</textarea>);
+    return (
+      <Form.Control as="textarea" rows="3"
+        onChange={this.handleChangeTextInput}
+        value={this.state.currentValue}/>
+    );
   }
 
   renderInline() {

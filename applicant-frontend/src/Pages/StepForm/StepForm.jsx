@@ -20,7 +20,11 @@ class StepForm extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleTouchMove = this.handleTouchMove.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
+
     this.submitForm = this.submitForm.bind(this);
+    this.saveForm = this.saveForm.bind(this);
+    this.sendForm = this.sendForm.bind(this);
+
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.getFormData = this.getFormData.bind(this);
     this.checkCurrentRequiredQuestions = this.checkCurrentRequiredQuestions.bind(this);
@@ -165,10 +169,11 @@ class StepForm extends Component {
   }
 
   // TODO
-  submitForm() {
+  sendForm(confirm) {
+    if (!this.checkCurrentRequiredQuestions()) return;
     const promise = this.props.index === undefined ?
       ApiRequests.postSigninForm(this.state.step)
-      : ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step);
+      : ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step, confirm);
 
     promise.then(response => {
       if (response.status === 201 || response.status === 204) {
@@ -182,6 +187,17 @@ class StepForm extends Component {
     }).catch((err) => {
       this.props.handleError(err);
     });
+  }
+
+  saveForm() {
+    const confirm = false;
+    this.sendForm(confirm);
+  }
+
+  submitForm() {
+    const confirm = true;
+    alert('TODO: are you sure?');
+    this.sendForm(confirm);
   }
 
   render() {
@@ -213,12 +229,24 @@ class StepForm extends Component {
           {this.state.currentPage !== pages.length ?
             <Button className='float-right' onClick={ this.nextPage }>Next</Button> : ''}
           {this.state.currentPage === pages.length ?
+            <span>
+            {
+              this.props.index === undefined ?
+                ''
+                :
+                <Button
+                  onClick={ this.saveForm }
+                  size='lg'
+                  variant='success'>
+                  Save
+                </Button>
+            }
             <Button
               onClick={ this.submitForm }
               size='lg'
               variant='success'>
               Submit
-            </Button>
+            </Button></span>
             : ''
           }
         </Container>
