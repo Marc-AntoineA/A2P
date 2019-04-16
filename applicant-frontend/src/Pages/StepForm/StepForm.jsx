@@ -70,9 +70,15 @@ class StepForm extends Component {
   }
 
   componentWillMount() {
+
+      if (!this.props.user || !this.props.user.token || !this.props.user.id) {
+        history.push('/');
+      }
+
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
+
   }
 
   componentDidMount() {
@@ -161,7 +167,6 @@ class StepForm extends Component {
   checkCurrentRequiredAndFormatQuestions() {
     const currentPage = this.state.step[this.state.currentPage - 1];
     const questions = currentPage.questions;
-    console.log(questions);
     for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
       const question = questions[questionIndex];
       if (question.mandatory && (question.answer === '' || question.answer === -1)) {
@@ -289,31 +294,34 @@ class StepForm extends Component {
         </ProgressBar>
         <Container>
           { pages }
-          {this.state.currentPage !== 1 ?
-            <Button className='float-left' onClick={ this.previousPage }>Previous</Button> : ''}
-          {this.state.currentPage !== pages.length ?
-            <Button className='float-right' onClick={ this.nextPage }>Next</Button> : ''}
-          {this.state.currentPage === pages.length && this.state.canBeEdited ?
-            <span>
-            {
-              this.props.index === undefined ?
-                ''
-                :
+          <div class='buttons-flexbar'>
+            {this.state.currentPage !== 1 ?
+              <Button onClick={ this.previousPage } size='lg'>Previous</Button> : ''}
+            {this.state.currentPage !== pages.length ?
+              <Button onClick={ this.nextPage } size='lg'>Next</Button> : ''}
+              {
+                this.state.currentPage === pages.length && this.state.canBeEdited && this.props.index !== undefined ?
+                  <Button
+                    onClick={ this.saveForm }
+                    size='lg'
+                    variant='success'>
+                    Save
+                  </Button>
+                  :
+                  ''
+              }
+              {
+                this.state.currentPage === pages.length && this.state.canBeEdited ?
                 <Button
-                  onClick={ this.saveForm }
+                  onClick={ this.openSubmitModal }
                   size='lg'
                   variant='success'>
-                  Save
+                  Submit
                 </Button>
+                :
+                ''
             }
-            <Button
-              onClick={ this.openSubmitModal }
-              size='lg'
-              variant='success'>
-              Submit
-            </Button></span>
-            : ''
-          }
+          </div>
         </Container>
       </div>
     );

@@ -16,3 +16,9 @@
 	bottom: 0;
 	margin: auto;
 }
+
+.buttons-flexbar {
+	display: flex;
+	justify-content: space-around;
+	margin-bottom: 20px;
+}

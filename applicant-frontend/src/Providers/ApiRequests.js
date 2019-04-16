@@ -8,6 +8,11 @@ exports.saveLogin = (id, token) => {
   localStorage.setItem('token', token);
 };
 
+exports.logout = () => {
+  localStorage.removeItem('id');
+  localStorage.removeItem('token');
+}
+
 exports.getLogin = () => {
   return {
     id: localStorage.getItem('id'),

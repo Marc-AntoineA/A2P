@@ -39,7 +39,7 @@ class App extends Component {
   }
 
   welcome() {
-    return (<Welcome handleError={ this.handleError }/>);
+    return (<Welcome user={ this.state.user } handleError={ this.handleError }/>);
   }
 
   login() {
@@ -78,10 +78,18 @@ class App extends Component {
   }
 
   handleLogin(user) {
+    if (user == undefined) {
+      this.setState((prevState) => {
+        prevState.user = undefined;
+        return prevState;
+      });
+      ApiRequests.logout();
+      return;
+    }
     ApiRequests.saveLogin(user.id, user.token);
     this.setState((prevState) => {
       prevState.user = user;
-      history.push('/summary')
+      history.push('/summary');
       return prevState;
     });
   }

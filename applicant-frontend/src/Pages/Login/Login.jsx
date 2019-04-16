@@ -19,6 +19,9 @@ class Login extends Component {
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
+  componentWillMount() {
+    this.props.handleLogin(undefined);
+  }
 
   login() {
     postLogin({mail: this.state.mail, password: this.state.password}).then((response) => {

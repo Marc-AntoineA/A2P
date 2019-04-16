@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import './styles.css';
 
 import ApiRequests from '../../Providers/ApiRequests';
-
+import history from '../../history';
 import Header from '../../Components/Header/Header.jsx';
 
 import { Button, Container, Row, Col } from 'react-bootstrap';
@@ -23,6 +23,12 @@ class Welcome extends Component {
       openedProcesses: []
     };
     this.getOpenedProcesses = this.getOpenedProcesses.bind(this);
+  }
+
+  componentWillMount() {
+    if (this.props.user.token && this.props.user.id) {
+      history.push('/summary');
+    }
   }
 
   getOpenedProcesses() {

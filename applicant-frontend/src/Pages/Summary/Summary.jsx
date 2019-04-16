@@ -24,6 +24,12 @@ class Summary extends Component {
     this.getProcessData = this.getProcessData.bind(this);
   }
 
+  componentWillMount() {
+    console.log(this.props.user);
+    if (!this.props.user.token || !this.props.user.id)
+      history.push('/');
+  }
+
   getDeadline() {
     if (!this.state.process.process) return '';
 
@@ -95,7 +101,7 @@ class Summary extends Component {
 
     return (
       <div>
-        <Header/>
+        <Header user={ this.props.user }/>
         <Container>
           <h2>Your Progress { personalData.name }</h2>
           <div className='warning-box'>
