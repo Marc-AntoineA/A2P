@@ -82,7 +82,7 @@
         </el-main>
       </el-container>
     </el-container>
-    <aap-footer></aap-footer>
+    <aap-footer/>
   </el-container>
 </template>
 

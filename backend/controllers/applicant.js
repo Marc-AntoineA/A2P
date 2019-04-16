@@ -210,20 +210,30 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   });
 }
 
+function promiseGetApplicantStep(userId, stepIndex) {
+  return new Promise((resolve, reject) => {
+    Applicant.findOne({ _id: userId })
+    .then((applicant) => {
+      const steps = applicant.process.steps;
+      if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
+        reject("The step " + stepIndex + " doesn't exist.");
+      } else {
+        resolve(steps[stepIndex]);
+      }
+    }).catch((error) => {
+      reject(error.toString());
+    });
+  });
+}
+
 exports.getApplicantStep = (req, res, next) => {
   const userId = req.params.userId;
   const stepIndex = req.params.step;
-  Applicant.findOne({
-    _id: userId
-  }).then((applicant) => {
-    const steps = applicant.process.steps;
-    if (isNaN(stepIndex) || stepIndex < 0 || stepIndex > steps.length) {
-      res.status(404).json({
-        error: {message: "The step " + stepIndex + " doesn't exist."}
-      });
-      return;
-    }
-    res.status(200).json({ 'pages': steps[stepIndex].pages, 'status': steps[stepIndex].status});
+  promiseGetApplicantStep(userId, stepIndex)
+  .then((step) => {
+    res.status(200).json({ 'pages': step.pages, 'status': step.status})
+  }).catch((errorMessage) => {
+    res.status(404).json({error: { message: errorMessage}});
   });
 };
 
@@ -235,4 +245,55 @@ exports.getAllApplicantsByProcessId = (req, res, next) => {
     applicants.forEach((applicant) => {applicant.password = undefined});
     res.status(200).json(applicants);
   });
+};
+
+exports.updateStepMarkByApplicantId = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  const stepIndex = req.params.stepIndex;
+
+  const mark = req.body.mark;
+  promiseGetApplicantStep(applicantId, stepIndex)
+  .then((step) => {
+    if (step.status !== 'validated') {
+      res.status(500).json({ error: { message: 'A not-validated step cannot be noted'}});
+      return;
+    }
+    Applicant.updateOne({_id: applicantId}, {
+      [`process.steps.${stepIndex}.mark`]: mark
+    }).then(() => {
+      res.status(200).json({ message: `Mark for step ${stepIndex} for applicant ${applicantId} updated successfully`});
+    }).catch((error) => {
+      res.status(500).json({ error: error });
+    });
+  }).catch((errorMessage) => {
+    res.status(404).json({error: { message: errorMessage}});
+  });
+};
+
+exports.updateStepStatusByApplicantId = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  const stepIndex = req.params.stepIndex;
+  const status = req.params.status;
+  if (status !== 'validated' && status !== 'rejected') {
+    res.status(404).json({ error: { message: `Status ${status} is undefined`}});
+    return;
+  }
+
+  promiseGetApplicantStep(applicantId, stepIndex)
+  .then((step) => {
+    if (step.status !== 'pending') {
+      res.status(500).json({ error: { message: 'Only steps in status pending can be validated.'}});
+      return;
+    }
+
+    Applicant.updateOne({ _id: applicantId }, {
+      [`process.steps.${stepIndex}.status`]: status
+    }).then(() => {
+      res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
+    }).catch((error) => {
+      res.status(500).json({ error: error });
+    });
+  }).catch((errorMessage) => {
+    res.status(404).json({ error: { message: errorMessage } });
+  })
 };

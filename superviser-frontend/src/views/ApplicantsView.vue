@@ -1,61 +1,63 @@
 <template>
-  <el-container>
-    <el-container direction='vertical'>
-      <aap-header></aap-header>
-      <el-container>
-        <el-main>
-          <aap-spinner :show="loading"></aap-spinner>
-          <aap-broken v-show="broken"></aap-broken>
-          <div v-if='!loading && !broken'>
-            <h2>Applicants list</h2>
-            <el-table v-if='!loading && !broken' :data='applicants'>
-              <el-table-column type='expand'>
-                <template slot-scope='scope'>
-                  <Aap-process-answers :process='getApplicantProcess(scope.row._id)'/>
-                </template>
-              </el-table-column>
-              <el-table-column label='Process' prop='campaign' sortable></el-table-column>
-              <el-table-column label='Location' prop='process.location' sortable>
-                <template slot-scope='scope'>
-                  <i class='el-icon-location big'></i>
-                  {{ scope.row.campaign.location }}
-                </template>
-              </el-table-column>
-              <el-table-column label='Name' prop='name' sortable></el-table-column>
-              <el-table-column label='Mail' prop='mailAddress' sortable>
-                <template slot-scope='scope'>
-                  <a class='black-link' :href='"mailto:" + scope.row.mailAddress' target='_blank'>
-                    <i class='el-icon-message round-boxed big'></i>
-                  </a>
-                  {{ scope.row.mailAddress }}
-                </template>
-              </el-table-column>
-              <el-table-column label='Phone' prop='phoneNumber' sortable>
-                <template slot-scope='scope'>
-                  <i class='el-icon-phone big'></i>
-                  {{ scope.row.phoneNumber | phoneFormatter }}
-                </template>
-              </el-table-column>
-              <el-table-column label='Current step' prop='status' align='center' sortable>
-                <template slot-scope='scope'>
-                  <span class='status-box'>{{ scope.row.status }}</span>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-main>
-      </el-container>
+  <el-container direction='vertical'>
+    <aap-header></aap-header>
+    <el-container>
+      <el-main>
+        <aap-spinner :show="loading"></aap-spinner>
+        <aap-broken v-show="broken"></aap-broken>
+        <div v-if='!loading && !broken'>
+          <h2>Applicants list</h2>
+          <el-table v-if='!loading && !broken' :data='applicants'>
+            <el-table-column type='expand'>
+              <template slot-scope='scope'>
+                <Aap-process-answers :process='getApplicantProcess(scope.row._id)' :applicantId='scope.row._id'/>
+              </template>
+            </el-table-column>
+            <el-table-column label='Process' prop='campaign' sortable></el-table-column>
+            <el-table-column label='Location' prop='process.location' sortable>
+              <template slot-scope='scope'>
+                <i class='el-icon-location big'></i>
+                {{ scope.row.campaign.location }}
+              </template>
+            </el-table-column>
+            <el-table-column label='Name' prop='name' sortable></el-table-column>
+            <el-table-column label='Mail' prop='mailAddress' sortable>
+              <template slot-scope='scope'>
+                <a class='black-link' :href='"mailto:" + scope.row.mailAddress' target='_blank'>
+                  <i class='el-icon-message round-boxed big'></i>
+                </a>
+                {{ scope.row.mailAddress }}
+              </template>
+            </el-table-column>
+            <el-table-column label='Phone' prop='phoneNumber' sortable>
+              <template slot-scope='scope'>
+                <i class='el-icon-phone big'></i>
+                {{ scope.row.phoneNumber | phoneFormatter }}
+              </template>
+            </el-table-column>
+            <el-table-column label='Last Modification' prop='updatedAt' sortable>
+              <template slot-scope='scope'>
+                <i class='el-icon-time'></i>
+                <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label='Current step' prop='status' align='center' sortable>
+              <template slot-scope='scope'>
+                <span class='status-box'>{{ scope.row.status }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-main>
     </el-container>
-    <el-footer>
-      FOOTER
-      <el-button>Hello</el-button>
-    </el-footer>
+    <aap-footer/>
   </el-container>
 </template>
 
 <script>
 
 import AapHeader from '../components/Header.vue';
+import AapFooter from '../components/Footer.vue';
 import AapAsideMenu from '../components/AsideMenu.vue';
 import AapSpinner from '../components/Spinner.vue';
 import AapBroken from '../components/Broken.vue';
@@ -63,7 +65,7 @@ import AapProcessAnswers from '../components/ProcessAnswers';
 
 export default {
   name: 'Applicants',
-  components: { AapHeader, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
+  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
   data: () => ({
     loading: true,
     broken: false

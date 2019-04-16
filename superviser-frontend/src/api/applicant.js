@@ -11,3 +11,22 @@ export function fetchApplicantsByProcessId(token, processId) {
     token: token
   }, 'get', 'no-cache');
 }
+
+export function updateStepStatusByApplicantId(token, applicantId, stepIndex, status) {
+  if (status !== 'validated' && status !== 'rejected')
+    throw new Error(`status ${status} is undefined`);
+
+  return request({
+    url: API_PATH + `/applicants/${applicantId}/${stepIndex}/status/${status}`,
+    data: undefined,
+    token: token
+  }, 'put');
+}
+
+export function updateStepMarkByApplicantId(token, applicantId, stepIndex, mark) {
+  return request({
+    url: API_PATH + `/applicants/${applicantId}/${stepIndex}/mark`,
+    data: { mark },
+    token: token
+  }, 'put');
+}

@@ -141,22 +141,22 @@ export default {
     },
     saveProcess: function() {
       const processId = this.getProcess()._id;
-      return new Promise((resolve, reject) => {
-      this.$store.dispatch('PUT_PROCESS', processId)
-        .then(() => {
-          this.$message({
-            type: 'info',
-            message: 'Your modifications have been saved'
+        return new Promise((resolve, reject) => {
+        this.$store.dispatch('PUT_PROCESS', processId)
+          .then(() => {
+            this.$message({
+              type: 'info',
+              message: 'Your modifications have been saved'
+            });
+            this.unsavedModifications = 0;
+            resolve();
+          }).catch((error) => {
+            this.$alert(error.message, `Error while saving process ${processId}.`, {
+              confirmButtonText: 'OK'
+            });
+            reject();
           });
-          this.unsavedModifications = 0;
-          resolve();
-        }).catch((error) => {
-          this.$alert(error.message, `Error while saving process ${processId}.`, {
-            confirmButtonText: 'OK'
-          });
-          reject();
         });
-      });
     },
     incrementModifications: function() {
       if (!this.editable) {

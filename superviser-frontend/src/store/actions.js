@@ -10,7 +10,11 @@ import {
 
 import { login } from '../api/login.js';
 
-import { fetchApplicantsByProcessId } from '../api/applicant.js';
+import {
+  fetchApplicantsByProcessId,
+  updateStepStatusByApplicantId,
+  updateStepMarkByApplicantId
+} from '../api/applicant.js';
 
 export default {
   FETCH_PROCESSES: ({ commit, state, dispatch }) => {
@@ -123,5 +127,29 @@ export default {
           reject(error);
         });
     });
+  },
+  UPDATE_MARK_STEP: ({ commit, state, dispatch }, { applicantId, stepIndex, mark }) => {
+    return new Promise((resolve, reject) => {
+      updateStepMarkByApplicantId(state.user.token, applicantId, stepIndex, mark)
+      .then(() => {
+        commit('SET_STEP_MARK', { applicantId, stepIndex, mark});
+        resolve();
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { applicantId, stepIndex, status }) => {
+    return new Promise((resolve, reject) => {
+      updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status)
+      .then(() => {
+        commit('SET_STEP_STATUS', { applicantId, stepIndex, status});
+        resolve();
+      }).catch((error) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    })
   }
 }

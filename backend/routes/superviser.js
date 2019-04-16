@@ -18,6 +18,9 @@ router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);
 
 router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
 
+router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
+router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicantCtrl.updateStepStatusByApplicantId);
+
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);
 
