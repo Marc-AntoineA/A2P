@@ -15,7 +15,8 @@ const signinForm = require('./signin-form.json');
 exports.getSigninForm = (req, res, next) => {
   const today = new Date();
   Process.find({
-    deadline: {$gt : today }
+    deadline: {$gt : today },
+    status: 'open'
   }).then((processes) => {
     const campaigns = processes.map(p => p.label);
     signinForm[1].questions[0].choices = campaigns;
@@ -151,7 +152,6 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
         for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
           const question = questions[questionIndex];
           if (!checkAnswer(question, questionsAnswers[questionIndex].answer)) {
-            console.log(question, questionsAnswers[questionIndex].answer);
             reject(new Error('Invalid request'));
           }
           question.answer = questionsAnswers[questionIndex].answer;
@@ -164,7 +164,9 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
         console.log(step.status);
       }
 
-      applicant.save().then(() => {
+      console.log('updating', JSON.stringify(applicant.process));
+      Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
+        console.log(x);
         resolve();
         return;
       }).catch((error) => {

@@ -217,7 +217,7 @@ class StepForm extends Component {
       }
       response.json().then((responseJson) => {
         const errorMessage = responseJson.error.message;
-        this.props.handleError(errorMessage);
+        this.props.handleError(errorMessage.toString());
       });
     }).catch((err) => {
       this.props.handleError(err);

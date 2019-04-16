@@ -29,8 +29,8 @@ exports.createEmptyProcess = (req, res, next) => {
     location: 'Choose location',
     deadline: '2080-01-01T00:00:00.000Z',
     status: 'draft',
-    createdAt: today.format(),
-    updatedAt: today.format(),
+    //createdAt: today.format(),
+    //updatedAt: today.format(),
     steps: []
   });
 
@@ -105,7 +105,7 @@ exports.updateProcessById = (req, res, next) => {
   }
 
   const now = moment();
-  process.updatedAt = now.format();
+  //process.updatedAt = now.format();
   Process.findOneAndUpdate({ _id: processId}, process)
     .then(() => {
       res.status(200).json(process);
@@ -123,8 +123,9 @@ exports.openProcessById = (req, res, next) => {
     if (process.status !== 'draft')
       res.status(500).json(
         { error: { message: `Process ${processId} is in status ${process.status} and cannot be opened`}});
-    process.status = 'open';
-    process.save().then(() => {
+
+    Process.updateOne({ _id: processId }, { status: 'open'})
+    .then(() => {
       res.status(200).json(process);
     }).catch((error) => {
       res.status(500).json({error: error});

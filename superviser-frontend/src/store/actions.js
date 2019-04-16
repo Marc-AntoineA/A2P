@@ -19,7 +19,7 @@ export default {
         commit('SET_PROCESSES', { processes });
         resolve(processes);
       }).catch(({code, error}) => {
-        if (code === 403) dispatch('LOGOUT');
+        if (code == 401) dispatch('LOGOUT');
         reject(error);
       });
     });
@@ -31,7 +31,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process] });
           resolve(process);
         }).catch(({code, error}) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -43,7 +43,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({error, code }) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -55,7 +55,7 @@ export default {
         commit('SET_PROCESSES', { processes: [ process ]});
         resolve(process);
       }).catch(({ error, code }) => {
-        if (code === 403) dispatch('LOGOUT');
+        if (code == 401) dispatch('LOGOUT');
         reject(error);
       });
     });
@@ -67,7 +67,7 @@ export default {
           commit('REMOVE_PROCESSES', [processId]);
           resolve();
         }).catch(({ code, error}) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -95,7 +95,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({code, error}) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -107,7 +107,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({code, error }) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -119,7 +119,7 @@ export default {
           commit('SET_APPLICANTS', applicants);
           resolve(applicants);
         }).catch(({code, error }) => {
-          if (code === 403) dispatch('LOGOUT');
+          if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
     });

@@ -23,7 +23,7 @@ class Input extends Component {
   }
 
   initState(type) {
-    if (this.props.data.answer !== undefined) {
+    if (this.props.data && this.props.data.answer !== undefined) {
       this.state = { 'currentValue': this.props.data.answer };
       return;
     }

@@ -11,7 +11,7 @@
     "questions": [
       {
         "id": 18,
-        "label": "Please select one country",
+        "label": "Please select one location",
         "type": "radio",
         "mandatory": true,
         "choices": ["Athens", "Berlin", "Cap", "Madrid", "Crete"]

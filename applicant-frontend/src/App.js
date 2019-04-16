@@ -56,7 +56,7 @@ class App extends Component {
   }
 
   summary() {
-    return (<Summary user={ this.state.user }></Summary>);
+    return (<Summary user={ this.state.user } handleError={ this.handleError }></Summary>);
   }
 
   handleCloseErrorModal() {

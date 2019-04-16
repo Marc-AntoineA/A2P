@@ -50,8 +50,8 @@ class Summary extends Component {
         console.log(process);
         return prevState;
       });
-    }).catch((err) => {
-      this.props.handleError(err);
+    }).catch((error) => {
+      this.props.handleError(error.toString());
     });
   }
 

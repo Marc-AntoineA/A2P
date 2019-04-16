@@ -13,7 +13,7 @@ const applicantSchema = mongoose.Schema({
   campaign: { type: String, required: true },
   status: { type: String, required: true }, // TODO rejected, accepted class X...,
   process: { type: processSchema, required: true },
-});
+}, { timestamps: { createdAt: 'createdAt' } });
 
 applicantSchema.plugin(uniqueValidator);
 
