@@ -43,6 +43,36 @@ exports.createEmptyProcess = (req, res, next) => {
   });
 };
 
+exports.copyProcessById = (req, res, next) => {
+  const processId = req.params.processId;
+
+  Process.findOne({ _id: processId })
+  .then((process) => {
+    if (!process) res.status(404).json({ error: { message: `Process ${processId} doesn't exist`}});
+    const processSchema = process.toObject();
+    delete processSchema._id;
+    processSchema.status = 'draft';
+    processSchema.deadline = '2080-01-01T00:00:00.000Z';
+    processSchema.label = 'Copy of ' + processSchema.label;
+    const copy = new Process (processSchema);
+    copy.save().then(() => {
+      res.status(201).json(copy);
+    }).catch((error) => {
+      console.log('line 60', error);
+      res.status(500).json({
+        error: error
+      });
+    });
+  }).catch((error) => {
+    console.log('line 66', error);
+    res.status(500).json({
+      error: error
+    });
+  });
+  const today = moment();
+};
+
+
 // TODO remove associated applicants?
 // Add check on status process: only draft or closed can be deleted
 exports.deleteProcessById = (req, res, next) => {
@@ -105,10 +135,6 @@ exports.openProcessById = (req, res, next) => {
     });
   });
 }
-
-exports.copyProcessById = (req, res, next) => {
-  // TODO
-};
 
 exports.getAllOpenedProcesses = (req, res, next) => {
   const today = new Date();

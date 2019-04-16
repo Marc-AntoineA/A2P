@@ -28,8 +28,22 @@ export function createEmptyProcess(token) {
       token: token,
     }, 'post').then((response) => {
       resolve(response);
-    }).catch((err) => {
-      reject(err);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+export function createCopyProcess(token, processId) {
+  return new Promise((resolve, reject) => {
+    request({
+      url: API_PATH + settings.CREATE_COPY_PROCESS + processId,
+      data: undefined,
+      token: token
+    }, 'post').then((response) => {
+      resolve(response);
+    }).catch((error) => {
+      reject(error);
     });
   });
 }

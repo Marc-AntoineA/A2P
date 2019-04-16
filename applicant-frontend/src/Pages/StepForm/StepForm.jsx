@@ -41,7 +41,7 @@ class StepForm extends Component {
       'xDown': null,
       'yDown': null,
       'canBeEdited': true,
-      'submitModalOpened': true,
+      'submitModalOpened': false,
     };
   }
 
@@ -237,6 +237,7 @@ class StepForm extends Component {
   closeSubmitModal() {
     this.setState((prevState) => {
       prevState.submitModalOpened = false;
+      return prevState;
     });
   }
 
@@ -244,24 +245,25 @@ class StepForm extends Component {
     console.log('opening submit modal');
     this.setState((prevState) => {
       prevState.submitModalOpened = true;
+      return prevState;
     });
   }
 
   render() {
-    const submitModal = (<Modal.Dialog>
-      <Modal.Header show={ this.state.submitModalOpened } onHide={ this.closeSubmitModal } closeButton>
-        <Modal.Title>Are you sure to submit your step?</Modal.Title>
+    const submitModal = (<Modal show={ this.state.submitModalOpened } onHide={ this.closeSubmitModal }>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirmation</Modal.Title>
       </Modal.Header>
-
-      <Modal.Body>
-        <p>Once</p>
-      </Modal.Body>
-
+      <Modal.Body>Are you sure to submit this form?</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={ this.closeSubmitModal }>Close</Button>
-        <Button variant="primary" onClick={ this.submitForm }>Save changes</Button>
+        <Button variant="secondary" onClick={ this.closeSubmitModal }>
+          Close
+        </Button>
+        <Button variant='primary' onClick={ this.submitForm }>
+          Submit
+        </Button>
       </Modal.Footer>
-    </Modal.Dialog>);
+    </Modal>);
 
     const pages = this.state.step.map((page, index) => {
       return(

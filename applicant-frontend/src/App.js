@@ -113,7 +113,7 @@ class App extends Component {
       </Router>
     );
 
-    return (      <div>
+    return (<div>
         { modal }
         { router }
       </div>

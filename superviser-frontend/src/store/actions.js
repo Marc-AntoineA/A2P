@@ -2,6 +2,7 @@ import {
   fetchProcesses,
   fetchProcess,
   createEmptyProcess,
+  createCopyProcess,
   deleteProcessById,
   updateProcessById,
   openProcessById
@@ -18,7 +19,7 @@ export default {
         commit('SET_PROCESSES', { processes });
         resolve(processes);
       }).catch(({code, error}) => {
-        if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+        if (code === 403) dispatch('LOGOUT');
         reject(error);
       });
     });
@@ -30,7 +31,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process] });
           resolve(process);
         }).catch(({code, error}) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -42,9 +43,21 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({error, code }) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
+    });
+  },
+  CREATE_PROCESS_COPY: ({ commit, state, dispatch }, processId) => {
+    return new Promise((resolve, reject) => {
+      createCopyProcess(state.user.token, processId)
+      .then((process) => {
+        commit('SET_PROCESSES', { processes: [ process ]});
+        resolve(process);
+      }).catch(({ error, code }) => {
+        if (code === 403) dispatch('LOGOUT');
+        reject(error);
+      });
     });
   },
   DELETE_PROCESS: ({ commit, state, dispatch }, processId) => {
@@ -54,7 +67,7 @@ export default {
           commit('REMOVE_PROCESSES', [processId]);
           resolve();
         }).catch(({ code, error}) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -82,7 +95,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({code, error}) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -94,7 +107,7 @@ export default {
           commit('SET_PROCESSES', { processes: [process]});
           resolve(process);
         }).catch(({code, error }) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
     });
@@ -106,7 +119,7 @@ export default {
           commit('SET_APPLICANTS', applicants);
           resolve(applicants);
         }).catch(({code, error }) => {
-          if (Math.floor(code / 100) === 4) dispatch('LOGOUT');
+          if (code === 403) dispatch('LOGOUT');
           reject(error);
         });
     });

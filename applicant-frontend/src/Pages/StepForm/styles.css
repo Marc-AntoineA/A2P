@@ -5,3 +5,14 @@
 .text-black {
   color: black;
 }
+
+.customized-modal {
+	position: absolute;
+	z-index: 99999;
+	margin-right: center;
+	left: 0;
+	right: 0;
+	top: 20vh;
+	bottom: 0;
+	margin: auto;
+}

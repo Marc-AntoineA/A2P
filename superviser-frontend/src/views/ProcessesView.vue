@@ -36,9 +36,13 @@
             </el-table-column>
             <el-table-column label='Applications' align='center'>
               <template slot-scope='scope'>
-                <router-link :to='{name: "applicants", params: {processId: scope.row._id} }'>
+                <router-link v-if='scope.row.status === "open"'
+                   :to='{name: "applicants", params: {processId: scope.row._id} }'>
                   <i class='el-icon-tickets big round-boxed'></i>
                 </router-link>
+                <span v-if='scope.row.status === "draft"'>
+                  Draft process
+                </span>
               </template>
             </el-table-column>
             <el-table-column label='Created At' prop='createdAt' sortable>
@@ -57,11 +61,21 @@
               <template slot-scope='scope'>
                 {{ scope.status }}
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
-                  <i v-if='scope.row.status === "draft"' class='el-icon-edit round-boxed big'></i>
-                  <i v-if='scope.row.status !== "draft"' class='el-icon-search round-boxed big'></i>
+                  <el-tooltip class="item" effect="dark" content="Edit this process" placement="bottom">
+                    <i v-if='scope.row.status === "draft"' class='el-icon-edit round-boxed big'></i>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="See this process" placement="bottom">
+                    <i v-if='scope.row.status !== "draft"' class='el-icon-search round-boxed big'></i>
+                  </el-tooltip>
                 </router-link>
-                <i class='el-icon-delete round-boxed big'
-                  @click='deleteProcess(scope.row._id)'></i>
+                <el-tooltip class="item" effect="dark" content="Delete this process" placement="bottom">
+                  <i class='el-icon-delete round-boxed big'
+                    @click='deleteProcess(scope.row._id)'></i>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Create a copy of this process" placement="bottom">
+                  <i class='el-icon-circle-plus-outline round-boxed big'
+                    @click='createCopy(scope.row._id)'></i>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -138,6 +152,9 @@ export default {
             confirmButtonText: 'OK'
           });
         });
+    },
+    createCopy(processId) {
+      this.$store.dispatch('CREATE_PROCESS_COPY', processId);
     }
   }
 }
