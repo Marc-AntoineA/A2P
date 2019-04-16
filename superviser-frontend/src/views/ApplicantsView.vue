@@ -7,12 +7,27 @@
         <aap-broken v-show="broken"></aap-broken>
         <div v-if='!loading && !broken'>
           <h2>Applicants list</h2>
-          <el-table v-if='!loading && !broken' :data='applicants'>
-            <el-table-column type='expand'>
-              <template slot-scope='scope'>
-                <Aap-process-answers :process='getApplicantProcess(scope.row._id)' :applicantId='scope.row._id'/>
-              </template>
-            </el-table-column>
+          <div id='processes-input'>
+            <div class='label'>Processes</div>
+            <multiselect v-model='selectedProcesses' :options='existingProcesses'
+              :multiple='true'
+              label="label"
+              placeholder="Select processes"
+              track-by='id'
+              @input='handleMultiselect'>
+            </multiselect>
+            </div>
+          </el-form>
+          <el-dialog v-if='!loading && !broken' class='applicant-modal' :title="displayedApplicant().name" :visible.sync="applicantModalVisible"
+            width="90%" center>
+            <Aap-process-answers :process='getApplicantProcess(currentDisplayedApplicantId)'
+             applicantId='currentDisplayedApplicantId'/>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="applicantModalVisible = false">Cancel</el-button>
+              <el-button type="primary" @click="applicantModalVisible = false">Confirm</el-button>
+            </span>
+          </el-dialog>
+          <el-table v-if='!loading && !broken' :data='applicants' @row-click='displayModal'>
             <el-table-column label='Process' prop='campaign' sortable></el-table-column>
             <el-table-column label='Location' prop='process.location' sortable>
               <template slot-scope='scope'>
@@ -62,16 +77,25 @@ import AapAsideMenu from '../components/AsideMenu.vue';
 import AapSpinner from '../components/Spinner.vue';
 import AapBroken from '../components/Broken.vue';
 import AapProcessAnswers from '../components/ProcessAnswers';
+import multiselect from 'vue-multiselect';
 
 export default {
   name: 'Applicants',
-  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
+  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers, multiselect },
   data: () => ({
     loading: true,
-    broken: false
+    broken: false,
+    applicantModalVisible: false,
+    currentDisplayedApplicantId: '5cb5c5de1be7ff2ac09d4be2',
+    selectedProcesses: null,
   }),
   props: {},
-  beforeMount() { this.fetchApplicants(); },
+  beforeMount() {
+    if (Object.values(this.$store.state.processes).length === 0) {
+      this.$store.dispatch('FETCH_PROCESSES');
+    }
+    this.fetchApplicants();
+  },
   methods: {
     fetchApplicants() {
       const processId = this.$route.params.processId;
@@ -88,14 +112,30 @@ export default {
         });
       });
     },
+    displayedApplicant() {
+      return this.$store.state.applicants[this.currentDisplayedApplicantId];
+    },
     getApplicantProcess(applicantId) {
       const applicant = this.$store.state.applicants[applicantId];
       return applicant.process;
+    },
+    displayModal(row, column, evt) {
+      this.applicantModalVisible = true;
+      this.currentDisplayedApplicantId = row._id;
+    },
+    handleMultiselect() {
+      console.log(this.selectedProcesses);
     }
   },
   computed: {// TODO passer par un getter pour uniquement les applicants qu'on souhaite
     applicants() {
       return Object.values(this.$store.state.applicants);
+    },
+    existingProcesses() {
+      return Object.values(this.$store.state.processes).map((process) => ({
+        label: process.label,
+        id: process._id
+      }));
     }
   }
 }
@@ -113,4 +153,19 @@ export default {
 	background-color: teal;
 	text-transform: uppercase;
 }
+
+.applicant-modal .el-dialog{
+  margin-top: 5vh;
+}
+
+#processes-input .label {
+	text-align: left;
+	text-transform: uppercase;
+	font-size: 13px;
+	font-weight: bold;
+	margin-bottom: 5px;
+	color: #41b883;
+	margin-left: 2px;
+}
 </style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
