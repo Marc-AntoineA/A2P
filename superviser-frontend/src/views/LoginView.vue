@@ -43,7 +43,7 @@ export default {
         password: this.password
       }).then(() => {
         this.loading = false;
-        this.$router.push('/');
+        this.$router.push('/administration');
         this.$message({
           type: 'success',
           message: 'You are now connected'

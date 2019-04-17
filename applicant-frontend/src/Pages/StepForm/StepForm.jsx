@@ -71,7 +71,8 @@ class StepForm extends Component {
 
   componentWillMount() {
 
-      if (!this.props.user || !this.props.user.token || !this.props.user.id) {
+      if (this.props.index !== undefined
+        && (!this.props.user || !this.props.user.token || !this.props.user.id)) {
         history.push('/');
       }
 

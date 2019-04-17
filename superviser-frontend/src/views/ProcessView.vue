@@ -260,7 +260,7 @@ export default {
       this.$alert(error.message, `Error while downloading process ${processId}`, {
         confirmButtonText: 'OK'
       });
-      this.$router.push('/404-error');
+      this.$router.push('/administration/404-error');
     });
   },
   beforeDestroy() {

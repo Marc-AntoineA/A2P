@@ -8,7 +8,7 @@ import StepForm from './Pages/StepForm/StepForm.jsx';
 import history from './history';
 import ApiRequests from './Providers/ApiRequests';
 
-import { Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 
 class App extends Component {

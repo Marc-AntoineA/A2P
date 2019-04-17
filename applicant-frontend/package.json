@@ -34,5 +34,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "uglify-js-brunch": "^2.10.0"
+  }
 }

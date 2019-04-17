@@ -18,43 +18,43 @@ export function createRouter() {
     scrollBehavior: () => ({ y: 0}),
     routes: [
       {
-        path: '/login',
+        path: '/administration/login',
         name: 'login',
         component: LoginView,
         meta: { requiresAuth: false }
       },
       {
-        path: '/',
+        path: '/administration',
         name: 'welcome',
         component: WelcomeView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/processes',
+        path: '/administration/processes',
         name: 'processes',
         component: ProcessesView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/process/:processId/',
+        path: '/administration/process/:processId/',
         name: 'process',
         component: ProcessView,
         meta: { requiresAuth: true }
       },
       {
-        path:'/applicants',
+        path:'/administration/applicants',
         name: 'applicants',
         component: ApplicantsView,
         meta: { requiresAuth: true },
       },
       {
-        path:'/applicants/:processId',
+        path:'/administration/applicants/:processId',
         name: 'applicantsInitialProcessId',
         component: ApplicantsView,
         meta: { requiresAuth: true },
       },
       {
-        path: '*',
+        path: '/administration/*',
         name: 'error404',
         component: Error404View,
         meta: { requiresAuth: false }
