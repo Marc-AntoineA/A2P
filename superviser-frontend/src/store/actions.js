@@ -120,9 +120,9 @@ export default {
     return new Promise((resolve, reject) => {
       fetchApplicantsByProcessId(state.user.token, processId)
         .then((applicants) => {
-          commit('SET_APPLICANTS', applicants);
+          commit('SET_APPLICANTS_BY_PROCESS_ID', { processId, applicants });
           resolve(applicants);
-        }).catch(({code, error }) => {
+        }).catch(({ code, error }) => {
           if (code == 401) dispatch('LOGOUT');
           reject(error);
         });

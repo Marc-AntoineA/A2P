@@ -37,7 +37,7 @@
             <el-table-column label='Applications' align='center'>
               <template slot-scope='scope'>
                 <router-link v-if='scope.row.status === "open"'
-                   :to='{name: "applicants", params: {processId: scope.row._id} }'>
+                   :to='{name: "applicantsInitialProcessId", params: {processId: scope.row._id} }'>
                   <i class='el-icon-tickets big round-boxed'></i>
                 </router-link>
                 <span v-if='scope.row.status === "draft"'>

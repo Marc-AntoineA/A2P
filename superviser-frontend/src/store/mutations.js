@@ -103,9 +103,10 @@ export default {
     const pages = getStep(state, identifier).pages;
     Vue.delete(pages, identifier.pageIndex);
   },
-  SET_APPLICANTS: (state, applicants) => {
+  SET_APPLICANTS_BY_PROCESS_ID: (state, { processId, applicants }) => {
+    Vue.set(state.applicantsByProcessId, processId, {});
     applicants.forEach((applicant) => {
-      if (applicant) Vue.set(state.applicants, applicant._id, applicant);
+      if (applicant) Vue.set(state.applicantsByProcessId[processId], applicant._id, applicant);
     });
   },
   SET_STEP_MARK: (state, { applicantId, stepIndex, mark }) => {
