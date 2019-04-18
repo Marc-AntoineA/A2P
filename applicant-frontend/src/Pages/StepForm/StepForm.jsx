@@ -196,7 +196,6 @@ class StepForm extends Component {
             return prevState;
           });
           return false;
-          break;
         case 'phone':
           if (checkPhone(question.answer)) break;
           this.setState((prevState) => {
@@ -204,7 +203,6 @@ class StepForm extends Component {
             return prevState;
           });
           return false;
-          break;
         case 'email':
           if (checkMailAddress(question.answer)) break;
           this.setState((prevState) => {
@@ -212,7 +210,6 @@ class StepForm extends Component {
             return prevState;
           });
           return false;
-          break;
         default:
           break;
       }

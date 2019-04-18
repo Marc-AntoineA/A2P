@@ -31,7 +31,7 @@ class Footer extends Component {
               <div className='social-media-box'>
                 {
                   TEXTS.YOUTUBE ?
-                  <a href={TEXTS.YOUTUBE} target='_blank'>
+                  <a href={TEXTS.YOUTUBE} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'youtube']}/>
                   </a>
                   :
@@ -39,7 +39,7 @@ class Footer extends Component {
                 }
                 {
                   TEXTS.FACEBOOK ?
-                  <a href={TEXTS.FACEBOOK} target='_blank'>
+                  <a href={TEXTS.FACEBOOK} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'facebook']}/>
                   </a>
                   :
@@ -47,7 +47,7 @@ class Footer extends Component {
                 }
                 {
                   TEXTS.INSTAGRAM ?
-                  <a href={TEXTS.INSTAGRAM} target='_blank'>
+                  <a href={TEXTS.INSTAGRAM} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'instagram']}/>
                   </a>
                   :
@@ -55,7 +55,7 @@ class Footer extends Component {
                 }
                 {
                   TEXTS.LINKEDIN ?
-                  <a href={TEXTS.LINKEDIN} target='_blank'>
+                  <a href={TEXTS.LINKEDIN} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'linkedin']}/>
                   </a>
                   :
@@ -63,7 +63,7 @@ class Footer extends Component {
                 }
                 {
                   TEXTS.GITHUB ?
-                  <a href={TEXTS.GITHUB} target='_blank'>
+                  <a href={TEXTS.GITHUB} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'github']}/>
                   </a>
                   :
@@ -71,7 +71,7 @@ class Footer extends Component {
                 }
                 {
                   TEXTS.TWITTER ?
-                  <a href={TEXTS.TWITTER} target='_blank'>
+                  <a href={TEXTS.TWITTER} target='_blank' rel='noopener noreferrer'>
                     <FontAwesomeIcon className='social-media-icon' icon={['fab', 'twitter']}/>
                   </a>
                   :
@@ -80,9 +80,9 @@ class Footer extends Component {
               </div>
             </Col>
             <Col>
-              Platform developed by <a href='https://socialhackersacademy.org/'> Social Hackers Academy </a> under
-              <a href='https://github.com/Marc-AntoineA/A2P/blob/master/LICENSE'> MIT Licence </a>
-              (Source code <a href='https://github.com/Marc-AntoineA/A2P' target='_blank'>
+              Platform developed by <a href='https://socialhackersacademy.org/' target='_blank' rel='noopener noreferrer'> Social Hackers Academy </a> under
+              <a href='https://github.com/Marc-AntoineA/A2P/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'> MIT Licence </a>
+              (Source code <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'>
                 <FontAwesomeIcon className='social-media-icon' icon={['fab', 'github']}/>
               </a>).<br/>
               Version {this.props.version}

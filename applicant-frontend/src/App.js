@@ -125,6 +125,7 @@ class App extends Component {
           <Route exact path='/signin' component={ this.signin }/>
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
+          <Route path='*' component={ this.welcome }/>
         </div>
       </Router>
     );

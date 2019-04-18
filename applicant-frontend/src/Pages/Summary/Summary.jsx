@@ -91,9 +91,9 @@ class Summary extends Component {
     const steps = this.state.process.process === undefined ? []
       : this.state.process.process.steps.map((step, index) => {
         return (
-          <li key={ index } className={'step-element ' + step.status}>
+          <li key={ index } className={'step-element ' + step.status} data-index={ index } onClick={ this.editStep }>
               <span>
-                <FontAwesomeIcon className='edit-button' data-index={ index } onClick={ this.editStep }
+                <FontAwesomeIcon className='edit-button'
                   icon={this.getActionSymbol(step.status)} />
                { step.label }
               </span>
