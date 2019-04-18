@@ -1,11 +1,9 @@
 <template>
   <el-container direction='vertical'>
     <el-main>
-      <img src='../assets/images/logo.jpg'/>
       <h1>Error 404, this page doesn't exist.</h1>
-      <p> TODO add the url </p>
+      <p>Go to the <a href='/administration'> main page </a></p>
     </el-main>
-    <aap-footer :fixed='true'></aap-footer>
   </el-container>
 </template>
 

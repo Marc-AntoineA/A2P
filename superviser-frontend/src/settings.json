@@ -1,5 +1,5 @@
 {
-  "API_PATH": "http://192.168.1.46:3300/superviser-api",
+  "API_PATH": "http://ma-augé.fr:3300/superviser-api",
   "GET_ALL_PROCESSES": "/processes",
   "GET_ONE_PROCESS": "/process/",
   "LOGIN": "/login",

@@ -26,6 +26,10 @@ The project is splitted into three parts:
   - Allow to see the progress of every applicant and validate & note every step if needed
   - Allow to start a new process from an existing one
 
+
+  ### TODO
+  - Allow supervisers and applicants to forgot their password
+
 ## Installation (production)
 
 ```sh
@@ -98,9 +102,6 @@ $ npm run build
 ```
 build the complete application in a `/build` folder, automatically served by the backend in the relative path: `/` (static-files in path `/static-applicant`).
 
-### TODO
-- Allow supervisers and applicants to forgot their password
-
 License
 ----
 MIT
@@ -117,3 +118,5 @@ MIT
    [element]: <https://element.eleme.io>
    [nodejs]: <https://nodejs.org>
    [npm]: <https://npmjs.com>
+   [nodemailer-setup]: <https://stackoverflow.com/questions/24098461/nodemailer-gmail-what-exactly-is-a-refresh-token-and-how-do-i-get-one>
+   [atlas]: <https://cloud.mongodb.com/user>

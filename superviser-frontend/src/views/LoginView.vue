@@ -18,7 +18,6 @@
         </el-form-item>
       </el-form>
     </el-main>
-    <aap-footer :fixed='true'></aap-footer>
   </el-container>
 </template>
 
@@ -76,9 +75,10 @@ export default {
 <style scoped>
 .boxed {
   margin: 50px auto;
-  border: 1px solid teal;
+  border: 2px solid teal;
   background-color: #f0efef;
   width: 330px;
+  box-shadow: 0px 6px 4px #004c4c;
 }
 
 .boxed img {
