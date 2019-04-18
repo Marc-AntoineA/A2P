@@ -249,7 +249,6 @@ export default {
     }
   },
   beforeMount() {
-    console.log('before mount');
     const processId = this.$route.params.processId;
     this.loading = true;
     this.$store.dispatch('FETCH_PROCESS', processId).then((process)=> {

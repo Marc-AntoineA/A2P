@@ -87,8 +87,12 @@ export default {
       }
     },
     changeStepStatus(stepIndex, status){
-      this.$store.dispatch('UPDATE_STATUS_STEP', { applicantId: this.applicantId, stepIndex, status} )
-      .then(() => {
+      this.$store.dispatch('UPDATE_STATUS_STEP', {
+        processId: this.process._id,
+        applicantId: this.applicantId,
+        stepIndex: stepIndex,
+        status: status
+      }).then(() => {
         this.$message({
           type: 'info',
           message: 'The status has been updated'
@@ -107,6 +111,7 @@ export default {
     },
     noteStep(stepIndex) {
       this.$store.dispatch('UPDATE_MARK_STEP', {
+        processId: this.process._id,
         applicantId: this.applicantId,
         stepIndex: stepIndex,
         mark: this.stepsMark[stepIndex]

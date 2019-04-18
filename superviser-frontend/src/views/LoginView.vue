@@ -51,7 +51,8 @@ export default {
       }).catch((error) => {
         this.loading = false;
         this.password = '';
-        this.$alert(error.message, 'Login Error', {
+        console.log('error message', error);
+        this.$alert(error.error ? error.error.message : error.toString(), 'Login Error', {
           confirmButtonText: 'OK'
         });
       });

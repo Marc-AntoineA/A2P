@@ -128,11 +128,11 @@ export default {
         });
     });
   },
-  UPDATE_MARK_STEP: ({ commit, state, dispatch }, { applicantId, stepIndex, mark }) => {
+  UPDATE_MARK_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, mark }) => {
     return new Promise((resolve, reject) => {
       updateStepMarkByApplicantId(state.user.token, applicantId, stepIndex, mark)
       .then(() => {
-        commit('SET_STEP_MARK', { applicantId, stepIndex, mark});
+        commit('SET_STEP_MARK', { processId, applicantId, stepIndex, mark});
         resolve();
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
@@ -140,13 +140,13 @@ export default {
       });
     });
   },
-  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { applicantId, stepIndex, status }) => {
+  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, status }) => {
     return new Promise((resolve, reject) => {
       updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status)
       .then(() => {
-        commit('SET_STEP_STATUS', { applicantId, stepIndex, status});
+        commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status});
         resolve();
-      }).catch((error) => {
+      }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
       });

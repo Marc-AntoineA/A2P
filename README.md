@@ -26,7 +26,25 @@ The project is splitted into three parts:
   - Allow to see the progress of every applicant and validate & note every step if needed
   - Allow to start a new process from an existing one
 
-## Installation
+## Installation (production)
+
+```sh
+git clone https://github.com/Marc-AntoineA/A2P.git
+```
+
+Prerequisites
+- Create a MongoDB database and an user (see [Atlas][atlas])
+- Create a OAuth2 token to the GMail address used (see [How to get a gmail token][nodemailer-setup])
+- Edit the `settings.json` file of backend properly.
+
+Start the server on port 3300
+```sh
+cd APP
+npm run install
+npm run start
+```
+
+## Installation (for development)
 
 A2P requires [Node.js][nodejs], [React][react] and [VueJS][vuejs]
 
@@ -56,6 +74,8 @@ $ cd superviser-frontend
 $ npm install
 $ npm start
 ```
+The server is started on port `8080`
+
 In production:
 ```sh
 $ npm run build
@@ -70,6 +90,7 @@ $ cd applicant-frontend
 $ npm install
 $ npm start
 ```
+The server is started on port `3300`.
 
 In production:
 ```sh

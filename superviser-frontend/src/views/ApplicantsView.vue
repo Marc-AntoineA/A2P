@@ -20,8 +20,8 @@
           <el-dialog v-if='!loading && !broken' class='applicant-modal'
             :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
             width="90%" center>
-            <Aap-process-answers :process='getApplicantProcess(currentDisplayedApplicantId)'
-             applicantId='currentDisplayedApplicantId'/>
+            <Aap-process-answers :process='getCurrentApplicantProcess()'
+             :applicantId='currentDisplayedApplicant.applicantId'/>
             <span slot="footer" class="dialog-footer">
               <el-button @click="applicantModalVisible = false">Cancel</el-button>
               <el-button type="primary" @click="applicantModalVisible = false">Confirm</el-button>
@@ -87,7 +87,7 @@ export default {
     loading: false,
     broken: false,
     applicantModalVisible: false,
-    currentDisplayedApplicantId: '',
+    currentDisplayedApplicant: { applicantId: '', processId: '' },
     selectedProcesses: [],
   }),
   props: {},
@@ -132,17 +132,24 @@ export default {
       });
     },
     displayedApplicantName() {
-      if (!this.$store.state.applicantsByProcessId[this.currentDisplayedApplicantId]) return '';
-      return this.$store.state.applicantsByProcessId[this.currentDisplayedApplicantId].name;
+      const applicantId = this.currentDisplayedApplicant.applicantId;
+      const processId = this.currentDisplayedApplicant.processId;
+      if (!this.$store.state.applicantsByProcessId[processId]) return '';
+      if (!this.$store.state.applicantsByProcessId[processId][applicantId]) return '';
+      return this.$store.state.applicantsByProcessId[processId][applicantId].name;
     },
-    getApplicantProcess(applicantId) {
-      const applicant = this.$store.state.applicantsByProcessId[applicantId];
-      if (!applicant) return {};
+    getCurrentApplicantProcess() {
+      const applicantId = this.currentDisplayedApplicant.applicantId;
+      const processId = this.currentDisplayedApplicant.processId;
+      if (!this.$store.state.applicantsByProcessId[processId]) return {};
+      if (!this.$store.state.applicantsByProcessId[processId][applicantId]) return {};
+
+      const applicant = this.$store.state.applicantsByProcessId[processId][applicantId];
       return applicant.process;
     },
     displayModal(row, column, evt) {
       this.applicantModalVisible = true;
-      this.currentDisplayedApplicantId = row._id;
+      this.currentDisplayedApplicant = { applicantId: row._id, processId: row.process._id };
     },
     handleMultiselect() {
       const selectedIds = this.selectedProcesses.map((process) => process.id);
