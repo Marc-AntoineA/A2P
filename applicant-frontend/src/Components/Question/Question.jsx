@@ -5,6 +5,7 @@ import Input from '../../Components/Input/Input.jsx';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
 import './styles.css';
+const TEXTS = require('../../texts.json');
 
 class Question extends Component {
 
@@ -28,16 +29,15 @@ class Question extends Component {
     switch (data.type) {
       case 'password':
         if (checkPassword(data.answer)) break;
-        this.failedMessage = 'Please provide a valid password. (it should contains at least one'
-            + 'uppercase, lowercase, one number and one special character (!, @, #, $, %, ^, &, *, |, -,_))';
+        this.failedMessage = TEXTS.ERROR_VALID_PASSWORD;
         return true;
       case 'phone':
         if (checkPhone(data.answer)) break;
-        this.failedMessage = 'Please provide a valid phone number (like +77123123123)';
+        this.failedMessage = TEXTS.ERROR_VALID_PHONE;
         return true;
       case 'email':
         if (checkMailAddress(data.answer)) break;
-        this.failedMessage = 'Please provide a valid maid address';
+        this.failedMessage = TEXTS.ERROR_VALID_EMAIL;
         return true;
       default:
         break;

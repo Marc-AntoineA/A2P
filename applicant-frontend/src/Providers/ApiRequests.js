@@ -1,7 +1,7 @@
 'using strict';
 
-const settings = require('../settings.json');
-const API_PATH = settings.API_PATH;
+const routes = require('./routes.json');
+const API_PATH = require('../settings.json').API_PATH;
 
 exports.saveLogin = (id, token) => {
   localStorage.setItem('id', id);
@@ -45,11 +45,11 @@ exports.getStepForm = function(user, index, token) {
 };
 
 exports.getSigninForm = function() {
-  return getData(API_PATH + settings.GET_SIGNIN_FORM);
+  return getData(API_PATH + routes.GET_SIGNIN_FORM);
 };
 
 exports.getProcess = function(user) {
-  return getData(API_PATH + settings.GET_PROCESS + user.id, user.token);
+  return getData(API_PATH + routes.GET_PROCESS + user.id, user.token);
 };
 
 function sendData(method, data, url, token) {
@@ -85,7 +85,7 @@ function putData(data, url, token) {
 }
 
 exports.postSigninForm = function(data) {
-  return postData(data, API_PATH + settings.POST_SIGNIN_FORM);
+  return postData(data, API_PATH + routes.POST_SIGNIN_FORM);
 };
 
 exports.putStepForm = function(user, index, data, confirm) {
@@ -94,9 +94,9 @@ exports.putStepForm = function(user, index, data, confirm) {
 };
 
 exports.postLogin = function(data) {
-  return postData(data, API_PATH + settings.POST_LOGIN);
+  return postData(data, API_PATH + routes.POST_LOGIN);
 };
 
 exports.getOpenedProcesses = function() {
-  return getData(API_PATH + settings.GET_OPENED_PROCESSES);
+  return getData(API_PATH + routes.GET_OPENED_PROCESSES);
 }

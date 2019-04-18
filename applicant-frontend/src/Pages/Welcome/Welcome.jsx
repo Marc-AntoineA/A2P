@@ -6,6 +6,7 @@ import computer from './computer.png';
 
 import ApiRequests from '../../Providers/ApiRequests';
 import Header from '../../Components/Header/Header.jsx';
+import Footer from '../../Components/Footer/Footer.jsx';
 
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
@@ -95,6 +96,7 @@ class Welcome extends Component {
             </Col>
           </Row>
         </Container>
+        <Footer version={this.props.version}/>
       </div>
     );
 

@@ -9,8 +9,9 @@ import ApiRequests from '../../Providers/ApiRequests.js';
 import './styles.css';
 
 import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
-import { withRouter } from "react-router-dom";
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
+
+const TEXTS = require('../../texts.json');
 
 class StepForm extends Component {
   constructor(props) {
@@ -122,7 +123,7 @@ class StepForm extends Component {
     const xDiff = xDown - xUp;
     const yDiff = yDown - yUp;
 
-    if (Math.abs(xDiff) > Math.abs(yDiff) ) {/*most significant*/
+    if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 5) {/*most significant*/
         if ( xDiff > 0 ) {
             this.nextPage();
         } else {
@@ -147,7 +148,7 @@ class StepForm extends Component {
   nextPage() {
     if (this.state.currentPage >= this.state.step.length) return;
     if (!this.checkCurrentRequiredAndFormatQuestions()) {
-      this.props.handleError('Please answer correctly to the questions.');
+      this.props.handleError(TEXTS.ERROR_REQUIRED_QUESTIONS);
       return;
     }
     this.setState((prevState) => {
@@ -269,7 +270,7 @@ class StepForm extends Component {
       <Modal.Header closeButton>
         <Modal.Title>Confirmation</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Are you sure to submit this form?</Modal.Body>
+      <Modal.Body>{ TEXTS.SUBMIT_FORM_VALIDATION }</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={ this.closeSubmitModal }>
           Close
@@ -296,7 +297,7 @@ class StepForm extends Component {
     const mainComponent = (
       <div>
         { submitModal }
-        <Header/>
+        <Header user={ this.props.user }/>
         <ProgressBar animated
           now={ this.state.currentPage }
           max= { pages.length }
@@ -306,15 +307,16 @@ class StepForm extends Component {
           { pages }
           <div class='buttons-flexbar'>
             {this.state.currentPage !== 1 ?
-              <Button onClick={ this.previousPage } size='lg'>Previous</Button> : ''}
+              <Button onClick={ this.previousPage } size='lg' className='fixed-width'>Previous</Button> : ''}
             {this.state.currentPage !== pages.length ?
-              <Button onClick={ this.nextPage } size='lg'>Next</Button> : ''}
+              <Button onClick={ this.nextPage } size='lg' className='fixed-width'>Next</Button> : ''}
               {
                 this.state.currentPage === pages.length && this.state.canBeEdited && this.props.index !== undefined ?
                   <Button
                     onClick={ this.saveForm }
                     size='lg'
-                    variant='success'>
+                    variant='success'
+                    className='fixed-width'>
                     Save
                   </Button>
                   :
@@ -325,7 +327,8 @@ class StepForm extends Component {
                 <Button
                   onClick={ this.openSubmitModal }
                   size='lg'
-                  variant='success'>
+                  variant='success'
+                  className='fixed-width'>
                   Submit
                 </Button>
                 :
@@ -347,4 +350,4 @@ class StepForm extends Component {
   }
 }
 
-export default withRouter(StepForm);
+export default StepForm;

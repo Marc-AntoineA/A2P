@@ -1,10 +1,12 @@
 'using strict';
 
 import React, { Component } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Container } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
+import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
+import Footer from '../../Components/Footer/Footer.jsx';
 import { postLogin } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
 
@@ -62,7 +64,8 @@ class Login extends Component {
             :
             <div>
               <Header/>
-              <main>
+              <Container>
+                <h2>Login</h2>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
                     <Form.Label>Email address</Form.Label>
@@ -75,11 +78,12 @@ class Login extends Component {
                     <Input id='1' type='password' onChange={ this.handleChangePassword }
                       className='form-control'></Input>
                   </Form.Group>
-                  <Button onClick={ this.login } variant="primary">
+                  <Button className='big' onClick={ this.login } variant="primary">
                     Submit
                   </Button>
                 </Form>
-              </main>
+              </Container>
+              <Footer version={this.props.version}/>
             </div>
           }
       </div>

@@ -1,0 +1,7 @@
+{
+  "GET_SIGNIN_FORM": "/",
+  "POST_SIGNIN_FORM": "/",
+  "POST_LOGIN": "/login",
+  "GET_PROCESS": "/",
+  "GET_OPENED_PROCESSES": "/processes"
+}

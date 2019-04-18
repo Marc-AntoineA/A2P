@@ -5,6 +5,7 @@ import Welcome from './Pages/Welcome/Welcome.jsx';
 import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
+import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
 import ApiRequests from './Providers/ApiRequests';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -26,6 +27,7 @@ class App extends Component {
       this.stepForm = this.stepForm.bind(this)
       this.login = this.login.bind(this);
       this.welcome = this.welcome.bind(this);
+      this.privacyPolicy = this.privacyPolicy.bind(this);
 
       this.handleCloseErrorModal = this.handleCloseErrorModal.bind(this);
       this.handleError = this.handleError.bind(this);
@@ -38,24 +40,28 @@ class App extends Component {
   }
 
   welcome() {
-    return (<Welcome user={ this.state.user } handleError={ this.handleError }/>);
+    return (<Welcome version={this.props.version} user={ this.state.user } handleError={ this.handleError }/>);
   }
 
   login() {
-    return (<Login user={ this.state.user } handleError={ this.handleError } handleLogin={ this.handleLogin }></Login>);
+    return (<Login  version={this.props.version} user={ this.state.user } handleError={ this.handleError } handleLogin={ this.handleLogin }></Login>);
   }
 
   signin() {
-    return (<StepForm user={ this.state.user } handleError={ this.handleError }></StepForm>);
+    return (<StepForm  version={this.props.version} user={ this.state.user } handleError={ this.handleError }></StepForm>);
   }
 
   stepForm(params) {
     const index = params.match.params.index;
-    return (<StepForm user={ this.state.user } handleError={ this.handleError } index={ index }></StepForm>);
+    return (<StepForm  version={this.props.version} user={ this.state.user } handleError={ this.handleError } index={ index }></StepForm>);
   }
 
   summary() {
-    return (<Summary user={ this.state.user } handleError={ this.handleError }></Summary>);
+    return (<Summary  version={this.props.version} user={ this.state.user } handleError={ this.handleError }></Summary>);
+  }
+
+  privacyPolicy() {
+    return (<PrivacyPolicy  version={this.props.version} user={ this.state.user }/>);
   }
 
   handleCloseErrorModal() {
@@ -117,6 +123,7 @@ class App extends Component {
           <Route exact path='/login' component={ this.login }/>
           <Route exact path='/summary' component={ this.summary }/>
           <Route exact path='/signin' component={ this.signin }/>
+          <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
         </div>
       </Router>

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faEye, faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import Header from '../../Components/Header/Header.jsx';
+import Footer from '../../Components/Footer/Footer.jsx';
 import ApiRequests from '../../Providers/ApiRequests';
 import './styles.css';
 import Moment from 'moment';
@@ -55,7 +56,7 @@ class Summary extends Component {
         return prevState;
       });
     }).catch((error) => {
-      this.props.handleError(error.toString());
+      this.props.handleError(error.message ? error.message : error.toString());
     });
   }
 
@@ -114,6 +115,7 @@ class Summary extends Component {
             </ol>
           </div>
         </Container>
+        <Footer version={this.props.version}/>
       </div>
     );
 

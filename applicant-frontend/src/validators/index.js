@@ -1,8 +1,8 @@
 
 export function checkPassword(password) {
   if (password === undefined) return false;
-  const checkedCharacters = [/[A-Z]/, /[a-z]/, /[0-9]/, /[?|!|@|#|$|%|^|&|*|(|)|-|_]/];
-  const nbOccurences = [0, 0, 0, 0];
+  const checkedCharacters = [/[A-Z]/, /[a-z]/, /[0-9]/];//, /[?|!|@|#|$|%|^|&|*|(|)|-|_]/];
+  const nbOccurences = [0, 0, 0];;
   const minLength = 10;
   if (password.length < minLength)
     return false;

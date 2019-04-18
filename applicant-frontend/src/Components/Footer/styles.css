@@ -1,0 +1,32 @@
+footer {
+	background: #3b3b3b;
+	margin-top: 80px;
+	color: white;
+	padding: 20px;
+	font-size: small;
+}
+
+.centered {
+  text-align: center;
+}
+
+footer ul {
+  list-style: none;
+  padding-left: 0px;
+}
+
+.footer-icon {
+	margin-right: 5px;
+	font-size: 16px;
+	margin-top: 7px;
+}
+
+.social-media-box {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.social-media-icon {
+	font-size: 25px;
+  color: white;
+}

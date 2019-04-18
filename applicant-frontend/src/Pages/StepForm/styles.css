@@ -22,3 +22,7 @@
 	justify-content: space-around;
 	margin-bottom: 20px;
 }
+
+.fixed-width {
+  width: 200px;
+}
