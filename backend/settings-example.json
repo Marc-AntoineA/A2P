@@ -1,0 +1,16 @@
+{
+  "DB_USERNAME": "",
+  "DB_PASSWORD": "",
+  "DB_NAME": "",
+  "DB_HOST": "",
+  "SERVER_PORT" : "",
+  "BCRYPT_SALTROUNDS": 7,
+  "TOKEN_RANDOM_SECRET": "<RANDOM STRING>",
+  "EMAIL_SETTINGS": {
+    "EMAIL": "",
+    "CLIENT_ID": "",
+    "REFRESH_TOKEN": "",
+    "CLIENT_SECRET": "",
+    "ACCESS_TOKEN": ""
+  }
+}

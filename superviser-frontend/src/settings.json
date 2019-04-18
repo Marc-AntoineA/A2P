@@ -1,0 +1,51 @@
+{
+  "API_PATH": "http://192.168.1.46:3300/superviser-api",
+  "GET_ALL_PROCESSES": "/processes",
+  "GET_ONE_PROCESS": "/process/",
+  "LOGIN": "/login",
+  "CREATE_EMPTY_PROCESS": "/create/process",
+  "CREATE_COPY_PROCESS": "/copy/process/",
+  "DELETE_PROCESS": "/delete/process/",
+  "OPEN_PROCESS": "/open/process/",
+  "GET_APPLICANTS_BY_PROCESS_ID": "/applicants/",
+  "QUESTION_TYPES": [
+    {
+      "value": "text",
+      "label": "Long Text"
+    },
+    {
+      "value": "inline",
+      "label": "Small Text"
+    },
+    {
+      "value": "date",
+      "label": "Date"
+    },
+    {
+      "value": "email",
+      "label": "Mail address"
+    },
+    {
+      "value": "phone",
+      "label": "Phone Number"
+    },
+    {
+      "value": "radio",
+      "label": "Unique Choice"
+    },
+    {
+      "value": "password",
+      "label": "Password"
+    }
+  ],
+  "QUESTION_VALIDATORS": [
+    {
+      "value": "motivationLetter",
+      "label": "Motivation Letter (500 words)"
+    },
+    {
+      "value": "codepenWebsite",
+      "label": "Codepen Website"
+    }
+  ]
+}
