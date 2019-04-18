@@ -187,10 +187,9 @@ exports.saveApplicantAnswers = (req, res, next) => {
   const confirm = false;
   editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
-     res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`})
+     res.status(200).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`})
    })
   .catch((error) => {
-    console.log('176', error);
     res.status(500).json({ error: { message: error.message } });
   });
 }
@@ -203,7 +202,7 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   console.log('confirm and save');
   editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
-      res.status(204).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
+      res.status(200).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
   }).catch((error) => {
     console.log('199', error);
     res.status(500).json({ error: { message: error.message }});

@@ -4,11 +4,10 @@ import React, { Component } from 'react';
 import './styles.css';
 
 import ApiRequests from '../../Providers/ApiRequests';
-import history from '../../history';
 import Header from '../../Components/Header/Header.jsx';
 
 import { Button, Container, Row, Col } from 'react-bootstrap';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -25,20 +24,14 @@ class Welcome extends Component {
     this.getOpenedProcesses = this.getOpenedProcesses.bind(this);
   }
 
-  componentWillMount() {
-    if (this.props.user.token && this.props.user.id) {
-      history.push('/summary');
-    }
-  }
-
   getOpenedProcesses() {
     ApiRequests.getOpenedProcesses().then((processes) => {
       this.setState((prevState) => {
         prevState.openedProcesses = processes;
         return prevState;
       });
-    }).catch((err) => {
-      this.props.handleError(err.toString());
+    }).catch((error) => {
+      this.props.handleError(error.toString());
     });
   }
 
@@ -56,7 +49,7 @@ class Welcome extends Component {
 
     const canApply = this.state.openedProcesses.length !== 0;
 
-    return (
+    const mainComponent = (
       <div>
         <Header></Header>
         <Container>
@@ -101,6 +94,17 @@ class Welcome extends Component {
             </Col>
           </Row>
         </Container>
+      </div>
+    );
+
+    return (
+      <div>
+        {
+          this.props.user.token && this.props.user.id ?
+          <Redirect to='/summary'/>
+          :
+          mainComponent
+        }
       </div>
     );
   }

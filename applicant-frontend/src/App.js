@@ -5,10 +5,9 @@ import Welcome from './Pages/Welcome/Welcome.jsx';
 import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
-import history from './history';
 import ApiRequests from './Providers/ApiRequests';
 
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
 
 class App extends Component {
@@ -72,25 +71,27 @@ class App extends Component {
         display: true,
         message: errorMessage
       };
-      console.log(prevState);
       return prevState;
     });
   }
 
   handleLogin(user) {
-    if (user == undefined) {
-      this.setState((prevState) => {
-        prevState.user = undefined;
-        return prevState;
-      });
-      ApiRequests.logout();
-      return;
-    }
-    ApiRequests.saveLogin(user.id, user.token);
-    this.setState((prevState) => {
-      prevState.user = user;
-      history.push('/summary');
-      return prevState;
+    return new Promise((resolve) => {
+      if (user == undefined) {
+        this.setState((prevState) => {
+          prevState.user = undefined;
+          return prevState;
+        });
+        ApiRequests.logout();
+        resolve();
+      } else {
+        ApiRequests.saveLogin(user.id, user.token);
+        this.setState((prevState) => {
+          prevState.user = user;
+          return prevState;
+        });
+        resolve();
+      }
     });
   }
 
@@ -110,7 +111,7 @@ class App extends Component {
     );
 
     const router = (
-      <Router history={ history }>
+      <Router>
         <div className="App">
           <Route exact path='/' component={ this.welcome }/>
           <Route exact path='/login' component={ this.login }/>

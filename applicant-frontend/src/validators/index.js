@@ -1,4 +1,3 @@
-'use strict';
 
 export function checkPassword(password) {
   if (password === undefined) return false;

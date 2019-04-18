@@ -19,7 +19,6 @@ class Question extends Component {
   }
 
   failed() {
-    console.log('failed ????');
     if (!this.props.mandatoryFailed) return false;
     const data = this.props.data;
     if (data.mandatory && (data.answer === '' || data.answer === -1)) {
@@ -32,17 +31,14 @@ class Question extends Component {
         this.failedMessage = 'Please provide a valid password. (it should contains at least one'
             + 'uppercase, lowercase, one number and one special character (!, @, #, $, %, ^, &, *, |, -,_))';
         return true;
-        break;
       case 'phone':
         if (checkPhone(data.answer)) break;
         this.failedMessage = 'Please provide a valid phone number (like +77123123123)';
         return true;
-        break;
       case 'email':
         if (checkMailAddress(data.answer)) break;
         this.failedMessage = 'Please provide a valid maid address';
         return true;
-        break;
       default:
         break;
     }

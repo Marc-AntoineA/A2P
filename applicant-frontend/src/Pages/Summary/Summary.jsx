@@ -3,13 +3,12 @@
 import React, { Component } from 'react';
 
 import { Container, Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faEye, faExclamationTriangle, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import Header from '../../Components/Header/Header.jsx';
-import history from '../../history';
 import ApiRequests from '../../Providers/ApiRequests';
 import './styles.css';
 import Moment from 'moment';
@@ -19,41 +18,40 @@ class Summary extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      process: {}
+      process: {},
+      redirectPath: null
     };
     this.getProcessData = this.getProcessData.bind(this);
+    this.editStep = this.editStep.bind(this);
   }
 
   componentWillMount() {
-    console.log(this.props.user);
-    if (!this.props.user.token || !this.props.user.id)
-      history.push('/');
+    if (!this.props.user.token || !this.props.user.id) {
+      this.setState((prevState) => {
+        prevState.redirectPath = '/login';
+      });
+    }
   }
 
   getDeadline() {
     if (!this.state.process.process) return '';
-
     const value = this.state.process.process.deadline;
     const m = Moment(value);
     return m.format('DD/MM/YY, h:mm a');
   }
 
   componentDidMount() {
-    console.log(this.props.user);
     const user = this.props.user;
-    if (user === undefined || user.token === undefined) {
-      history.push('/');
-      return;
-    }
     this.getProcessData();
   }
 
   getProcessData() {
+    if (!this.props.user.token || !this.props.user.id) return;
+
     const user = this.props.user;
     ApiRequests.getProcess(user).then((process) => {
       this.setState((prevState) => {
         prevState.process = process;
-        console.log(process);
         return prevState;
       });
     }).catch((error) => {
@@ -64,7 +62,10 @@ class Summary extends Component {
   editStep(e) {
     const target = e.currentTarget;
     const index = target.dataset.index;
-    history.push('/step/' + index);
+    this.setState((prevState) => {
+      prevState.redirectPath = '/step/' + index;
+      return prevState;
+    });
     e.stopPropagation();
   }
 
@@ -99,7 +100,7 @@ class Summary extends Component {
         );
     });
 
-    return (
+    const mainComponent = (
       <div>
         <Header user={ this.props.user }/>
         <Container>
@@ -115,7 +116,22 @@ class Summary extends Component {
         </Container>
       </div>
     );
+
+    const redirect = (
+      <Redirect to={this.state.redirectPath} />
+    );
+
+    return (
+      <div>
+      {
+        this.state.redirectPath ?
+        redirect
+        :
+        mainComponent
+      }
+      </div>
+    );
   }
 }
 
-export default withRouter(Summary);
+export default Summary;

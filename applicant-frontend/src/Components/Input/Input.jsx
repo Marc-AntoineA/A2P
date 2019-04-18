@@ -45,7 +45,6 @@ class Input extends Component {
     if (this.props.disabled) return;
     const target = e.target;
     const value = target.value;
-    console.log('42', value);
     this.setState(prevState => {
       prevState.currentValue = value;
       return prevState;
@@ -66,10 +65,8 @@ class Input extends Component {
     if (this.props.disabled) return;
     const target = e.target;
     const value = target.dataset.index;
-    console.log('radio', value);
     this.setState((prevState) => {
       prevState.currentValue = value;
-      console.log(prevState);
       return prevState;
     });
     this.props.onChange(value);
@@ -80,7 +77,6 @@ class Input extends Component {
   }
 
   renderText() {
-    console.log('is disabled ?', this.props.disabled);
     return (
       <Form.Control as="textarea" rows="3"
         onChange={this.handleChangeTextInput}
@@ -167,7 +163,6 @@ class Input extends Component {
 
   renderRadio() {
     const choices = [];
-    console.log(this.state.currentValue);
     this.props.data.choices.forEach((choice, index) => {
       choices.push(
         <div className='custom-control custom-checkbox' key={ index }>

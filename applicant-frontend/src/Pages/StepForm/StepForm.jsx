@@ -1,11 +1,11 @@
 'using strict';
 
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import Header from '../../Components/Header/Header.jsx';
 import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
 import ApiRequests from '../../Providers/ApiRequests.js';
-import history from '../../history';
 import './styles.css';
 
 import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
@@ -33,6 +33,8 @@ class StepForm extends Component {
     this.getFormData = this.getFormData.bind(this);
     this.checkCurrentRequiredAndFormatQuestions = this.checkCurrentRequiredAndFormatQuestions.bind(this);
 
+    this.isNotAuthorized = this.isNotAuthorized.bind(this);
+
     this.state = {
       'submissionRunning': false,
       'currentPage': 1,
@@ -42,10 +44,12 @@ class StepForm extends Component {
       'yDown': null,
       'canBeEdited': true,
       'submitModalOpened': false,
+      'redirectPath': null
     };
   }
 
   getFormData() {
+    if (this.isNotAuthorized()) return;
     if (this.props.index === undefined) {
       ApiRequests.getSigninForm().then((step) => {
           this.setState((prevState) => {
@@ -59,23 +63,29 @@ class StepForm extends Component {
         ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
           this.setState((prevState) => {
             prevState.step = step.pages;
-            console.log(step);
             prevState.canBeEdited = step.status === 'rejected' || step.status === 'todo';
             return prevState;
           });
-        }).catch((err) => {
-          this.props.handleError(err.toString());
+        }).catch((error) => {
+          this.props.handleError(error.message ? error.message : error.toString());
         });
       }
   }
 
+  isNotAuthorized() {
+    return this.props.index !== undefined
+      && (!this.props.user || !this.props.user.token || !this.props.user.id);
+  }
+
   componentWillMount() {
 
-      if (this.props.index !== undefined
-        && (!this.props.user || !this.props.user.token || !this.props.user.id)) {
-        history.push('/');
-      }
-
+    if (this.isNotAuthorized()) {
+      this.setState((prevState) => {
+        prevState.redirectPath = '/login';
+        return prevState;
+      });
+      return;
+    }
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("touchstart", this.handleTouchStart);
     document.addEventListener("touchmove", this.handleTouchMove);
@@ -214,19 +224,19 @@ class StepForm extends Component {
     if (!this.checkCurrentRequiredAndFormatQuestions()) return;
     const promise = this.props.index === undefined ?
       ApiRequests.postSigninForm(this.state.step)
-      : ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step, confirm);
+      :
+      ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step, confirm);
 
-    promise.then(response => {
-      if (response.status === 201 || response.status === 204) {
-        history.push('/summary');
-        return;
-      }
-      response.json().then((responseJson) => {
-        const errorMessage = responseJson.error.message;
-        this.props.handleError(errorMessage.toString());
+    promise.then((response) => {
+      this.setState((prevState) => {
+        prevState.redirectPath = '/summary';
+        return prevState;
       });
-    }).catch((err) => {
-      this.props.handleError(err);
+    })
+    .catch((error) => {
+      this.props.handleError(error.message ? error.message : error.toString());
+    }).catch((error) => {
+      this.props.handleError(error.toString());
     });
   }
 
@@ -248,7 +258,6 @@ class StepForm extends Component {
   }
 
   openSubmitModal() {
-    console.log('opening submit modal');
     this.setState((prevState) => {
       prevState.submitModalOpened = true;
       return prevState;
@@ -284,7 +293,7 @@ class StepForm extends Component {
         </QuestionPage>);
     });
 
-    return (
+    const mainComponent = (
       <div>
         { submitModal }
         <Header/>
@@ -325,6 +334,15 @@ class StepForm extends Component {
           </div>
         </Container>
       </div>
+    );
+
+    return (
+      <div>{
+        this.state.redirectPath ?
+          <Redirect to={ this.state.redirectPath }/>
+          :
+          mainComponent
+      }</div>
     );
   }
 }

@@ -21,16 +21,21 @@ exports.getLogin = () => {
 };
 
 function getData(url, token) {
-  console.log(url);
   return new Promise((resolve, reject) => {
     fetch(url, {
       headers: {
         'Authorization': 'Bearer ' + token
       }
-    }).then((results) => {
-        resolve(results.json());
-      }).catch((err) => {
-        reject(err);
+    }).then((response) => {
+      if (Math.floor(response.status / 100)  !== 2) {
+        response.json()
+        .then((error) => reject(error.error))
+        .catch((error) => reject(error));
+       } else {
+         resolve(response.json());
+       }
+     }).catch((error) => {
+        reject(error);
       });
   });
 }
@@ -58,7 +63,13 @@ function sendData(method, data, url, token) {
        'Authorization': 'Bearer ' + token
      }
    }).then((response) => {
-      resolve(response);
+     if (Math.floor(response.status / 100)  !== 2) {
+       response.json()
+       .then((error) => reject(error.error))
+       .catch((error) => reject(error));
+      } else {
+        resolve(response.json());
+      }
     }).catch((err) => {
       reject(err);
     });
@@ -78,7 +89,6 @@ exports.postSigninForm = function(data) {
 };
 
 exports.putStepForm = function(user, index, data, confirm) {
-  console.log('put step form', confirm);
   const url = `${API_PATH}/${user.id}/${index}/${confirm ? 'confirm' : 'save'}`;
   return putData(data, url, user.token);
 };

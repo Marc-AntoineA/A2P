@@ -16,10 +16,6 @@ class QuestionPage extends Component {
     this.props.onChange(this.props.pageIndex, questionIndex, value);
   }
 
-  componentDidMount() {
-    console.log(this.props.data);
-  }
-
   render() {
     const data = this.props.data;
     const questions = [];
