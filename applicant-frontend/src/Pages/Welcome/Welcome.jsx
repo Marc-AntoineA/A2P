@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import './styles.css';
+import computer from './computer.png';
 
 import ApiRequests from '../../Providers/ApiRequests';
 import Header from '../../Components/Header/Header.jsx';
@@ -87,7 +88,7 @@ class Welcome extends Component {
 
             </Col>
             <Col className='centered-col'>
-              <img src='https://socialhackersacademy.org/wp-content/uploads/2018/01/coding-isometric-01.png'
+              <img src={computer} alt='webdevelopment illustration'
                 width='350px'/>
               <Button href='/signin' variant='success' block disabled={!canApply}>Apply Now</Button>
               <Button href='/login' variant='info' block canApply disabled={!canApply}>Already Registered</Button>

@@ -37,13 +37,13 @@ app.use(bodyParser.json());
 app.use('/applicant-api/', applicantRoutes);
 app.use('/superviser-api/', superviserRoutes);
 
-app.use(express.static(path.join(__dirname, '../superviser-frontend/dist')));
-app.get('/administration/*', function(req, res) {
+app.use('/administration/static-superviser/', express.static(path.join(__dirname, '../superviser-frontend/dist/static-superviser')));
+app.get('/administration*', function(req, res) {
   // TODO also go on /administration (without / at the end)
   res.sendFile(path.join(__dirname, '../superviser-frontend/dist', 'index.html'));
 });
 
-app.use(express.static(path.join(__dirname, '../applicant-frontend/build')));
+app.use('/static-applicant/', express.static(path.join(__dirname, '../applicant-frontend/build')));
 app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
 });

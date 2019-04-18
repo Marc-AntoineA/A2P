@@ -1,3 +1,4 @@
+
 # A2P - Automated Application Process
 **Author:** Marc-Antoine Augé
 
@@ -32,12 +33,13 @@ A2P requires [Node.js][nodejs], [React][react] and [VueJS][vuejs]
 ```sh
 git clone https://github.com/Marc-AntoineA/A2P.git
 ```
-### Prerequisites
+
+#### Prerequisites
 - Create a MongoDB database and an user (see [Atlas][atlas])
 - Create a OAuth2 token to the GMail address used (see [How to get a gmail token][nodemailer-setup])
 - Edit the `settings.json` files properly.
 
-### Backend
+#### Backend
 Install the dependencies and and start the server.
 
 ```sh
@@ -45,19 +47,20 @@ $ cd backend
 $ npm install
 $ npm start
 ```
+The website will be accessible in `localhost:3000`.
 
-### Superviser-Frontend
+#### Superviser-Frontend
 Install the dependencies and start the server
 ```sh
 $ cd superviser-frontend
 $ npm install
 $ npm start
 ```
-
 In production:
 ```sh
-TODO
+$ npm run build
 ```
+build the complete application in a `/dist` folder, automatically served by the backend in the relative path: `/administration` (static files in path `/administration/static-superviser`).
 
 ### Applicant-Frontend
 
@@ -70,8 +73,9 @@ $ npm start
 
 In production:
 ```sh
-TODO
+$ npm run build
 ```
+build the complete application in a `/build` folder, automatically served by the backend in the relative path: `/` (static-files in path `/static-applicant`).
 
 ### TODO
 - Allow supervisers and applicants to forgot their password

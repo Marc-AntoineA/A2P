@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "A2P-Applicant",
+  "name": "Join Social Hackers Academy",
+  "description": "The easy to use and mobile-first platform to join Social Hackers Academy as a student",
   "icons": [
     {
       "src": "favicon.ico",
