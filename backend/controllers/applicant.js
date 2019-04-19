@@ -86,7 +86,7 @@ exports.login = (req, res, next) => {
           error: {message: 'User or password is incorrect'}
         });
       }
-      const token = jwt.sign({ userId: applicant._id }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       res.status(200).json({
         id: applicant._id,
         token: token

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const auth = require('../middleware/auth');
+const auth = require('../middleware/auth')(true);
 
 const processCtrl = require('../controllers/process');
 const applicantCtrl = require('../controllers/applicant');
