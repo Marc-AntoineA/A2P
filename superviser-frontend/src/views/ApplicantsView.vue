@@ -20,29 +20,22 @@
           <el-dialog v-if='!loading && !broken' class='applicant-modal'
             :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
             width="90%" center>
-            <Aap-process-answers :process='getCurrentApplicantProcess()'
+            <Aap-process-answers :applicant='getCurrentApplicant()'
              :applicantId='currentDisplayedApplicant.applicantId'/>
             <span slot="footer" class="dialog-footer">
               <el-button @click="applicantModalVisible = false">Cancel</el-button>
-              <el-button type="primary" @click="applicantModalVisible = false">Confirm</el-button>
             </span>
           </el-dialog>
           <aap-spinner :show="loading"></aap-spinner>
+
           <el-table v-if='!broken' :data='applicants' @row-click='displayModal'>
             <el-table-column label='Process' prop='campaign' sortable></el-table-column>
-            <el-table-column label='Location' prop='process.location' sortable>
-              <template slot-scope='scope'>
-                <i class='el-icon-location big'></i>
-                {{ scope.row.campaign.location }}
-              </template>
-            </el-table-column>
             <el-table-column label='Name' prop='name' sortable></el-table-column>
-            <el-table-column label='Mail' prop='mailAddress' sortable>
+            <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
               <template slot-scope='scope'>
                 <a class='black-link' :href='"mailto:" + scope.row.mailAddress' target='_blank'>
                   <i class='el-icon-message round-boxed big'></i>
                 </a>
-                {{ scope.row.mailAddress }}
               </template>
             </el-table-column>
             <el-table-column label='Phone' prop='phoneNumber' sortable>
@@ -57,9 +50,34 @@
                 <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Current step' prop='status' align='center' sortable>
+            <el-table-column label='Current step / Status' align='center'>
               <template slot-scope='scope'>
-                <span class='status-box'>{{ scope.row.status }}</span>
+                <div v-if='scope.row.status === "pending"'>
+                  <span class='step-status todo'>
+                    {{ computedStatus[scope.row._id].todo }}
+                    <i class='status-icon el-icon-service'></i>
+                  </span>
+                  <span class='step-status pending'>
+                    {{ computedStatus[scope.row._id].pending }}
+                    <i class='status-icon el-icon-more'></i>
+                  </span>
+                  <span class='step-status validated'>
+                    {{ computedStatus[scope.row._id].validated }}
+                    <i class='status-icon el-icon-check'></i>
+                  </span>
+                  <span class='step-status rejected'>
+                    {{ computedStatus[scope.row._id].rejected }}
+                    <i class='status-icon el-icon-close'></i>
+                  </span>
+                </div>
+                <div v-if='scope.row.status !== "pending"'>
+                  <span class='status-box'>{{ scope.row.status }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label='Average Mark' align='center'>
+              <template slot-scope='scope'>
+                <span class='status-box'>{{ computedStatus[scope.row._id].averageMark }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -138,14 +156,14 @@ export default {
       if (!this.$store.state.applicantsByProcessId[processId][applicantId]) return '';
       return this.$store.state.applicantsByProcessId[processId][applicantId].name;
     },
-    getCurrentApplicantProcess() {
+    getCurrentApplicant() {
       const applicantId = this.currentDisplayedApplicant.applicantId;
       const processId = this.currentDisplayedApplicant.processId;
       if (!this.$store.state.applicantsByProcessId[processId]) return {};
       if (!this.$store.state.applicantsByProcessId[processId][applicantId]) return {};
 
       const applicant = this.$store.state.applicantsByProcessId[processId][applicantId];
-      return applicant.process;
+      return applicant;
     },
     displayModal(row, column, evt) {
       this.applicantModalVisible = true;
@@ -176,6 +194,30 @@ export default {
         label: process.label,
         id: process._id
       }));
+    },
+    computedStatus() {
+      const result = {};
+      this.applicants.forEach((applicant) => {
+        const counter = {
+          'pending': 0,
+          'validated': 0,
+          'rejected': 0,
+          'todo': 0
+        };
+        let averageMark = 0;
+        let div = 0;
+        const steps = applicant.process.steps;
+        steps.forEach((step) => {
+          counter[step.status]++;
+          if (step.status === 'validated') {
+            averageMark += step.mark;
+            div++;
+          }
+        });
+        counter['averageMark'] = Math.round(10 * averageMark / div)/10;
+        result[applicant._id] = counter;
+      });
+      return result;
     }
   }
 }
@@ -206,6 +248,12 @@ export default {
 	margin-bottom: 5px;
 	color: #41b883;
 	margin-left: 2px;
+}
+
+.step-status {
+	font-size: 17px !important;
+	font-weight: bold;
+	margin: 3px;
 }
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

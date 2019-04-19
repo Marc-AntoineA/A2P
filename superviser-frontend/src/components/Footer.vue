@@ -1,23 +1,35 @@
 <template>
   <el-footer>
     <el-row>
-      <el-col :span="12">
-        Platform developed by
-          <a href='https://socialhackersacademy.org/' target='_blank' rel='noopener noreferrer'> Social Hackers Academy </a>
-          under <a href='https://github.com/Marc-AntoineA/A2P/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'> MIT Licence </a>
-          <br/>
-        (Source code <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'>
-          <font-awesome-icon :icon="['fab', 'github']" />
-        </a>)
-          <br/>
-          Questions? Problems? Ideas? <a href='https://github.com/Marc-AntoineA/A2P/issues' target='_blank' rel='noopener noreferrer'>Open an issue</a>.
-        </a>).
+      <el-col :span="8">
+        <p>
+          Platform developed by
+            <a href='https://socialhackersacademy.org/' target='_blank' rel='noopener noreferrer'>Social Hackers Academy</a>.
+        </p>
+        <p>
+          <font-awesome-icon class='big-icon' :icon="['fab', 'github']" />
+          <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'>Source Code</a>
+          (under
+            <a href='https://github.com/Marc-AntoineA/A2P/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>
+              MIT Licence
+            </a>
+          )
+        </p>
       </el-col>
-      <el-col :span="12">
-        <ul>
-          <li><a href='#'>Social Hackers Academy Website</a></li>
-          <li><a href='/'> Applicant Website</a></li>
+      <el-col :span="8">
+        <ul class='links-list'>
+          <li>
+            <span class='link-prefix'>Go to</span>
+            <a href='https://socialhackersacademy.org/'>Social Hackers Academy Website</a>
+          </li>
+          <li><span class='link-prefix'>Go to</span> <a href='/'> Applicant Website</a></li>
         </ul>
+      </el-col>
+      <el-col :span="8">
+        <p>
+          Questions? Problems? Ideas?
+          <a href='https://github.com/Marc-AntoineA/A2P/issues' target='_blank' rel='noopener noreferrer'>Open an issue</a>.
+        </p>
       </el-col>
     </el-row>
   </el-footer>
@@ -42,4 +54,20 @@ export default {
 	padding: 20px 0px;
 }
 
+.big-icon {
+  font-size: 40px;
+}
+
+.links-list {
+  list-style: none;
+  text-align: left;
+}
+
+.link-prefix {
+	text-transform: uppercase;
+	font-weight: bolder;
+	color: #303030;
+	font-size: 12px;
+	margin-right: 7px;
+}
 </style>

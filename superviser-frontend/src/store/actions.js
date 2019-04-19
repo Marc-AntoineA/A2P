@@ -13,7 +13,8 @@ import { login } from '../api/login.js';
 import {
   fetchApplicantsByProcessId,
   updateStepStatusByApplicantId,
-  updateStepMarkByApplicantId
+  updateStepMarkByApplicantId,
+  updateStatusByApplicantId
 } from '../api/applicant.js';
 
 export default {
@@ -147,9 +148,21 @@ export default {
         commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status});
         resolve();
       }).catch(({ code, error }) => {
-        if (code == 401) dispatch('LOGOUT');
+        if (code === 401) dispatch('LOGOUT');
         reject(error);
       });
     })
+  },
+  UPDATE_STATUS_APLICANT: ({ commit, state, dispatch }, { processId, applicantId, status }) => {
+    return new Promise((resolve, reject) => {
+      updateStatusByApplicantId(state.user.token, applicantId, status)
+      .then(() => {
+        commit('SET_APPLICANT_STATUS', { processId, applicantId, status });
+        resolve();
+      }).catch(({ code, error }) => {
+        if (code === 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
   }
 }

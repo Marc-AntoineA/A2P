@@ -294,5 +294,31 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
     });
   }).catch((errorMessage) => {
     res.status(404).json({ error: { message: errorMessage } });
-  })
+  });
+};
+
+exports.updateStatusByApplicantId = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  const status = req.params.status;
+  console.log(applicantId);
+  Applicant.findOne({ _id: applicantId })
+  .then((applicant) => {
+    if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
+    const steps = applicant.process.steps;
+    for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
+      const step = steps[stepIndex];
+      if (step.status !== 'validated') {
+        res.status(500).json({ error: { message: 'All the steps must be validated to change the status'}});
+        return;
+      }
+    }
+    Applicant.updateOne({ _id: applicantId }, { status: status })
+    .then(() => {
+      res.status(200).json({ message: `Status for applicant ${applicantId} updated successfully`});
+    }).catch((error) => {
+      res.status(500).json({ error: error });
+    });
+  }).catch((error) => {
+    res.status(404).json({ error: { message: error.toString() } });
+  });
 };

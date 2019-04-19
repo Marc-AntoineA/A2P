@@ -58,7 +58,6 @@ exports.copyProcessById = (req, res, next) => {
     copy.save().then(() => {
       res.status(201).json(copy);
     }).catch((error) => {
-      console.log('line 60', error);
       res.status(500).json({
         error: error
       });

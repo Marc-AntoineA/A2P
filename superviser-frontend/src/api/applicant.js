@@ -30,3 +30,11 @@ export function updateStepMarkByApplicantId(token, applicantId, stepIndex, mark)
     token: token
   }, 'put');
 }
+
+export function updateStatusByApplicantId(token, applicantId, status) {
+  return request({
+    url: API_PATH + `/applicants/${applicantId}/status/${status}`,
+    data: undefined,
+    token: token
+  }, 'put');
+}

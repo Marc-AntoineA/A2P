@@ -114,5 +114,8 @@ export default {
   },
   SET_STEP_STATUS: (state, { processId, applicantId, stepIndex, status }) => {
     Vue.set(state.applicantsByProcessId[processId][applicantId].process.steps[stepIndex], 'status', status);
+  },
+  SET_APPLICANT_STATUS: (state, { processId, applicantId, status }) => {
+    Vue.set(state.applicantsByProcessId[processId][applicantId], 'status', status);
   }
 }

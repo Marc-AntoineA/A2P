@@ -1,5 +1,26 @@
 <template>
   <div>
+    <div class='edit-status'>
+      <h3>Accept this student?</h3>
+      <div :class='"status-box " + applicant.status'>
+        <i :class='"status-icon " + getStatusSymbol(applicant.status)'></i>
+        {{ applicant.status }}
+      </div>
+
+      <p v-if='!canBeValidated'>
+        To accept one student, please validate firstly all the steps.
+      </p>
+      <div class='tools-buttons'>
+        <el-button v-if='canBeValidated'
+          type='success' @click='acceptApplicant'>
+          Accept
+        </el-button>
+        <el-button v-if='canBeValidated'
+          type='danger' @click='rejectApplicant'>
+          Reject
+        </el-button>
+      </div>
+    </div>
     <el-tabs tab-position="left" stretch>
       <el-tab-pane v-for='(step, stepIndex) in process.steps' :label='step.label'>
         <h3>{{ step.label }}</h3>
@@ -32,8 +53,6 @@
             </el-table>
       </el-tab-pane>
     </el-tabs>
-    <el-button>Accept</el-button>
-    <el-button>Reject</el-button>
   </div>
 </template>
 
@@ -42,7 +61,7 @@ import { dateFormatter, phoneFormatter } from '../filters';
 
 export default {
   name: 'aap-process-answers',
-  props: ['process', 'applicantId'],
+  props: ['applicant', 'applicantId'],
   data: () => ({
     stepsMark: [],
     notCollapsedQuestions: []
@@ -52,6 +71,19 @@ export default {
     this.notCollapsedQuestions = this.process.steps.map((step, stepIndex) => {
       return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
     });
+  },
+  computed: {
+    process() {
+      return this.applicant.process;
+    },
+    canBeValidated() {
+      const steps = this.process.steps;
+      for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
+        const step = steps[stepIndex];
+        if (step.status !== 'validated') return false;
+      }
+      return true;
+    }
   },
   methods: {
     questionsForStep(stepIndex) {
@@ -133,12 +165,27 @@ export default {
         case 'rejected':
           return 'el-icon-close';
         case 'validated':
+          return 'el-icon-check';
+        case 'accepted':
           return 'el-icon-check'
         case 'pending':
           return 'el-icon-more';
         default:
           throw new Error(`status ${status} is undefined`);
       }
+    },
+    acceptApplicant() {
+      this.changeApplicantStatus('accepted');
+    },
+    rejectApplicant() {
+      this.changeApplicantStatus('rejected');
+    },
+    changeApplicantStatus(status) {
+      this.$store.dispatch('UPDATE_STATUS_APLICANT', {
+        processId: this.process._id,
+        applicantId: this.applicant._id,
+        status: status
+      });
     }
   }
 }
@@ -157,7 +204,7 @@ export default {
   color: red;
 }
 
-.validated {
+.validated, .accepted {
   border-color: green;
   color: green;
 }
@@ -182,5 +229,20 @@ export default {
   font-size: 13px;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.buttons-tool .el-button {
+	width: 200px;
+}
+
+.tools-buttons {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 5px;
+	margin-bottom: 6px;
+}
+
+.edit-status {
+  text-align: center;
 }
 </style>
