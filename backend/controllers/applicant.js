@@ -1,6 +1,6 @@
 'using strict';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
 const jwt = require('jsonwebtoken');
 const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
