@@ -9,7 +9,7 @@ The project is splitted into three parts:
   - `superviser-frontend`: a website in [VueJS][vuejs] which provides to the supervisers an easy way to validate the different steps, start new cohorts... ;
   - `backend`: a complete API in [NodeJS][nodejs] and [Express][express] in order to link together the [MongoDB][mongodb] database and the frontends ;
 
-# Release V1!  
+# Release V0!  
 
   - Allow an applicant to apply and to an opened process
   - Allow an applicant to start completing a step and save it before submit it
@@ -29,6 +29,7 @@ The project is splitted into three parts:
 
   ### TODO
   - Allow supervisers and applicants to forgot their password
+  - Send emails after each step
 
 ## Installation (production)
 
@@ -38,14 +39,12 @@ git clone https://github.com/Marc-AntoineA/A2P.git
 
 Prerequisites
 - Create a MongoDB database and an user (see [Atlas][atlas])
-- Create a OAuth2 token to the GMail address used (see [How to get a gmail token][nodemailer-setup])
+- Create a OAuth2 token to the GMail address used (see [How to get a gmail token][nodemailer-setup]) (not useful now)
 - Edit the `settings.json` file of backend properly.
 
-Start the server on port 3300
+On your computer, to build the code and upload everything on your hosting via ftp
 ```sh
-cd APP
-npm run install
-npm run start
+./deploy.sh -ftp ftpPath -u ftpUser
 ```
 
 ## Installation (for development)
