@@ -11,7 +11,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 
 library.add(fab);
 
-const TEXTS = require('../../texts.json').FOOTER;
+const TEXTS = require('../../static.json').FOOTER;
 
 class Footer extends Component {
   render() {

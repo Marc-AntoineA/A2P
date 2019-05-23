@@ -3,9 +3,6 @@ const app = require('./app');
 
 const settings = require('./settings.json');
 
-if (typeof(PhusionPassenger) != 'undefined')
-  PhusionPassenger.configure({ autoInstall: false });
-
 const normalizePort = val => {
   const port = parseInt(val, 10);
   if (isNaN(port)) return val;
@@ -43,4 +40,4 @@ server.on('listening', () => {
   console.log('listening on ' + bind);
 });
 
-server.listen(settings.SERVER_PORT);
+server.listen(3300);

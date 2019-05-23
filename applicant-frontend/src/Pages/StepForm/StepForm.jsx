@@ -11,7 +11,7 @@ import './styles.css';
 import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
-const TEXTS = require('../../texts.json');
+const TEXTS = require('../../static.json');
 
 class StepForm extends Component {
   constructor(props) {

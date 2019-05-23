@@ -5,7 +5,7 @@ import Input from '../../Components/Input/Input.jsx';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
 import './styles.css';
-const TEXTS = require('../../texts.json');
+const TEXTS = require('../../static.json');
 
 class Question extends Component {
 

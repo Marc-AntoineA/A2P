@@ -8,7 +8,7 @@ import Footer from '../../Components/Footer/Footer.jsx';
 
 import { Container } from 'react-bootstrap';
 
-const TEXTS = require('../../texts.json');
+const TEXTS = require('../../static.json');
 
 class PrivacyPolicy extends Component {
   render() {
