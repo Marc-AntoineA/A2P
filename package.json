@@ -4,6 +4,6 @@
   "private": true,
   "scripts": {
     "install": "cd superviser-frontend && npm install && cd ../applicant-frontend && npm install && cd ../backend && npm install",
-    "start": "cd superviser-frontend && npm run build && cd ../applicant-frontend && npm run build && cd ../backend && npm start"
+    "build": "cd superviser-frontend && npm run build && cd ../applicant-frontend && npm run build && cd ../backend"
   }
 }
