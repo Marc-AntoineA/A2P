@@ -15,5 +15,6 @@ router.get('/:userId/:step', auth, applicantCtrl.getApplicantStep);
 router.put('/:userId/:step/save', auth, applicantCtrl.saveApplicantAnswers);
 router.put('/:userId/:step/confirm', auth, applicantCtrl.confirmAndSaveApplicantAnswers)
 router.post('/login', applicantCtrl.login);
+router.post('/reset', applicantCtrl.resetPassword);
 
 module.exports = router;

@@ -8,8 +8,10 @@ const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
+const { sendMail } = require('../smtp/');
 
 const signinForm = require('./signin-form.json');
+
 
 // TODO add dynamically the choices for the campaign
 exports.getSigninForm = (req, res, next) => {
@@ -99,6 +101,37 @@ exports.login = (req, res, next) => {
   }).catch((error) => {
     res.status(500).json({
       error: error
+    });
+  });
+};
+
+exports.resetPassword = (req, res, next) => {
+  const mailAddress = req.body.mail;
+  const outputMessage = "An email was sent to this mail address. If you don't see it soon, please double check your email address or contact us";
+  Applicant.findOne({
+    mailAddress: mailAddress
+  }).then((applicant) => {
+    if (!applicant) {
+      return res.status(401).json({
+        error: {message: outputMessage}
+      });
+    }
+    // todo 1. password generator
+    // Todo 2. use emails templates
+    const newPassword = "1234567890";
+    bcrypt.hash(newPassword, BCRYPT_SALTROUNDS).then((hash) => {
+      applicant.password = hash;
+      applicant.save().then(() => {
+        res.status(202).json({
+          message: outputMessage
+        });
+      }).then(() => {
+        sendMail({
+          to: applicant.mailAddress,
+          subject: 'reset Password',
+          text: `Your new password is ${newPassword}`
+        });
+      });
     });
   });
 };

@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export function sendMail(mail) {
+exports.sendMail = function(mail) {
   return new Promise((resolve, reject) => {
     mail.from = EMAIL_SETTINGS.EMAIL;
     transporter.sendMail(mail, (error, info) => {

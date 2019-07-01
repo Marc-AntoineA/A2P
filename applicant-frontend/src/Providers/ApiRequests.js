@@ -97,6 +97,10 @@ exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
 };
 
+exports.postForgotPassword = function(data) {
+  return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
+};
+
 exports.getOpenedProcesses = function() {
   return getData(API_PATH + routes.GET_OPENED_PROCESSES);
 }

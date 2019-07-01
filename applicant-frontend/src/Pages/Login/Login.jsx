@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
-import { postLogin } from '../../Providers/ApiRequests.js';
+import { postLogin, postForgotPassword } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
 
 class Login extends Component {
@@ -19,6 +19,7 @@ class Login extends Component {
       'isLogged': false
     };
     this.login = this.login.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
@@ -38,6 +39,16 @@ class Login extends Component {
         });
       });
     }).catch((error) => {
+      this.props.handleError(error.message ? error.message : error.toString());
+    });
+  }
+
+  forgotPassword() {
+    postForgotPassword({ mail: this.state.mail })
+    .then((response) => {
+      console.log('if this is your adress. you should get an email with your password soon');
+    })
+    .catch((error) => {
       this.props.handleError(error.message ? error.message : error.toString());
     });
   }
@@ -78,9 +89,14 @@ class Login extends Component {
                     <Input id='1' type='password' onChange={ this.handleChangePassword }
                       className='form-control'></Input>
                   </Form.Group>
-                  <Button className='big' onClick={ this.login } variant="primary">
-                    Submit
-                  </Button>
+                  <Form.Group>
+                    <Button size='lg' onClick={ this.forgotPassword } variant="primary" block>
+                      Forgot Password
+                    </Button>
+                    <Button size='lg' onClick={ this.login } variant="primary" block>
+                      Submit
+                    </Button>
+                  </Form.Group>
                 </Form>
               </Container>
               <Footer version={this.props.version}/>

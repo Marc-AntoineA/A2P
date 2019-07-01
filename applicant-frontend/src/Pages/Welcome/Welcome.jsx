@@ -92,7 +92,7 @@ class Welcome extends Component {
               <img src={computer} alt='webdevelopment illustration'
                 width='350px'/>
               <Button href='/signin' variant='success' block disabled={!canApply}>Apply Now</Button>
-              <Button href='/login' variant='info' block canApply disabled={!canApply}>Already Registered</Button>
+              <Button href='/login' variant='info' block disabled={!canApply}>Already Registered</Button>
             </Col>
           </Row>
         </Container>
