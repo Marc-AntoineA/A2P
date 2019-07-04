@@ -22,7 +22,7 @@ class QuestionPage extends Component {
     data.questions.forEach((question, index) => {
       questions.push(
         <Question
-          key={ question.id }
+          key={ question._id }
           data={ question }
           questionIndex={ index }
           onChange={ this.handleChangeValue }

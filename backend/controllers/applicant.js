@@ -48,9 +48,12 @@ exports.createApplicant = (req, res, next) => {
         status: 'pending',
         process: process,
       });
+      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
         res.status(201).json({
-          message: 'Applicant created successfully'
+          message: 'Applicant created successfully',
+          id: applicant._id,
+          token: token
         });
       }).catch((error) => {
         res.status(500).json({

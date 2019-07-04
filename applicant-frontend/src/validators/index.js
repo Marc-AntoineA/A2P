@@ -2,7 +2,7 @@
 export function checkPassword(password) {
   if (password === undefined) return false;
   const checkedCharacters = [/[A-Z]/, /[a-z]/, /[0-9]/];//, /[?|!|@|#|$|%|^|&|*|(|)|-|_]/];
-  const nbOccurences = [0, 0, 0];;
+  const nbOccurences = [0, 0, 0];
   const minLength = 10;
   if (password.length < minLength)
     return false;
@@ -22,9 +22,10 @@ export function checkPassword(password) {
   return true;
 }
 
+// Regex from http://phoneregex.com
 export function checkPhone(value) {
   if (value === undefined) return false;
-  return /^\+\d{11}$/.test(value);
+  return /\+(9[976]\d|8[987530]\d|6[987]\d|5[90]\d|42\d|3[875]\d|2[98654321]\d|9[8543210]|8[6421]|6[6543210]|5[87654321]|4[987654310]|3[9643210]|2[70]|7|1)\d{1,14}$/.test(value);
 }
 
 export function checkMailAddress(value) {

@@ -10,6 +10,8 @@ import Footer from '../../Components/Footer/Footer.jsx';
 import { postLogin, postForgotPassword } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
 
+const TEXTS = require('../../static.json')
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -29,7 +31,7 @@ class Login extends Component {
   }
 
   login() {
-    postLogin({mail: this.state.mail, password: this.state.password})
+    postLogin({mail: this.state.mail.trim(), password: this.state.password})
     .then((response) => {
       this.props.handleLogin(response)
       .then(() => {
@@ -37,19 +39,20 @@ class Login extends Component {
           prevState.isLogged = true; 
           return prevState;
         });
+        this.props.handleModal(TEXTS.SUCCESS_MESSAGES.LOGGED_IN, 'Success');
       });
     }).catch((error) => {
-      this.props.handleError(error.message ? error.message : error.toString());
+      this.props.handleModal(error.message ? error.message : error.toString());
     });
   }
 
   forgotPassword() {
-    postForgotPassword({ mail: this.state.mail })
+    postForgotPassword({ mail: this.state.mail.trim() })
     .then((response) => {
-      console.log('if this is your adress. you should get an email with your password soon');
+      this.props.handleModal(TEXTS.SUCCESS_MESSAGES.FORGOT_PASSWORD, 'Success');
     })
     .catch((error) => {
-      this.props.handleError(error.message ? error.message : error.toString());
+      this.props.handleModal(error.message ? error.message : error.toString(), 'Error');
     });
   }
 
@@ -90,11 +93,11 @@ class Login extends Component {
                       className='form-control'></Input>
                   </Form.Group>
                   <Form.Group>
-                    <Button size='lg' onClick={ this.forgotPassword } variant="primary" block>
-                      Forgot Password
-                    </Button>
                     <Button size='lg' onClick={ this.login } variant="primary" block>
                       Submit
+                    </Button>
+                    <Button size='lg' onClick={ this.forgotPassword } variant="dark" block>
+                      Forgot Password
                     </Button>
                   </Form.Group>
                 </Form>

@@ -9,8 +9,10 @@ exports.saveLogin = (id, token) => {
 };
 
 exports.logout = () => {
+  let wasConnected = this.getLogin().id != undefined && this.getLogin().token != undefined;
   localStorage.removeItem('id');
   localStorage.removeItem('token');
+  return wasConnected;
 }
 
 exports.getLogin = () => {

@@ -58,7 +58,7 @@ class StepForm extends Component {
             return prevState;
           });
         }).catch((err) => {
-          this.props.handleError(err.toString());
+          this.props.handleModal(err.toString());
         });
       } else {
         ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
@@ -68,7 +68,7 @@ class StepForm extends Component {
             return prevState;
           });
         }).catch((error) => {
-          this.props.handleError(error.message ? error.message : error.toString());
+          this.props.handleModal(error.message ? error.message : error.toString());
         });
       }
   }
@@ -79,7 +79,6 @@ class StepForm extends Component {
   }
 
   componentWillMount() {
-
     if (this.isNotAuthorized()) {
       this.setState((prevState) => {
         prevState.redirectPath = '/login';
@@ -87,14 +86,13 @@ class StepForm extends Component {
       });
       return;
     }
-    document.addEventListener("keydown", this.handleKeyDown);
-    document.addEventListener("touchstart", this.handleTouchStart);
-    document.addEventListener("touchmove", this.handleTouchMove);
-
   }
 
   componentDidMount() {
     this.getFormData();
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("touchstart", this.handleTouchStart);
+    document.addEventListener("touchmove", this.handleTouchMove);
   }
 
   componentWillUnmount() {
@@ -148,7 +146,7 @@ class StepForm extends Component {
   nextPage() {
     if (this.state.currentPage >= this.state.step.length) return;
     if (!this.checkCurrentRequiredAndFormatQuestions()) {
-      this.props.handleError(TEXTS.ERROR_REQUIRED_QUESTIONS);
+      this.props.handleModal(TEXTS.ERROR_REQUIRED_QUESTIONS);
       return;
     }
     this.setState((prevState) => {
@@ -217,24 +215,41 @@ class StepForm extends Component {
     return true;
   }
 
-  // TODO
   sendForm(confirm) {
-    if (!this.checkCurrentRequiredAndFormatQuestions()) return;
     const promise = this.props.index === undefined ?
       ApiRequests.postSigninForm(this.state.step)
       :
       ApiRequests.putStepForm(this.props.user, this.props.index, this.state.step, confirm);
 
     promise.then((response) => {
-      this.setState((prevState) => {
-        prevState.redirectPath = '/summary';
-        return prevState;
-      });
+      if (this.props.index === undefined) {
+        this.props.handleLogin({'id': response.id, 'token': response.token})
+        .then(() => {
+          this.setState((prevState) => {
+            prevState.redirectPath = '/summary';
+            return prevState;
+          });
+        });
+      } else {
+        this.setState((prevState) => {
+          prevState.redirectPath = '/summary';
+          return prevState;
+        });
+      }
+
+      let successMessage = '';
+      if (this.props.index === undefined)
+        successMessage = TEXTS.SUCCESS_MESSAGES.APPLICATION;
+      else if (confirm)
+        successMessage = TEXTS.SUCCESS_MESSAGES.SUBMITTING_FORM;
+      else
+        successMessage = TEXTS.SUCCESS_MESSAGES.SAVING_FORM;
+      this.props.handleModal(successMessage, 'Success');
     })
     .catch((error) => {
-      this.props.handleError(error.message ? error.message : error.toString());
+      this.props.handleModal(error.message ? error.message : error.toString());
     }).catch((error) => {
-      this.props.handleError(error.toString());
+      this.props.handleModal(error.toString());
     });
   }
 
@@ -244,6 +259,7 @@ class StepForm extends Component {
   }
 
   submitForm() {
+    if (!this.checkCurrentRequiredAndFormatQuestions()) return;
     const confirm = true;
     this.sendForm(confirm);
   }
@@ -281,7 +297,7 @@ class StepForm extends Component {
     const pages = this.state.step.map((page, index) => {
       return(
         <QuestionPage
-          key={ page.id }
+          key={ page._id }
           pageIndex={ index }
           data={ page }
           hidden={ index + 1 !== this.state.currentPage }
@@ -302,19 +318,19 @@ class StepForm extends Component {
         </ProgressBar>
         <Container>
           { pages }
-          <div class='buttons-flexbar'>
+          <div className='buttons-flexbar'>
             {this.state.currentPage !== 1 ?
               <Button onClick={ this.previousPage } size='lg' className='fixed-width'>Previous</Button> : ''}
             {this.state.currentPage !== pages.length ?
               <Button onClick={ this.nextPage } size='lg' className='fixed-width'>Next</Button> : ''}
               {
-                this.state.currentPage === pages.length && this.state.canBeEdited && this.props.index !== undefined ?
+                this.state.canBeEdited && this.props.index !== undefined ?
                   <Button
                     onClick={ this.saveForm }
                     size='lg'
                     variant='success'
                     className='fixed-width'>
-                    Save
+                    Save for later
                   </Button>
                   :
                   ''
@@ -326,7 +342,7 @@ class StepForm extends Component {
                   size='lg'
                   variant='success'
                   className='fixed-width'>
-                  Submit
+                  Submit (definitive)
                 </Button>
                 :
                 ''

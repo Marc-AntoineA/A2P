@@ -54,6 +54,7 @@ li.step-element::before {
   list-style: none;
   width: max-content;
   margin: auto;
+  padding-left: 0px;
 }
 
 .warning-box {
