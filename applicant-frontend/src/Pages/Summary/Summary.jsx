@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { Container, Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
+import Handlebars  from 'handlebars';
 import { Redirect } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +14,8 @@ import Footer from '../../Components/Footer/Footer.jsx';
 import ApiRequests from '../../Providers/ApiRequests';
 import './styles.css';
 import Moment from 'moment';
+
+const TEXTS = require('../../static.json');
 
 class Summary extends Component {
 
@@ -32,6 +35,8 @@ class Summary extends Component {
         prevState.redirectPath = '/login';
       });
     }
+    this.welcomeTemplate = Handlebars.compile(TEXTS.SUMMARY_VIEW.WELCOME_MESSAGE);
+    this.deadlineTemplate = Handlebars.compile(TEXTS.SUMMARY_VIEW.DEADLINE_TEXT);
   }
 
   getDeadline() {
@@ -105,9 +110,28 @@ class Summary extends Component {
       <div>
         <Header user={ this.props.user }/>
         <Container>
-          <h2>Your Progress { personalData.name }</h2>
+          <h2>{ this.welcomeTemplate({ name: personalData.name }) }</h2>
+          <p>{ TEXTS.SUMMARY_VIEW.WELCOME_DESCRIPTION }</p>
           <div className='warning-box'>
-            <FontAwesomeIcon icon={faExclamationTriangle} />Deadline { this.getDeadline() }
+            <FontAwesomeIcon icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
+          </div>
+          <div className='help-box'>
+            <h3>Some help</h3>
+            { TEXTS.SUMMARY_VIEW.HELP_NOTE }
+            <ul className='help-list'>
+              <li>
+                <span className='small-icon-box todo'>2</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.TODO_ICON_DESCRIPTION }
+              </li>
+              <li>
+                <span className='small-icon-box pending'>...</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.PENDING_ICON_DESCRIPTION }
+              </li>
+              <li>
+                <span className='small-icon-box validated'>&#x2713;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.VALIDATED_ICON_DESCRIPTION }
+              </li>
+              <li>
+                <span className='small-icon-box rejected'>&#x2715;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.REJECTED_ICON_DESCRIPTION }
+              </li>
+            </ul>
           </div>
           <div id='process'>
             <ol className='steps-list'>

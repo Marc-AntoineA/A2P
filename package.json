@@ -1,6 +1,6 @@
 {
-  "name": "backend",
-  "version": "0.0.0",
+  "name": "A2P",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "install": "cd superviser-frontend && npm install && cd ../applicant-frontend && npm install && cd ../backend && npm install",

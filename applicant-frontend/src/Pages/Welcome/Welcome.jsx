@@ -15,6 +15,8 @@ import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
+const TEXTS = require('../../static.json').WELCOME_VIEW;
+
 library.add(fab);
 
 class Welcome extends Component {
@@ -57,42 +59,39 @@ class Welcome extends Component {
         <Container>
           <Row>
             <Col>
-              <h2 className='centered-title'>Full Stack Web Development Course</h2>
-              <p>
-                Learn how to design and develop websites both Front and Back end
-                with the latest technologies
-              </p>
+              <h2 className='centered-title'>{ TEXTS.TITLE }</h2>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.DESCRIPTION }}></div>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.OFFICE_LOCATION }}></div>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.ANY_QUESTION}}></div>
 
-              <div className='citation'>
-                <div className='left-citation'>155 classrooms hours - 24 / 7 Online Support...</div>
-                <div className='right-citation'>...to learn all these technologies in only 6 months.</div>
-              </div>
-
-              <div id='language-container'>
-                <FontAwesomeIcon className='technology html' icon={['fab', 'html5']}/>
-                <FontAwesomeIcon className='technology css' icon={['fab', 'css3-alt']}/>
-                <FontAwesomeIcon className='technology javascript' icon={['fab', 'js-square']}/>
-                <FontAwesomeIcon className='technology node' icon={['fab', 'node-js']}/>
-                <FontAwesomeIcon className='technology react' icon={['fab', 'react']}/>
-                <FontAwesomeIcon className='technology database' icon={faDatabase}/>
-              </div>
-
-              <p className='big'>Free For All Students</p>
-              <h2 className='centered-title'>Opened Locations</h2>
+              <h2 className='centered-title'>{ TEXTS.OPENED_LOCATIONS_LABEL }</h2>
               { canApply ?
                 <div id='current-locations'>
                   { processesElements }
                 </div>
                 :
-                <p>No locations are currently opened. Please come back in few days</p>
+                <p>{ TEXTS.NO_OPENED_LOCATIONS }</p>
               }
-
             </Col>
             <Col className='centered-col'>
-              <img src={computer} alt='webdevelopment illustration'
-                width='350px'/>
-              <Button href='/signin' variant='success' block disabled={!canApply}>Apply Now</Button>
-              <Button href='/login' variant='info' block canApply disabled={!canApply}>Already Registered</Button>
+            <div id='language-container'>
+              <FontAwesomeIcon className='technology html' icon={['fab', 'html5']}/>
+              <FontAwesomeIcon className='technology css' icon={['fab', 'css3-alt']}/>
+              <FontAwesomeIcon className='technology javascript' icon={['fab', 'js-square']}/>
+              <FontAwesomeIcon className='technology node' icon={['fab', 'node-js']}/>
+              <FontAwesomeIcon className='technology react' icon={['fab', 'react']}/>
+              <FontAwesomeIcon className='technology database' icon={faDatabase}/>
+            </div>
+            <div className='citation'>
+              <div className='left-citation'>155 classrooms hours - 24 / 7 Online Support...</div>
+              <div className='right-citation'>...to learn all these technologies in only 6 months.</div>
+            </div>
+
+            <p className='big'>Free For All Students</p>
+              <img src={computer} alt='webdevelopment illustration' width='350px'/>
+
+              <Button href='/signin' variant='success' block disabled={!canApply}>{ TEXTS.CREATE_ACCOUNT_BUTTON }</Button>
+              <Button href='/login' variant='info' block>{ TEXTS.ALREADY_REGISTERED_BUTTON }</Button>
             </Col>
           </Row>
         </Container>

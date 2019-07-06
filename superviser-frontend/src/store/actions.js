@@ -14,7 +14,8 @@ import {
   fetchApplicantsByProcessId,
   updateStepStatusByApplicantId,
   updateStepMarkByApplicantId,
-  updateStatusByApplicantId
+  updateStatusByApplicantId,
+  deleteApplicantById
 } from '../api/applicant.js';
 
 export default {
@@ -163,6 +164,18 @@ export default {
         if (code === 401) dispatch('LOGOUT');
         reject(error);
       });
+    });
+  },
+  DELETE_APPLICANT_BY_ID: ({ commit, state, dispatch }, { applicantId, processId }) => {
+    return new Promise((resolve, reject) => {
+      deleteApplicantById(state.user.token, applicantId)
+        .then(() => {
+          commit('REMOVE_APPLICANT', { processId, applicantId });
+          resolve();
+        }).catch(({ code, error}) => {
+          if (code == 401) dispatch('LOGOUT');
+          reject(error);
+        });
     });
   }
 }

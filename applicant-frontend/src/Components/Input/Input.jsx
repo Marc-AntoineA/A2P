@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMobileAlt, faCalendarAlt, faPen, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ReactDOM from 'react-dom';
 import { Form } from 'react-bootstrap';
 
 import './styles.css';
@@ -20,6 +21,20 @@ class Input extends Component {
     this.handleChangeRadio = this.handleChangeRadio.bind(this);
 
     this.initState(this.props.type);
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.stopPropagation();
+    }
+  }
+
+  componentDidMount() {
+    ReactDOM.findDOMNode(this).addEventListener("keydown", this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    ReactDOM.findDOMNode(this).addEventListener("keydown", this.handleKeyDown);
   }
 
   initState(type) {
@@ -139,7 +154,7 @@ class Input extends Component {
         </div>
         <input type="text"
           className="form-control"
-          placeholder="phone number"
+          placeholder="+11123123123"
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);

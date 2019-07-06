@@ -117,5 +117,8 @@ export default {
   },
   SET_APPLICANT_STATUS: (state, { processId, applicantId, status }) => {
     Vue.set(state.applicantsByProcessId[processId][applicantId], 'status', status);
-  }
+  },
+  REMOVE_APPLICANT: (state, { applicantId, processId }) => {
+    Vue.delete(state.applicantsByProcessId[processId], applicantId);
+  },
 }

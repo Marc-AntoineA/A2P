@@ -22,7 +22,7 @@ class QuestionPage extends Component {
     data.questions.forEach((question, index) => {
       questions.push(
         <Question
-          key={ question.id }
+          key={ question._id }
           data={ question }
           questionIndex={ index }
           onChange={ this.handleChangeValue }
@@ -34,7 +34,7 @@ class QuestionPage extends Component {
     return (
       <div className={this.props.hidden ? 'hidden' : ''}>
         <h2>{ data.label }</h2>
-        <p>{ data.caption }</p>
+        <p dangerouslySetInnerHTML={{  __html: data.caption }}></p>
         { questions }
       </div>
     );

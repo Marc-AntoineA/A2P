@@ -9,8 +9,10 @@ exports.saveLogin = (id, token) => {
 };
 
 exports.logout = () => {
+  let wasConnected = this.getLogin().id != undefined && this.getLogin().token != undefined;
   localStorage.removeItem('id');
   localStorage.removeItem('token');
+  return wasConnected;
 }
 
 exports.getLogin = () => {
@@ -95,6 +97,10 @@ exports.putStepForm = function(user, index, data, confirm) {
 
 exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
+};
+
+exports.postForgotPassword = function(data) {
+  return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
 };
 
 exports.getOpenedProcesses = function() {

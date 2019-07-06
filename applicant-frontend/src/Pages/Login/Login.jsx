@@ -3,12 +3,15 @@
 import React, { Component } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import Handlebars  from 'handlebars';
 
 import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
-import { postLogin } from '../../Providers/ApiRequests.js';
+import { postLogin, postForgotPassword } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
+
+const TEXTS = require('../../static.json');
 
 class Login extends Component {
   constructor(props) {
@@ -19,6 +22,7 @@ class Login extends Component {
       'isLogged': false
     };
     this.login = this.login.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
@@ -28,7 +32,7 @@ class Login extends Component {
   }
 
   login() {
-    postLogin({mail: this.state.mail, password: this.state.password})
+    postLogin({mail: this.state.mail.trim(), password: this.state.password})
     .then((response) => {
       this.props.handleLogin(response)
       .then(() => {
@@ -36,9 +40,21 @@ class Login extends Component {
           prevState.isLogged = true; 
           return prevState;
         });
+        this.props.handleModal(TEXTS.SUCCESS_MESSAGES.LOGGED_IN, 'Success');
       });
     }).catch((error) => {
-      this.props.handleError(error.message ? error.message : error.toString());
+      this.props.handleModal(error.message ? error.message : error.toString());
+    });
+  }
+
+  forgotPassword() {
+    postForgotPassword({ mail: this.state.mail.trim() })
+    .then((response) => {
+      const forgotPasswordTemplate = Handlebars.compile(TEXTS.SUCCESS_MESSAGES.FORGOT_PASSWORD);
+      this.props.handleModal(forgotPasswordTemplate({ mailAddress: this.state.mail.trim() }), 'Success');
+    })
+    .catch((error) => {
+      this.props.handleModal(error.message ? error.message : error.toString(), 'Error');
     });
   }
 
@@ -65,7 +81,7 @@ class Login extends Component {
             <div>
               <Header/>
               <Container>
-                <h2>Login</h2>
+                <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
                     <Form.Label>Email address</Form.Label>
@@ -78,9 +94,14 @@ class Login extends Component {
                     <Input id='1' type='password' onChange={ this.handleChangePassword }
                       className='form-control'></Input>
                   </Form.Group>
-                  <Button className='big' onClick={ this.login } variant="primary">
-                    Submit
-                  </Button>
+                  <Form.Group>
+                    <Button size='lg' onClick={ this.login } variant="primary" block>
+                      { TEXTS.LOGIN_VIEW.SUBMIT_BUTTON }
+                    </Button>
+                    <Button size='lg' onClick={ this.forgotPassword } variant="dark" block>
+                      { TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }
+                    </Button>
+                  </Form.Group>
                 </Form>
               </Container>
               <Footer version={this.props.version}/>

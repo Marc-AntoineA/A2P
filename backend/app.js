@@ -21,12 +21,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use('/administration/static-superviser/', express.static(path.join(__dirname, '../superviser-frontend/dist/static-superviser')));
 app.get('/administration*', function(req, res) {
-  // TODO also go on /administration (without / at the end)
   res.sendFile(path.join(__dirname, '../superviser-frontend/dist', 'index.html'));
 });
 
 app.use('/static-applicant/', express.static(path.join(__dirname, '../applicant-frontend/build')));
-app.get('/*', function(req, res) {
+app.get('/*', function(req, res, next) {
+  if (req.path.includes('applicant-api') || req.path.includes('superviser-api')) {
+    next();
+    return
+  }
+  console.log(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
   res.sendFile(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
 });
 

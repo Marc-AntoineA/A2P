@@ -23,6 +23,20 @@
 	margin-bottom: 20px;
 }
 
+@media screen and (max-width: 900px) {
+  .buttons-flexbar {
+    display:block;
+    clear:both;
+  }
+
+	.fixed-width {
+		width: 100%!important;
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+}
+
 .fixed-width {
-  width: 200px;
+  width: 300px;
+	font-size: 15px;
 }

@@ -84,7 +84,7 @@
         </div>
       </el-main>
     </el-container>
-    <aap-footer/>
+    <aap-footer version={this.props.version}/>
   </el-container>
 </template>
 
@@ -108,7 +108,7 @@ export default {
     currentDisplayedApplicant: { applicantId: '', processId: '' },
     selectedProcesses: [],
   }),
-  props: {},
+  props: [],
   beforeMount() {
     if (Object.values(this.$store.state.processes).length === 0) {
       this.$store.dispatch('FETCH_PROCESSES')
@@ -171,7 +171,6 @@ export default {
     },
     handleMultiselect() {
       const selectedIds = this.selectedProcesses.map((process) => process.id);
-      console.log('handle muliselect ', selectedIds);
       selectedIds.forEach((processId) => {
           if (!this.$store.state.applicantsByProcessId[processId])
             this.fetchApplicantsByProcessId(processId);

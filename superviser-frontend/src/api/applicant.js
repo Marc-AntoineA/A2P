@@ -38,3 +38,11 @@ export function updateStatusByApplicantId(token, applicantId, status) {
     token: token
   }, 'put');
 }
+
+export function deleteApplicantById(token, applicantId) {
+  return request({
+    url: API_PATH + `/delete/applicant/${applicantId}`,
+    data: undefined,
+    token: token
+  }, 'delete');
+}
