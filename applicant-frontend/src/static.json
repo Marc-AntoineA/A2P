@@ -1,0 +1,47 @@
+{
+  "ERROR_REQUIRED_QUESTIONS": "Please answer correctly to required questions",
+  "ERROR_VALID_PASSWORD": "Please provide a valid password. (10 characters: at least one uppercase, lowercase and one number)",
+  "ERROR_VALID_PHONE": "Please provide a valid phone number (for example +77123123123) no space",
+  "ERROR_VALID_EMAIL": "Please provide a valid email address",
+  "SUBMIT_FORM_VALIDATION": "Are you sure to submit this form? If you prefer to edit it later, save it.",
+  "FOOTER": {
+    "PHONE_NUMBER": "+30 210 30 03 124",
+    "EMAIL": "admissions(at)socialhackersacademy.org",
+    "ADRESS": "Anaxagora 3-5, Romantso (Office 204), Athens 105 52",
+    "YOUTUBE": "https://www.youtube.com/channel/UCO6KKzoJGeG92XZoHqX7H2w?",
+    "FACEBOOK": "https://www.facebook.com/socialhackersacademy/",
+    "INSTAGRAM": "https://www.instagram.com/socialhackersacademy/",
+    "LINKEDIN": "https://www.linkedin.com/company/social-hackers-academy/",
+    "GITHUB": "https://github.com/SocialHackersCodeSchool",
+    "TWITTER": "http://www.twitter.com/sochackacademy",
+    "FIRST_COLUMN": "<ul> <li>Registered Greek Charity</li> <li>Social Hackers Academy </li> <li>Company No: 1152385</li> <li>Tax No: 996964152</li> </ul>"
+  },
+  "SUCCESS_MESSAGES": {
+    "FORGOT_PASSWORD": "If a account is registered with this email address, you should get an email with your new password soon",
+    "APPLICATION": "Thank your for your application to Social Hackers Academy. You can now fill all the steps",
+    "SAVING_FORM": "Your progress has been saved, you can edit it later and submit it once it's finished",
+    "SUBMITTING_FORM": "Thank you for submitting your step, Social Hackers Academy will come back to you soon",
+    "LOGGED_IN": "You are now logged in. You can logout when you want with the button in the top right corner",
+    "LOGGED_OUT": "Your are now logged out"
+  },
+  "HOSTING": "joinus.socialhackersacademy.org",
+  "BUTTONS": {
+    "NEXT_PAGE": "Next questions",
+    "PREVIOUS_PAGE": "Previous questions",
+    "SAVE": "I want to leave, save my answers for later",
+    "SUBMIT": "I'm sure, submit my answers"
+  },
+  "SUMMARY_VIEW": {
+    "WELCOME_MESSAGE": "Welcome back {{ name }}",
+    "WELCOME_DESCRIPTION": "You will find in this page your current progress, you have to complete all this steps. You can do it in the order you prefer, save your answers and submit them later...",
+    "ICONS_DESCRIPTIONS":
+    {
+      "TODO_ICON_DESCRIPTION": "means that you have not yet completed this step, you have to answer and submit it.",
+      "PENDING_ICON_DESCRIPTION": "means that your answers are waiting a review from Social Hackers Academy, it would come soon",
+      "REJECTED_ICON_DESCRIPTION": "means that unfortunately, your answer was rejected by Social Hackers Academy: you can find on your emails some remarks on it. You have to submit it again",
+      "VALIDATED_ICON_DESCRIPTION": "means that your answer was accepted by Social Hackers Academy, perfect!"
+    },
+    "DEADLINE_TEXT": "You have to complete all this steps before the {{ deadline }}",
+    "HELP_NOTE": "If you have any question or find any bugs, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)"
+  }
+}
