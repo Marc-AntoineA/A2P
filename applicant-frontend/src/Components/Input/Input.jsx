@@ -154,7 +154,7 @@ class Input extends Component {
         </div>
         <input type="text"
           className="form-control"
-          placeholder="phone number"
+          placeholder="+11123123123"
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);

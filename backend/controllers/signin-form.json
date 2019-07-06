@@ -2,12 +2,12 @@
   {
     "_id": 0,
     "label": "Become a Student in Social Hackers Academy",
-    "caption": "Welcome to the application form for the third Social Hackers Academy class. This class will run once per week but will require you to put in up 10 hours of your time a week. The course will run for six months and is completely free. You can see the whole application process here: http://socialhackersacademy.org/application-process/ If you have any questions please email me at: admissions@socialhackersacademy.org",
+    "caption": "Dear Student, <br/>Thank you for choosing Social Hackers Academy to study and learn how to code! The class you are going to apply for will take place 3 afternoons/week, from 6-8 pm or 8-10 pm. You need to study, complete your homework, in order to graduate! Our teachers will be always available for questions you might have and support you in the lessons! <br/>Now, you need to enter your personal information, in order to enter the platform to complete your application.<br/> Good luck!",
     "questions": []
   },
   {
     "_id": 1,
-    "label": "Where do you want to become a student?",
+    "label": "In which city do you apply to participate?",
     "questions": [
       {
         "_id": 18,
@@ -20,42 +20,38 @@
   },
   {
     "_id": 2,
-    "label": "Personal information",
+    "label": "Enter Your Personal information",
     "caption":"",
     "questions": [
       {
         "_id": 0,
-        "label": "Your name",
-        "caption":"",
+        "label": "Your Name",
         "type": "inline",
         "mandatory": true
       },
       {
         "_id": 1,
-        "label" : "Password",
-        "caption":"",
-        "type": "password",
+        "label" : "Your Phone Number (we'll only contact you through WhatsApp)",
+        "type": "phone",
         "mandatory": true
       }
     ]
   },
   {
     "_id": 3,
-    "label": "Contact information",
+    "label": "Enter your e-mail & Password",
     "caption":"",
     "questions": [
       {
         "_id": 3,
-        "label": "Your email address",
-        "caption":"",
+        "label": "Your e-mail address",
         "type": "email",
         "mandatory": true
       },
       {
         "_id": 4,
-        "label": "Your phone number",
-        "caption": "we'll only contact you through WhatsApp",
-        "type": "phone",
+        "label": "Your password (Choose a password with letters & numbers and that you can easily remember it)",
+        "type": "password",
         "mandatory": true
       }
     ]

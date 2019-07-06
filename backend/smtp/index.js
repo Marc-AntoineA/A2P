@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const Email = require('email-templates');
 const EMAIL_SETTINGS = require('../settings.json').EMAIL_SETTINGS;
 
 const transporter = nodemailer.createTransport({
@@ -16,6 +17,13 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const email = new Email({
+  message: {
+    from: EMAIL_SETTINGS.EMAIL
+  },
+  transport: transporter
+});
+
 exports.sendMail = function(mail) {
   return new Promise((resolve, reject) => {
     mail.from = EMAIL_SETTINGS.EMAIL;
@@ -25,5 +33,22 @@ exports.sendMail = function(mail) {
       else
         resolve(info);
     })
+  });
+}
+
+exports.sendApplicationEmail = function(to, name, deadline, location) {
+  return new Promise((resolve, reject) => {
+    email.send({
+      template: 'application',
+      message: {
+        to: to,
+        from: EMAIL_SETTINGS.EMAIL
+      },
+      locals: {
+        name: name,
+        deadline: deadline
+      }
+    }).then((response) => { resolve(response); })
+    .catch((error) => { reject(error); });
   });
 }

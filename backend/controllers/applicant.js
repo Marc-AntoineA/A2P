@@ -31,9 +31,9 @@ exports.createApplicant = (req, res, next) => {
   const campaignIndex = body[1].questions[0].answer;
   const campaign = body[1].questions[0].choices[campaignIndex];
   const name = body[2].questions[0].answer;
-  const password = body[2].questions[1].answer;
+  const phoneNumber = body[2].questions[1].answer;
   const mailAddress = body[3].questions[0].answer;
-  const phoneNumber = body[3].questions[1].answer;
+  const password = body[3].questions[1].answer;
 
   Process.findOne({
     label: campaign
@@ -115,8 +115,8 @@ exports.resetPassword = (req, res, next) => {
     mailAddress: mailAddress
   }).then((applicant) => {
     if (!applicant) {
-      return res.status(401).json({
-        error: {message: outputMessage}
+      return res.status(200).json({
+        message: outputMessage
       });
     }
     // todo 1. password generator
@@ -125,7 +125,7 @@ exports.resetPassword = (req, res, next) => {
     bcrypt.hash(newPassword, BCRYPT_SALTROUNDS).then((hash) => {
       applicant.password = hash;
       applicant.save().then(() => {
-        res.status(202).json({
+        res.status(200).json({
           message: outputMessage
         });
       }).then(() => {

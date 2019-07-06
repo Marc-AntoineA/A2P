@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import Handlebars  from 'handlebars';
 
 import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
@@ -10,7 +11,7 @@ import Footer from '../../Components/Footer/Footer.jsx';
 import { postLogin, postForgotPassword } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
 
-const TEXTS = require('../../static.json')
+const TEXTS = require('../../static.json');
 
 class Login extends Component {
   constructor(props) {
@@ -49,7 +50,8 @@ class Login extends Component {
   forgotPassword() {
     postForgotPassword({ mail: this.state.mail.trim() })
     .then((response) => {
-      this.props.handleModal(TEXTS.SUCCESS_MESSAGES.FORGOT_PASSWORD, 'Success');
+      const forgotPasswordTemplate = Handlebars.compile(TEXTS.SUCCESS_MESSAGES.FORGOT_PASSWORD);
+      this.props.handleModal(forgotPasswordTemplate({ mailAddress: this.state.mail.trim() }), 'Success');
     })
     .catch((error) => {
       this.props.handleModal(error.message ? error.message : error.toString(), 'Error');
@@ -79,7 +81,7 @@ class Login extends Component {
             <div>
               <Header/>
               <Container>
-                <h2>Login</h2>
+                <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
                     <Form.Label>Email address</Form.Label>
@@ -94,10 +96,10 @@ class Login extends Component {
                   </Form.Group>
                   <Form.Group>
                     <Button size='lg' onClick={ this.login } variant="primary" block>
-                      Submit
+                      { TEXTS.LOGIN_VIEW.SUBMIT_BUTTON }
                     </Button>
                     <Button size='lg' onClick={ this.forgotPassword } variant="dark" block>
-                      Forgot Password
+                      { TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }
                     </Button>
                   </Form.Group>
                 </Form>
