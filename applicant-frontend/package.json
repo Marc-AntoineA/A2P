@@ -1,6 +1,6 @@
 {
   "name": "applicant-frontend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "homepage": "http://localhost:3300/static-applicant/",
   "dependencies": {

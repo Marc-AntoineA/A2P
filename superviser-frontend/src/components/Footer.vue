@@ -15,6 +15,9 @@
             </a>
           )
         </p>
+        <p> <!-- TODO compute it from package.json -->
+          Version 0.2.0
+        </p>
       </el-col>
       <el-col :span="8">
         <ul class='links-list'>
@@ -42,7 +45,7 @@ library.add(faGithub);
 
 export default {
   name: 'aap-footer',
-  props: [  ],
+  props: [],
 }
 </script>
 

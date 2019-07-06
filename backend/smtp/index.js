@@ -21,34 +21,47 @@ const email = new Email({
   message: {
     from: EMAIL_SETTINGS.EMAIL
   },
-  transport: transporter
+  transport: transporter,
+  send: true
 });
 
-exports.sendMail = function(mail) {
-  return new Promise((resolve, reject) => {
-    mail.from = EMAIL_SETTINGS.EMAIL;
-    transporter.sendMail(mail, (error, info) => {
-      if (error)
-        reject(error);
-      else
-        resolve(info);
-    })
-  });
-}
-
-exports.sendApplicationEmail = function(to, name, deadline, location) {
+function sendMail(to, template, locals) {
   return new Promise((resolve, reject) => {
     email.send({
-      template: 'application',
+      template: template,
       message: {
-        to: to,
-        from: EMAIL_SETTINGS.EMAIL
+        to: to
       },
-      locals: {
-        name: name,
-        deadline: deadline
-      }
+      locals: locals
     }).then((response) => { resolve(response); })
     .catch((error) => { reject(error); });
   });
 }
+
+exports.sendApplicationMail = function(to, name, deadline, location) {
+  return sendMail(to, 'application', { name, deadline, location });
+};
+
+exports.sendAcceptedMail = function(to, name, campaignName) {
+  return sendMail(to, 'accepted', { name, campaignName});
+};
+
+exports.sendRejectedMail = function(to, name, campaignName) {
+  return sendMail(to, 'rejected', { name, campaignName });
+};
+
+exports.sendResetPasswordMail = function(to, name, password, campaignName) {
+  return sendMail(to, 'reset_password', { name, password, campaignName})
+};
+
+exports.sendReceivedStepMail = function(to, name, stepName, campaignName, location) {
+  return sendMail(to, 'step_received', { name, stepName, campaignName, location });
+};
+
+exports.sendAcceptedStepMail = function(to, name, stepName, campaignName, location) {
+  return sendMail(to, 'step_accepted', { name, stepName, campaignName, location });
+}
+
+exports.sendRejectedStepMail = function(to, name, stepName, campaignName, location) {
+  return sendMail(to, 'step_rejected', { name, stepName, campaignName, location });
+};

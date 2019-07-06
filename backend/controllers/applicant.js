@@ -8,12 +8,19 @@ const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
-const { sendMail } = require('../smtp/');
 
 const signinForm = require('./signin-form.json');
 
+const {
+  sendApplicationMail,
+  sendRejectedMail,
+  sendAcceptedMail,
+  sendRejectedStepMail,
+  sendAcceptedStepMail,
+  sendReceivedStepMail,
+  sendResetPasswordMail
+} = require('../smtp/');
 
-// TODO add dynamically the choices for the campaign
 exports.getSigninForm = (req, res, next) => {
   const today = new Date();
   Process.find({
@@ -50,6 +57,7 @@ exports.createApplicant = (req, res, next) => {
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
+        sendApplicationMail(mailAddress, name, process.deadline, process.location);
         res.status(201).json({
           message: 'Applicant created successfully',
           id: applicant._id,
@@ -74,7 +82,6 @@ exports.createApplicant = (req, res, next) => {
 
 // 401 Unauthorized error
 exports.login = (req, res, next) => {
-  console.log(req.body);
   const mailAddress = req.body.mail;
   const password = req.body.password;
   Applicant.findOne({
@@ -108,6 +115,16 @@ exports.login = (req, res, next) => {
   });
 };
 
+function generatePassword() {
+    var length = 10,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.random() * n);
+    }
+    return retVal;
+}
+
 exports.resetPassword = (req, res, next) => {
   const mailAddress = req.body.mail;
   const outputMessage = "An email was sent to this mail address. If you don't see it soon, please double check your email address or contact us";
@@ -119,9 +136,8 @@ exports.resetPassword = (req, res, next) => {
         message: outputMessage
       });
     }
-    // todo 1. password generator
-    // Todo 2. use emails templates
-    const newPassword = "1234567890";
+
+    const newPassword = generatePassword();
     bcrypt.hash(newPassword, BCRYPT_SALTROUNDS).then((hash) => {
       applicant.password = hash;
       applicant.save().then(() => {
@@ -129,11 +145,7 @@ exports.resetPassword = (req, res, next) => {
           message: outputMessage
         });
       }).then(() => {
-        sendMail({
-          to: applicant.mailAddress,
-          subject: 'reset Password',
-          text: `Your new password is ${newPassword}`
-        });
+        sendResetPasswordMail(applicant.mailAddress, applicant.name, newPassword, applicant.process.label);
       });
     });
   });
@@ -157,7 +169,6 @@ function checkAnswer(question, answer) {
   return true;
 }
 
-// TODO check construction of this step
 function editApplicantAnswers(userId, stepIndex, answers, confirm){
   return new Promise((resolve, reject) => {
     Applicant.findOne({_id: userId }).then((applicant) => {
@@ -197,12 +208,10 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
       // TODO add here automatic validation
       if (confirm)  {
         step.status = 'pending';
-        console.log(step.status);
+        sendReceivedStepMail(applicant.mailAddress, applicant.name, step.label, applicant.process.label, applicant.process.location);
       }
 
-      console.log('updating', JSON.stringify(applicant.process));
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
-        console.log(x);
         resolve();
         return;
       }).catch((error) => {
@@ -235,12 +244,10 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   const stepIndex = req.params.step;
   const answers = req.body;
   const confirm = true;
-  console.log('confirm and save');
   editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
       res.status(200).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
   }).catch((error) => {
-    console.log('199', error);
     res.status(500).json({ error: { message: error.message }});
   });
 }
@@ -320,10 +327,15 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
       res.status(500).json({ error: { message: 'Only steps in status pending can be validated.'}});
       return;
     }
-
-    Applicant.updateOne({ _id: applicantId }, {
+    Applicant.findOneAndUpdate({ _id: applicantId }, {
       [`process.steps.${stepIndex}.status`]: status
-    }).then(() => {
+    }).then((applicant) => {
+
+      if (status === 'validated')
+        sendAcceptedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
+      if (status === 'rejected')
+        sendRejectedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
+
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
       res.status(500).json({ error: error });
@@ -336,7 +348,6 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
 exports.updateStatusByApplicantId = (req, res, next) => {
   const applicantId = req.params.applicantId;
   const status = req.params.status;
-  console.log(applicantId);
   Applicant.findOne({ _id: applicantId })
   .then((applicant) => {
     if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
@@ -348,8 +359,13 @@ exports.updateStatusByApplicantId = (req, res, next) => {
         return;
       }
     }
-    Applicant.updateOne({ _id: applicantId }, { status: status })
-    .then(() => {
+    Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
+    .then((applicant) => {
+      if (status === 'validated')
+        sendAcceptedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+      if (status === 'rejected')
+        sendRejectedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+
       res.status(200).json({ message: `Status for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
       res.status(500).json({ error: error });
@@ -357,4 +373,19 @@ exports.updateStatusByApplicantId = (req, res, next) => {
   }).catch((error) => {
     res.status(404).json({ error: { message: error.toString() } });
   });
+};
+
+exports.deleteApplicantById = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  Applicant.findOneAndDelete({_id: applicantId})
+    .then((applicant) => {
+      if (!applicant) res.status(404).json({error: { message: `applicant ${applicantId} doesn't exist.`}});
+      res.status(200).json({
+        message: `Applicant ${applicantId} deleted successfully`
+      });
+    }).catch((error) => {
+      res.status(500).json({
+        error: error
+      });
+    });
 };

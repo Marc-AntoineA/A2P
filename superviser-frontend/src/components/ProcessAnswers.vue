@@ -53,6 +53,12 @@
             </el-table>
       </el-tab-pane>
     </el-tabs>
+    <div class='action-buttons'>
+      <el-button
+        type='danger' @click='deleteApplicant'>
+        Remove this student (definititve)
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -140,6 +146,28 @@ export default {
     },
     rejectStep(stepIndex) {
       this.changeStepStatus(stepIndex, 'rejected');
+    },
+    deleteApplicant() {
+      this.$confirm('Once an applicant is deleted, it is definitive', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.$store.dispatch('DELETE_APPLICANT_BY_ID', {
+            applicantId: this.applicantId,
+            processId: this.process._id
+          }).then(() => {
+            this.$emit('cancel');
+            this.$message({
+              type: 'info',
+              message: 'The applicant has been deleted'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, `Error while deliting this student`, {
+              confirmButtonText: 'OK'
+            });
+          });
+        });
     },
     noteStep(stepIndex) {
       this.$store.dispatch('UPDATE_MARK_STEP', {
