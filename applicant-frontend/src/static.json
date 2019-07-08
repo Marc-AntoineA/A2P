@@ -1,7 +1,7 @@
 {
   "ERROR_REQUIRED_QUESTIONS": "Please answer correctly to required questions",
   "ERROR_VALID_PASSWORD": "Please provide a valid password. (10 characters: at least one uppercase, lowercase and one number)",
-  "ERROR_VALID_PHONE": "Please provide a valid phone number (for example +77123123123) no space",
+  "ERROR_VALID_PHONE": "Please provide a valid phone number (for example +77123123123). Do not use spaces between the numbers!",
   "ERROR_VALID_EMAIL": "Please provide a valid email address",
   "SUBMIT_FORM_VALIDATION": "Are you sure to submit this form? If you prefer to edit it later, save it.",
   "FOOTER": {

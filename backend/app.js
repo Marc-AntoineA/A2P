@@ -16,7 +16,7 @@ app.use(cors({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-if (typeof(PhusionPassenger) === undefined) {
+if (typeof(PhusionPassenger) === 'undefined') {
 
   const mongoose = require('mongoose');
   const applicantRoutes = require('./routes/applicant');
@@ -38,7 +38,7 @@ if (typeof(PhusionPassenger) === undefined) {
   })
   .catch((error) => {
     console.log('Unable to connect to MongoDB!');
-    console.error(error)
+    console.error(error);
   });
 }
 
