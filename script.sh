@@ -27,15 +27,15 @@ echo "Step 2. Install the dependencies"
 #npm run install
 
 echo "Step 3. Build the frontends (applicant and superviser)"
-npm run build
+#npm run build
 
 echo "Step 4. Send the source code to the website through ftp"
 echo "Step 4.1. Sending applicant-frontend"
-ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "applicant-frontend" ./applicant-frontend/build/
+#ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "applicant-frontend" ./applicant-frontend/build/
 
 echo "Step 4.2. Sending superviser-frontend"
-ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "superviser-frontend" ./superviser-frontend/dist/
+#ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "superviser-frontend" ./superviser-frontend/dist/
 
 echo "Step 4.3. Sending backend"
 rm -r backend/node_modules
-#ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "." ./backend/
+ncftpput -R -v -u "$USER" -p "$PASSWORD" $FTP "." ./backend/
