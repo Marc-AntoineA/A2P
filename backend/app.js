@@ -15,19 +15,6 @@ app.use(cors({
 }));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/administration/static-superviser/', express.static(path.join(__dirname, '../superviser-frontend/dist/static-superviser')));
-app.get('/administration*', function(req, res) {
-  res.sendFile(path.join(__dirname, '../superviser-frontend/dist', 'index.html'));
-});
-
-app.use('/static-applicant/', express.static(path.join(__dirname, '../applicant-frontend/build')));
-app.get('/*', function(req, res, next) {
-  if (req.path.includes('applicant-api') || req.path.includes('superviser-api')) {
-    next();
-    return
-  }
-  res.sendFile(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
-});
 
 if (typeof(PhusionPassenger) === undefined) {
 
@@ -42,17 +29,31 @@ if (typeof(PhusionPassenger) === undefined) {
   MONGODB_URL += settings.DB_NAME + '?retryWrites=true';
 
   mongoose.connect(MONGODB_URL, { useNewUrlParser: true })
-    .then(() => {
-      console.log('Successfully connected to MongoDB!');
+  .then(() => {
+    console.log('Successfully connected to MongoDB!');
 
-      app.use('/applicant-api/', applicantRoutes);
-      app.use('/superviser-api/', superviserRoutes);
+    app.use('/applicant-api/', applicantRoutes);
+    app.use('/superviser-api/', superviserRoutes);
 
-    })
-    .catch((error) => {
-      console.log('Unable to connect to MongoDB!');
-      console.error(error)
-    });
+  })
+  .catch((error) => {
+    console.log('Unable to connect to MongoDB!');
+    console.error(error)
+  });
+}
+
+app.use('/administration/static-superviser/', express.static(path.join(__dirname, '../superviser-frontend/dist/static-superviser')));
+app.get('/administration*', function(req, res) {
+  res.sendFile(path.join(__dirname, '../superviser-frontend/dist', 'index.html'));
+});
+
+app.use('/static-applicant/', express.static(path.join(__dirname, '../applicant-frontend/build')));
+app.get('/*', function(req, res, next) {
+  if (req.path.includes('applicant-api') || req.path.includes('superviser-api')) {
+    next();
+    return
   }
+  res.sendFile(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
+});
 
 module.exports = app;
