@@ -1,13 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const path = require('path');
 
 const settings = require('./settings.json');
-
-const applicantRoutes = require('./routes/applicant');
-const superviserRoutes = require('./routes/superviser');
 
 const app = express();
 
@@ -30,14 +26,19 @@ app.get('/*', function(req, res, next) {
     next();
     return
   }
-  console.log(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
   res.sendFile(path.join(__dirname, '../applicant-frontend/build', 'index.html'));
 });
 
-if (typeof(PhusionPassenger) == 'undefined') {
+if (typeof(PhusionPassenger) === undefined) {
+
+  const mongoose = require('mongoose');
+  const applicantRoutes = require('./routes/applicant');
+  const superviserRoutes = require('./routes/superviser');
+
+
   let MONGODB_URL = 'mongodb+srv://' + settings.DB_USERNAME + ':';
   MONGODB_URL += settings.DB_PASSWORD + '@';
-  MONGODB_URL += settings.DB_HOST + '/';
+  MONGODB_URL += settings.DB_HOST + '/';
   MONGODB_URL += settings.DB_NAME + '?retryWrites=true';
 
   mongoose.connect(MONGODB_URL, { useNewUrlParser: true })
