@@ -40,4 +40,4 @@ server.on('listening', () => {
   console.log('listening on ' + bind);
 });
 
-server.listen(3300);
+server.listen(port);

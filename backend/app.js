@@ -31,12 +31,14 @@ if (typeof(PhusionPassenger) === 'undefined') {
   mongoose.connect(MONGODB_URL, { useNewUrlParser: true })
   .then(() => {
     console.log('Successfully connected to MongoDB!');
+
     app.use('/applicant-api/', applicantRoutes);
     app.use('/superviser-api/', superviserRoutes);
+
   })
   .catch((error) => {
     console.log('Unable to connect to MongoDB!');
-    console.error(error)
+    console.error(error);
   });
 }
 
