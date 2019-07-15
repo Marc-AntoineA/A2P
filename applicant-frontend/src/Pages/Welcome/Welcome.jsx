@@ -84,7 +84,7 @@ class Welcome extends Component {
             </div>
             <div className='citation'>
               <div className='left-citation'>155 classrooms hours - 24 / 7 Online Support...</div>
-              <div className='right-citation'>...to learn all these technologies in only 6 months.</div>
+              <div className='right-citation'>...to learn all these technologies in only 7 months.</div>
             </div>
 
             <p className='big'>Free For All Students</p>

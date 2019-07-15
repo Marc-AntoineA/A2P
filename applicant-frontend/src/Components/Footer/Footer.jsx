@@ -23,7 +23,15 @@ class Footer extends Component {
             </Col>
             <Col>
               <ul>
-                { TEXTS.EMAIL ? <li><FontAwesomeIcon className='footer-icon' icon={faEnvelope} /> {TEXTS.EMAIL }</li> : '' }
+                {
+                  TEXTS.EMAIL ?
+                  <li>
+                    <FontAwesomeIcon className='footer-icon' icon={faEnvelope}/>
+                    <a href={'mailto:' + TEXTS.EMAIL }>{ TEXTS.EMAIL }</a>
+                  </li>
+                  :
+                  ''
+                }
                 { TEXTS.PHONE_NUMBER ? <li><FontAwesomeIcon className='footer-icon' icon={faMobileAlt} /> { TEXTS.PHONE_NUMBER }</li> : '' }
                 { TEXTS.ADRESS ? <li><FontAwesomeIcon className='footer-icon' icon={faMapMarkerAlt} /> { TEXTS.ADRESS }</li> : '' }
                 <li><FontAwesomeIcon className='footer-icon' icon={faUserSecret} /><a href='/privacy-policy/'>Privacy Policy</a></li>
