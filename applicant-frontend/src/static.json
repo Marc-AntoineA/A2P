@@ -56,7 +56,7 @@
       "REJECTED_ICON_DESCRIPTION": "means that unfortunately, your answer was rejected by Social Hackers Academy: you can find on your emails some comments about it. You have to submit it again",
       "VALIDATED_ICON_DESCRIPTION": "means that your answer was accepted by Social Hackers Academy, perfect!"
     },
-    "DEADLINE_TEXT": "You have to complete all these steps before the {{I guess I will add here the Deadline, as soon we launch the applications?}}",
+    "DEADLINE_TEXT": "You have to complete all these steps before the {{ deadline }}",
     "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)"
   }
 }
