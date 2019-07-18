@@ -1,7 +1,7 @@
 {
   "ERROR_REQUIRED_QUESTIONS": "Please answer correctly to required questions.",
   "ERROR_VALID_PASSWORD": "Please provide a valid password. (10 characters: at least one uppercase, lowercase and one number)",
-  "ERROR_VALID_PHONE": "Please provide a valid phone number (for example +306934303600 +30 at the beginning for a Greek Number). Do note use spaces between the numbers!",
+  "ERROR_VALID_PHONE": "Please provide a valid phone number (for example +306934303600). Add +30 at the beginning for a Greek Number. Do note use spaces between the numbers!",
   "ERROR_VALID_EMAIL": "Please provide a valid email address (for example max@gmail.com).",
   "SUBMIT_FORM_VALIDATION": "Are you sure you want to submit your answer? If you want to leave and edit it later, save it.",
   "FOOTER": {
@@ -24,17 +24,17 @@
     "NO_OPENED_LOCATIONS": "No locations are currently opened. Please come back in few days",
     "DESCRIPTION": "<p> Apply in order to learn coding & work as a developer. You can apply for the class, if you really want (and need) to start working as a developer, in Greece or abroad and you are <ul> <li>Refugee & Migrant (asylum seeker or with residence permit)</li> <li> or 12-month unemployed (with OAED Card)</li> </ul> </p> <p> This course lasts for <b>7-months</b> and is <b>free of charge for you!</b> Classes take place, <b>3 afternoons per week</b>, from <b>6-8 pm</b> and/or <b>8-10pm</b>. <br/>  Please read the full details here before applying: <a href='https://socialhackersacademy.org/coding-school/' target='_blank'>socialhackersacademy.org/coding-school</a> </p>",
     "OFFICE_LOCATION": "Come to our classroom (<a href='https://goo.gl/maps/CqgKAahgkBV2AGFB7' target='_blank'>see on the map</a>) if you have questions or you need help in the application process! It is open every day from <b>11am - 6pm</b>.",
-    "ANY_QUESTION": "If you have any questions please email us at: <a href='mailto:admissions@socialhackersacademy.org'>admissions@socialhackersacademy.org</a>"
+    "ANY_QUESTION": "If you have any questions, please email us at: <a href='mailto:admissions@socialhackersacademy.org'>admissions@socialhackersacademy.org</a>"
   },
   "LOGIN_VIEW":{
-    "TITLE": "Enter your email & password you have have already created, to log in!",
-    "SUBMIT_BUTTON": "Submit",
+    "TITLE": "Enter your email & password you have already created, to log in!",
+    "SUBMIT_BUTTON": "Create my profil!",
     "FORGOT_PASSWORD_BUTTON": "I forgot my password"
   },
   "SUCCESS_MESSAGES": {
     "FORGOT_PASSWORD": "If an account is registered with the email address \"{{ mailAddress }}\", you should get an email there with your new password soon",
-    "APPLICATION": "Thank your for your creating your account in the paltform. You can now fill all the steps of the application process, to join the class!",
-    "SAVING_FORM": "Your progress has been saved, you can edit it later and submit it once it's finished",
+    "APPLICATION": "Thank your for your creating your account in the platform. You can now fill all the steps of the application process, to join the class!",
+    "SAVING_FORM": "Your progress has been saved, you can edit it later and submit it when you finish",
     "SUBMITTING_FORM": "Thank you for submitting your step, Social Hackers Academy Team will come back to you soon. In the meantime, please move on with the next application step!",
     "LOGGED_IN": "You are now logged in. You can log-out when you want with the button in the top right corner. Don't forget your password, to log-in in the future! ",
     "LOGGED_OUT": "Your are now logged out"
@@ -48,7 +48,7 @@
   },
   "SUMMARY_VIEW": {
     "WELCOME_MESSAGE": "Welcome back {{ name }}",
-    "WELCOME_DESCRIPTION": "In this page you will find your current progress, you have to complete all these steps. You can do it in the order you prefer. You can save your answers and submit them later, or submit them directly!",
+    "WELCOME_DESCRIPTION": "In this page, you will find your current progress, you have to complete all these steps. You can do it in the order you prefer. You can save your answers and submit them later, or submit them directly!",
     "ICONS_DESCRIPTIONS":
     {
       "TODO_ICON_DESCRIPTION": "means that you have not yet completed this step, you have to answer and submit it (the number is the index of the step)",
@@ -56,7 +56,7 @@
       "REJECTED_ICON_DESCRIPTION": "means that unfortunately, your answer was rejected by Social Hackers Academy: you can find on your emails some comments about it. You have to submit it again",
       "VALIDATED_ICON_DESCRIPTION": "means that your answer was accepted by Social Hackers Academy, perfect!"
     },
-    "DEADLINE_TEXT": "You have to complete all these steps before the {{ deadline }}",
+    "DEADLINE_TEXT": "You have to complete all these steps before the {{I guess I will add here the Deadline, as soon we launch the applications?}}",
     "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)"
   }
 }
