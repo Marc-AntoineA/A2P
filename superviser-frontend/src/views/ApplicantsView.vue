@@ -84,7 +84,7 @@
         </div>
       </el-main>
     </el-container>
-    <aap-footer version={this.props.version}/>
+    <aap-footer/>
   </el-container>
 </template>
 

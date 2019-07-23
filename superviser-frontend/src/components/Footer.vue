@@ -16,7 +16,7 @@
           )
         </p>
         <p> <!-- TODO compute it from package.json -->
-          Version 0.2.0
+          Version 1.0.0-dev
         </p>
       </el-col>
       <el-col :span="8">
