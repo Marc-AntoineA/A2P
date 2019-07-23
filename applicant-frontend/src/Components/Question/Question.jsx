@@ -22,7 +22,7 @@ class Question extends Component {
   failed() {
     if (!this.props.mandatoryFailed) return false;
     const data = this.props.data;
-    if (data.mandatory && (data.answer === '' || data.answer === -1)) {
+    if (data.mandatory && (data.answer === '' || data.answer === -1 || data.answer === null)) {
       this.failedMessage = 'Required Question';
       return true;
     }

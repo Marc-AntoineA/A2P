@@ -48,6 +48,9 @@
               <el-table-column label='Answer' prop='answer'>
                 <template slot-scope='scope'>
                   {{ parseAnswer(scope.row) }}
+                  <div class='words-counter' v-if='scope.row.type==="text"'>
+                    {{ nbWords(scope.row) }} words
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -123,6 +126,12 @@ export default {
         default:
           throw new Error(`undefined display type ${type}`);
       }
+    },
+    nbWords(question) {
+      const type = question.type;
+      if (type !== 'text') return 0
+      const answer = question.answer;
+      return answer.split(' ').length;
     },
     changeStepStatus(stepIndex, status){
       this.$store.dispatch('UPDATE_STATUS_STEP', {
@@ -272,5 +281,13 @@ export default {
 
 .edit-status {
   text-align: center;
+}
+
+.words-counter {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  color: #808080;
+  text-align: right;
 }
 </style>

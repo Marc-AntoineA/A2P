@@ -39,16 +39,22 @@ class Input extends Component {
 
   initState(type) {
     if (this.props.data && this.props.data.answer !== undefined) {
-      this.state = { 'currentValue': this.props.data.answer };
+      if (type !== 'text')
+        this.state = { 'currentValue': this.props.data.answer };
+      else
+        this.state = { 'currentValue': this.props.data.answer, 'nbWords': this.props.data.answer.split(' ').length };
       return;
     }
 
     switch (type) {
       case 'date':
-        this.state = {'currentValue': new Date()};
+        this.state = {'currentValue': null};
         break;
       case 'radio':
         this.state = {'currentValue': -1};
+        break;
+      case 'text':
+        this.state = { 'currentValue': '', 'nbWords': 0 };
         break;
       default:
         this.state = {'currentValue': ''};
@@ -62,6 +68,7 @@ class Input extends Component {
     const value = target.value;
     this.setState(prevState => {
       prevState.currentValue = value;
+      prevState.nbWords = value.split(' ').length
       return prevState;
     });
     this.props.onChange(value);
@@ -93,10 +100,13 @@ class Input extends Component {
 
   renderText() {
     return (
+      <div>
       <Form.Control as="textarea" rows="3"
         onChange={this.handleChangeTextInput}
         value={this.state.currentValue}
         disabled={this.props.disabled}/>
+        <div className='words-counter'> { this.state.nbWords } words</div>
+      </div>
     );
   }
 
