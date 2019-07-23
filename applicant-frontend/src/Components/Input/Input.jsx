@@ -78,7 +78,6 @@ class Input extends Component {
     if (this.props.disabled) return;
     this.setState((prevState) => {
       prevState.currentValue = date;
-      console.log(date);
       return prevState;
     });
     this.props.onChange(date);
