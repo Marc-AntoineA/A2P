@@ -45,7 +45,7 @@
         </div>
             <el-table :data='questionsForStep(stepIndex)'>
               <el-table-column label='Question' prop='label'></el-table-column>
-              <el-table-column label='Answer' prop='answer'>
+              <el-table-column label='Answer'>
                 <template slot-scope='scope'>
                   {{ parseAnswer(scope.row) }}
                   <div class='words-counter' v-if='scope.row.type==="text"'>
@@ -131,6 +131,7 @@ export default {
       const type = question.type;
       if (type !== 'text') return 0
       const answer = question.answer;
+      if (!answer) return 0;
       return answer.split(' ').length;
     },
     changeStepStatus(stepIndex, status){

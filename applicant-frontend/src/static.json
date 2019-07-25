@@ -28,7 +28,7 @@
   },
   "LOGIN_VIEW":{
     "TITLE": "Enter your email & password you have already created, to log in!",
-    "SUBMIT_BUTTON": "Create my profil!",
+    "SUBMIT_BUTTON": "Open my profile!",
     "FORGOT_PASSWORD_BUTTON": "I forgot my password"
   },
   "SUCCESS_MESSAGES": {
