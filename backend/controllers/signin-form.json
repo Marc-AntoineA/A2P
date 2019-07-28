@@ -1,17 +1,17 @@
 [
   {
     "_id": 0,
-    "label": "Become a Student in Social Hackers Academy",
-    "caption": "Dear Student, <br/>Thank you for choosing Social Hackers Academy to study and learn how to code! The class you are going to apply for will take place 3 afternoons/week, from 6-8 pm or 8-10 pm. You need to study, complete your homework, in order to graduate! Our teachers will be always available for questions you might have and support you in the lessons! <br/>Now, you need to enter your personal information, in order to enter the platform to complete your application.<br/> Good luck!",
+    "label": "Become a Student in Social Hackers Academy and learn how to code!",
+    "caption": "Dear Student, <br/>Thank you for choosing Social Hackers Academy to study and learn how to create websites and Internet Applications! <br> The class you are going to apply for will take place <b> 3 afternoons/week, from 6-8 pm or 8-10 pm</b>>/br>. You need to study, complete your homework, in order to graduate! Our teachers will be always available for questions you might have and support you in the lessons! <br/>Now, you need to enter your personal information, in order to enter the platform to complete your application.<br/> Good luck!",
     "questions": []
   },
   {
     "_id": 1,
-    "label": "In which city do you apply to participate?",
+    "label": "In which class do you apply to participate?",
     "questions": [
       {
         "_id": 18,
-        "label": "Please select one location",
+        "label": "Please select one class",
         "type": "radio",
         "mandatory": true,
         "choices": ["Athens", "Berlin", "Cap", "Madrid", "Crete"]
