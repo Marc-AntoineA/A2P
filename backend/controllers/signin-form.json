@@ -7,11 +7,11 @@
   },
   {
     "_id": 1,
-    "label": "In which city do you apply to participate?",
+    "label": "In which class do you apply to participate?",
     "questions": [
       {
         "_id": 18,
-        "label": "Please select one location",
+        "label": "Please select one class",
         "type": "radio",
         "mandatory": true,
         "choices": ["Athens", "Berlin", "Cap", "Madrid", "Crete"]
