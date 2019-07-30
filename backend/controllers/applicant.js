@@ -41,13 +41,11 @@ exports.createApplicant = (req, res, next) => {
   const phoneNumber = body[2].questions[1].answer;
   const mailAddress = body[3].questions[0].answer;
   const password = body[3].questions[1].answer;
-
   Process.findOne({
     label: campaign
   }).then(process => {
     bcrypt.hash(password, BCRYPT_SALTROUNDS).then((hash) => {
       const applicant = new Applicant({
-        campaign: campaign,
         name: name,
         password: hash,
         mailAddress: mailAddress,
@@ -284,7 +282,6 @@ exports.getAllApplicantsByProcessId = (req, res, next) => {
   Applicant.find({
     "process._id": processId
   }).then((applicants) => {
-    applicants.forEach((applicant) => {applicant.password = undefined});
     res.status(200).json(applicants);
   });
 };

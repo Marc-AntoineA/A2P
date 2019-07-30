@@ -4,38 +4,36 @@
       <aap-header></aap-header>
       <el-container>
         <aap-spinner :show="loading"></aap-spinner>
-        <el-main v-if='getProcess()'>
+        <el-main v-if='process'>
           <ul class='inline-list small'>
-            <li>Created at: {{ getProcess().createdAt | dateFormatter }}</li>
-            <li>Updated at: {{ getProcess().updatedAt | dateFormatter }}</li>
+            <li>Created at: {{ process.createdAt | dateFormatter }}</li>
+            <li>Updated at: {{ process.updatedAt | dateFormatter }}</li>
           </ul>
 
-          <el-input v-model='getProcess().label' class='process-label'
-            @change='incrementModifications()' :disabled='!editable'>
-             {{ getProcess().label }}
+          <el-input v-model='process.label' class='process-label'
+            @change='incrementModifications()'>
+             {{ process.label }}
           </el-input>
 
           <el-form :inline="true" class="option-form">
             <el-form-item label="Location:">
-              <el-input v-model='getProcess().location'
-                @change='incrementModifications()'
-                :disabled='!editable'/>
+              <el-input v-model='process.location'
+                @change='incrementModifications()'/>
             </el-form-item>
 
             <el-form-item label='Deadline'>
               <el-date-picker
-                v-model='getProcess().deadline'
+                v-model='process.deadline'
                 type="datetime"
                 placeholder="Select date and time"
                 default-time="23:00:00"
-                :disabled='!editable'>
-              </el-date-picker>
+                @change='incrementModifications()'/>
             </el-form-item>
 
             <el-form-item label='Status'>
-              <span :class='getProcess().status'>&#11044;</span>
-              {{ getProcess().status }}
-              <el-button v-if='getProcess().status === "draft"'
+              <span :class='process.status'>&#11044;</span>
+              {{ process.status }}
+              <el-button v-if='process.status === "draft"'
                 @click='openProcess'>Open
               </el-button>
             </el-form-item>
@@ -46,7 +44,7 @@
           </el-button>
 
           <el-collapse>
-            <el-collapse-item v-for='(step, stepIndex) in getProcess().steps'
+            <el-collapse-item v-for='(step, stepIndex) in process.steps'
               :key='stepIndex' :name='stepIndex'>
               <template slot="title">
                 <span v-if='editable' class='horizontal-toolbar'>
@@ -131,16 +129,19 @@ export default {
     loading: true,
     settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS },
     unsavedModifications: 0,
-    editable: false
+    editable: false,
+    deadlineEditable: false
   }),
-  methods: {
-    getProcess: function(){
+  computed: {
+    process: function() {
       const processId = this.$route.params.processId;
       const process = this.$store.state.processes[processId];
       return process;
-    },
+    }
+  },
+  methods: {
     saveProcess: function() {
-      const processId = this.getProcess()._id;
+      const processId = this.process._id;
         return new Promise((resolve, reject) => {
         this.$store.dispatch('PUT_PROCESS', processId)
           .then(() => {
@@ -159,20 +160,17 @@ export default {
         });
     },
     incrementModifications: function() {
-      if (!this.editable) {
-        console.log("Forbidden increment modifications");
-      }
       this.unsavedModifications++;
     },
     stepIdentifier(stepIndex) {
       return {
-        processId: this.getProcess()._id,
+        processId: this.process._id,
         stepIndex: stepIndex
       };
     },
     pageIdentifier(stepIndex, pageIndex) {
       return {
-        processId: this.getProcess()._id,
+        processId: this.process._id,
         stepIndex: stepIndex,
         pageIndex: pageIndex
       };
@@ -228,7 +226,7 @@ export default {
           type: 'warning'
         }).then(() => {
           this.saveProcess().then(() => {
-            this.$store.dispatch('OPEN_PROCESS', this.getProcess()._id)
+            this.$store.dispatch('OPEN_PROCESS', this.process._id)
               .then(() => {
                 this.$message({
                   type: 'info',
@@ -246,7 +244,7 @@ export default {
         }).catch(() => {
 
         });
-    }
+    },
   },
   beforeMount() {
     const processId = this.$route.params.processId;
