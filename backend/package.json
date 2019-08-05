@@ -12,6 +12,7 @@
     "debug": "~2.6.9",
     "email-templates": "^6.0.0",
     "express": "~4.16.0",
+    "fs": "0.0.1-security",
     "http-errors": "~1.6.2",
     "jsdom": "^13.2.0",
     "jsonwebtoken": "^8.5.0",
@@ -21,6 +22,7 @@
     "morgan": "~1.9.0",
     "nodemailer": "^6.1.0",
     "pug": "^2.0.4",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "xlsx": "^0.15.0"
   }
 }

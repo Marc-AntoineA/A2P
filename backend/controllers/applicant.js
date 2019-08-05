@@ -1,9 +1,11 @@
-'using strict';
+ 'using strict';
 
 const bcrypt = require('bcryptjs');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
 const jwt = require('jsonwebtoken');
 const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
+const XLSX = require('xlsx');
+const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
@@ -114,10 +116,10 @@ exports.login = (req, res, next) => {
 };
 
 function generatePassword() {
-    var length = 10,
+    const length = 10,
         charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
         retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
+    for (const i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.random() * n);
     }
     return retVal;
@@ -385,4 +387,89 @@ exports.deleteApplicantById = (req, res, next) => {
         error: error
       });
     });
+};
+
+exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
+  const processId = req.params.processId;
+  Applicant.find({
+    "process._id": processId
+  }).then((applicants) => {
+  Process.findOne({
+    "_id": processId
+  }).then((process) => {
+  if (!process) {
+    res.status(404).json({
+      error: { message: `No process with id ${process.id}`}
+    })
+  }
+  console.log(process);
+  const label = process.label;
+  console.log(label);
+  const wb = XLSX.utils.book_new();
+
+  // First row = user
+  const firstRow = ['User information', '', '', '', '', ''];
+  const secondRow =  ['Name', 'Mail', 'Phone', 'status', 'Date application', 'Last modification']
+
+  for (let stepIndex = 0; stepIndex < process.steps.length; stepIndex++) {
+    const step = process.steps[stepIndex];
+    if (step.pages.length === 0) continue;
+    firstRow.push(step.label);
+    for (let pageIndex=0; pageIndex < step.pages.length-1; pageIndex++) {
+      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+        firstRow.push('');
+      }
+    }
+
+    for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+      const page = step.pages[pageIndex];
+      for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
+        const question = page.questions[questionIndex];
+        secondRow.push(question.label);
+      }
+    }
+  }
+  /* make worksheet */
+  const ws_data = [
+    firstRow,
+    secondRow
+  ];
+
+  for (let applicantIndex=0; applicantIndex < applicants.length; applicantIndex++) {
+    const applicant = applicants[applicantIndex];
+    const applicantAnswers = [applicant.name, applicant.mailAddress, applicant.phoneNumber, applicant.status, applicant.createdAt, applicant.updatedAt];
+    for (let stepIndex = 0; stepIndex < applicant.process.steps.length; stepIndex++) {
+      const step = applicant.process.steps[stepIndex];
+      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+        const page = step.pages[pageIndex];
+        for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
+          const question = page.questions[questionIndex];
+
+          const answer = question.type === 'select' ? question.choices[question.answer] : question.answer;
+          applicantAnswers.push(answer);
+        }
+      }
+    }
+    ws_data.push(applicantAnswers);
+  }
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+
+  /* Add the worksheet to the workbook */
+  XLSX.utils.book_append_sheet(wb, ws, process.label);
+
+  const today = new Date();
+  const tmpFilename = 'tmp/out.xlsx';
+  XLSX.writeFile(wb, tmpFilename);
+  const filePath = tmpFilename;
+  const stat = fileSystem.statSync(filePath);
+  res.writeHead(200, {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Length': stat.size,
+      'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+  });
+  const readStream = fileSystem.createReadStream(filePath);
+  readStream.pipe(res);
+  });
+  });
 };

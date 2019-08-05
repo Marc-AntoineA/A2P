@@ -38,8 +38,13 @@
               <template slot-scope='scope'>
                 <router-link v-if='scope.row.status === "open"'
                    :to='{name: "applicantsInitialProcessId", params: {processId: scope.row._id} }'>
-                  <i class='el-icon-tickets big round-boxed'></i>
+                   <el-tooltip class="item" effect="dark" content="See applicants" placement="bottom">
+                     <i class='el-icon-tickets big round-boxed'/>
+                   </el-tooltip>
                 </router-link>
+                <el-tooltip v-if='scope.row.status === "open"' class="item" effect="dark" content="Download applicants" placement="bottom">
+                  <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
+                </el-tooltip>
                 <span v-if='scope.row.status === "draft"'>
                   Draft process
                 </span>
@@ -69,8 +74,7 @@
                   </el-tooltip>
                 </router-link>
                 <el-tooltip class="item" effect="dark" content="Delete this process" placement="bottom">
-                  <i class='el-icon-delete round-boxed big'
-                    @click='deleteProcess(scope.row._id)'></i>
+                  <i class='el-icon-delete round-boxed big' @click='deleteProcess(scope.row._id)'/>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="Create a copy of this process" placement="bottom">
                   <i class='el-icon-circle-plus-outline round-boxed big'
@@ -155,6 +159,9 @@ export default {
     },
     createCopy(processId) {
       this.$store.dispatch('CREATE_PROCESS_COPY', processId);
+    },
+    downloadApplicants(processId) {
+      console.log(`DOWNLOAD DOWNLOAD {}`, processId);
     }
   }
 }

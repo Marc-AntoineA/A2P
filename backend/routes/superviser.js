@@ -18,6 +18,7 @@ router.delete('/delete/applicant/:applicantId', auth, applicantCtrl.deleteApplic
 router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);
 
 router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
+router.get('/applicants/:processId/download', auth, applicantCtrl.getAllApplicantsByProcessIdExcelFile);
 
 router.put('/applicants/:applicantId/status/:status', auth, applicantCtrl.updateStatusByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
