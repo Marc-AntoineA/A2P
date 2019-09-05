@@ -1,4 +1,5 @@
-<template>
+
+gi<template>
   <div>
     <div class='edit-status'>
       <h3>Accept this student?</h3>
@@ -43,11 +44,13 @@
             <el-button type='info' @click='noteStep(stepIndex)'>Change Mark</el-button>
           </div>
         </div>
-            <el-table :data='questionsForStep(stepIndex)'>
+            <el-table :data='questionsForStep(stepIndex)' class='no-break'>
               <el-table-column label='Question' prop='label'></el-table-column>
               <el-table-column label='Answer'>
                 <template slot-scope='scope'>
-                  {{ parseAnswer(scope.row) }}
+                  <pre>
+                    {{ parseAnswer(scope.row) }}
+                  </pre>
                   <div class='words-counter' v-if='scope.row.type==="text"'>
                     {{ nbWords(scope.row) }} words
                   </div>
@@ -290,5 +293,9 @@ export default {
   font-weight: bold;
   color: #808080;
   text-align: right;
+}
+
+.no-break .cell {
+  word-break: normal;
 }
 </style>
