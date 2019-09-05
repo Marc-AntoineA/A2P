@@ -5,3 +5,12 @@
 .form-check {
   margin: 7px;
 }
+
+.words-counter {
+	text-align: right;
+	margin-top: 3px;
+	color: #808080;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 12px;
+}

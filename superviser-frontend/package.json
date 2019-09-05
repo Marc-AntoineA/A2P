@@ -1,6 +1,6 @@
 {
   "name": "superviser-frontend",
-  "version": "0.2.0",
+  "version": "1.0.0-dev",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
@@ -16,6 +16,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "core-js": "^2.5.7",
     "element-ui": "^2.6.1",
+    "fix": "0.0.6",
     "moment": "^2.24.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.6.6",

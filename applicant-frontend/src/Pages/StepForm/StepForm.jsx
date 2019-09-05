@@ -179,7 +179,7 @@ class StepForm extends Component {
     const questions = currentPage.questions;
     for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
       const question = questions[questionIndex];
-      if (question.mandatory && (question.answer === '' || question.answer === -1)) {
+      if (question.mandatory && (question.answer === '' || question.answer === -1 || question.answer === null)) {
         this.setState((prevState) => {
           prevState.mandatoryFailed = true;
           return prevState;
