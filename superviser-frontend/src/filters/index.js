@@ -14,9 +14,9 @@ export function phoneFormatter(value) {
   let result = '';
   let k = 0;
   for (k = 0; k < value.length / 3; k++) {
-    result += value.slice(1+ 3*k, 1 + 3*(k + 1));
+    result += value.slice(3*k, 3*(k + 1));
     result += ' ';
   }
-  result += value.slice(1 + 3*k, value.length);
+  result += value.slice(3*k, value.length);
   return result;
 }
