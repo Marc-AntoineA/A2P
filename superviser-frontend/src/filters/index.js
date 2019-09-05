@@ -10,6 +10,13 @@ export function dateFormatter(value) {
 
 export function phoneFormatter(value) {
   if (!value) return '';
-  return value.slice(0, 3) + ' ' + value.slice(3, 6) + ' '
-    + value.slice(6, 9) + ' ' + value.slice(9, 12);
+
+  let result = '';
+  let k = 0;
+  for (k = 0; k < value.length / 3; k++) {
+    result += value.slice(1+ 3*k, 1 + 3*(k + 1));
+    result += ' ';
+  }
+  result += value.slice(1 + 3*k, value.length);
+  return result;
 }
