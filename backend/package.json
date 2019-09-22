@@ -11,6 +11,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "email-templates": "^6.0.0",
+    "exceljs": "^2.0.1",
     "express": "~4.16.0",
     "fs": "0.0.1-security",
     "http-errors": "~1.6.2",

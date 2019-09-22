@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
 const jwt = require('jsonwebtoken');
 const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
-const XLSX = require('xlsx');
+const Excel = require('exceljs');
 const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
@@ -402,10 +402,7 @@ exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
       error: { message: `No process with id ${process.id}`}
     })
   }
-  console.log(process);
   const label = process.label;
-  console.log(label);
-  const wb = XLSX.utils.book_new();
 
   // First row = user
   const firstRow = ['User information', '', '', '', '', ''];
@@ -452,24 +449,66 @@ exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
     }
     ws_data.push(applicantAnswers);
   }
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  const workbook = new Excel.Workbook();
+  const worksheet = workbook.addWorksheet(process.label);
+  ws_data.forEach((row) => { console.log(row); worksheet.addRow(row)});
 
+  worksheet.views = [
+    { state: 'frozen', xSplit: 1, ySplit: 2 }
+  ];
 
-  /* Add the worksheet to the workbook */
-  XLSX.utils.book_append_sheet(wb, ws, process.label);
+  // Merging headers cells + header font
+  //for (let columnIndex=0; columnIndex)
+  worksheet.getRow(1).height = 20;
+  first = 0;
+  for (let columnIndex = 1; columnIndex < firstRow.length; columnIndex++) {
+    if(firstRow[columnIndex] === '') continue;
+    if (first + 1 === columnIndex) continue;
+    worksheet.mergeCells(1, first + 1, 1, columnIndex);
+    worksheet.getCell(1, first + 1).font = {
+      size: 15,
+      bold: true
+    };
+    first = columnIndex;
+  }
+  if (first + 1 !== firstRow.length)
+    worksheet.mergeCells(1, first + 1, firstRow.length);
+  worksheet.getCell(1, first + 1).font = {
+    size: 15,
+    bold: true
+  };
 
+  // Computing optimal width
+  secondRow.forEach((value, index) => {
+    worksheet.getColumn(1 + index).width = Math.max(16, value.length);
+    worksheet.getCell(2, 1 + index).font = {
+      italic: true
+    };
+  });
+  /*worksheet.autoFilter = {
+    from: {
+      row: 2,
+      column: 1
+    },
+    to: {
+      row: 2,
+      column: secondRow.length + 1
+    }
+  };*/
   const today = new Date();
   const tmpFilename = 'tmp/out.xlsx';
-  XLSX.writeFile(wb, tmpFilename);
-  const filePath = tmpFilename;
-  const stat = fileSystem.statSync(filePath);
-  res.writeHead(200, {
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'Content-Length': stat.size,
-      'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+  workbook.xlsx.writeFile(tmpFilename)
+    .then(() => {
+      const filePath = tmpFilename;
+      const stat = fileSystem.statSync(filePath);
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Length': stat.size,
+        'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+      });
+      const readStream = fileSystem.createReadStream(filePath);
+      readStream.pipe(res);
+    });
   });
-  const readStream = fileSystem.createReadStream(filePath);
-  readStream.pipe(res);
-  });
-  });
+});
 };

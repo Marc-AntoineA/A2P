@@ -164,7 +164,7 @@ export default {
       this.$store.dispatch('DOWNLOAD_EXCEL_ANSWERS', processId)
       .then((blob) => {
         console.log(blob);
-        const fileName = 'Answers';
+        const fileName = 'Answers.xlsx';
          if(window.navigator.msSaveOrOpenBlob) {
            window.navigator.msSaveBlob(blob, fileName);
          }else{
