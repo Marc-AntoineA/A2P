@@ -43,14 +43,21 @@ gi<template>
             <el-input-number v-model="stepsMark[stepIndex]" :min="0" :max="10"></el-input-number>
             <el-button type='info' @click='noteStep(stepIndex)'>Change Mark</el-button>
           </div>
+
+        </div>
+        <div class='feedback-box'>
+          <h5>Feedback</h5>
+          <textarea>
+
+          </textarea>
         </div>
             <el-table :data='questionsForStep(stepIndex)' class='no-break'>
               <el-table-column label='Question' prop='label'></el-table-column>
               <el-table-column label='Answer'>
                 <template slot-scope='scope'>
-                  <pre>
+                  <div class='answer-box'>
                     {{ parseAnswer(scope.row) }}
-                  </pre>
+                  </div>
                   <div class='words-counter' v-if='scope.row.type==="text"'>
                     {{ nbWords(scope.row) }} words
                   </div>
@@ -297,5 +304,25 @@ export default {
 
 .no-break .cell {
   word-break: normal;
+}
+
+.answer-box {
+  white-space: pre-wrap;
+}
+
+.feedback-box textarea {
+  display: block;
+  width: calc(100% - 30px);
+  height: calc(2.25rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 </style>
