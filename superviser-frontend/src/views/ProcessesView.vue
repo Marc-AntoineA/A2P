@@ -161,7 +161,27 @@ export default {
       this.$store.dispatch('CREATE_PROCESS_COPY', processId);
     },
     downloadApplicants(processId) {
-      console.log(`DOWNLOAD DOWNLOAD {}`, processId);
+      this.$store.dispatch('DOWNLOAD_EXCEL_ANSWERS', processId)
+      .then((blob) => {
+        console.log(blob);
+        const fileName = 'Answers';
+         if(window.navigator.msSaveOrOpenBlob) {
+           window.navigator.msSaveBlob(blob, fileName);
+         }else{
+           const downloadLink = window.document.createElement('a');
+           const contentTypeHeader = blob.type;
+           downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+           downloadLink.download = fileName;
+           document.body.appendChild(downloadLink);
+           downloadLink.click();
+           document.body.removeChild(downloadLink);
+          }
+      })
+      .catch((error) => {
+        this.$alert(error.message, 'Error while downloading process answers', {
+          confirmButtonText: 'OK'
+        });
+      });
     }
   }
 }

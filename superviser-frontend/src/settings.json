@@ -1,5 +1,5 @@
 {
-  "API_PATH": "https://joinsha-dev.marc-antoinea.fr/superviser-api",
+  "API_PATH": "http://localhost:3300/superviser-api",
   "GET_ALL_PROCESSES": "/processes",
   "GET_ONE_PROCESS": "/process/",
   "LOGIN": "/login",

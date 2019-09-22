@@ -46,3 +46,12 @@ export function deleteApplicantById(token, applicantId) {
     token: token
   }, 'delete');
 }
+
+export function downloadProcessAnswers(token, processId) {
+  return request({
+    url: API_PATH + `/applicants/${processId}/download`,
+    data: undefined,
+    token: token,
+    type: 'blob'
+  }, 'get');
+}

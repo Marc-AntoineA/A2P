@@ -15,7 +15,8 @@ import {
   updateStepStatusByApplicantId,
   updateStepMarkByApplicantId,
   updateStatusByApplicantId,
-  deleteApplicantById
+  deleteApplicantById,
+  downloadProcessAnswers
 } from '../api/applicant.js';
 
 export default {
@@ -177,5 +178,16 @@ export default {
           reject(error);
         });
     });
+  },
+  DOWNLOAD_EXCEL_ANSWERS: ({ commit, state, dispatch }, processId) => {
+    return new Promise((resolve, reject) => {
+      downloadProcessAnswers(state.user.token, processId)
+        .then((response) => {
+          resolve(response);
+        }).catch(({ code, error }) => {
+          if (code == 401) dispatch('LOGOUT');
+          reject(error);
+        })
+    })
   }
 }
