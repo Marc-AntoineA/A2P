@@ -16,7 +16,8 @@ import {
   updateStepMarkByApplicantId,
   updateStatusByApplicantId,
   deleteApplicantById,
-  downloadProcessAnswers
+  downloadProcessAnswers,
+  getEmailTemplate
 } from '../api/applicant.js';
 
 export default {
@@ -187,7 +188,18 @@ export default {
         }).catch(({ code, error }) => {
           if (code == 401) dispatch('LOGOUT');
           reject(error);
-        })
-    })
+        });
+    });
+  },
+  GET_EMAIL_TEMPLATE: ({ commit, state, dispatch }, templateId) => {
+    return new Promise((resolve, reject) => {
+      getEmailTemplate(state.user.token, templateId)
+        .then((response) => {
+          resolve(response);
+        }).catch(({ code, error }) => {
+          if (code == 401) dispatch('LOGOUT');
+          reject(error);
+        });
+    });
   }
 }

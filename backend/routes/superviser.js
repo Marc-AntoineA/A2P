@@ -7,6 +7,7 @@ const auth = require('../middleware/auth')(true);
 const processCtrl = require('../controllers/process');
 const applicantCtrl = require('../controllers/applicant');
 const superviserCtrl = require('../controllers/superviser');
+const emailsCtrl = require('../controllers/email');
 
 router.get('/processes', auth, processCtrl.getAllProcesses);
 router.get('/process/:processId', auth, processCtrl.getProcessById);
@@ -23,6 +24,8 @@ router.get('/applicants/:processId/download', auth, applicantCtrl.getAllApplican
 router.put('/applicants/:applicantId/status/:status', auth, applicantCtrl.updateStatusByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicantCtrl.updateStepStatusByApplicantId);
+
+router.get('/emails/:templateId', emailsCtrl.getEmailTemplate); // warning auth
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);

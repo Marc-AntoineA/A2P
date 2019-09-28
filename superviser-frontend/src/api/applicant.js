@@ -55,3 +55,11 @@ export function downloadProcessAnswers(token, processId) {
     type: 'blob'
   }, 'get');
 }
+
+export function getEmailTemplate(token, templateId) {
+  return request({
+    url: API_PATH + `/emails/${templateId}`,
+    data: undefined,
+    token: token
+  }, 'get');
+}

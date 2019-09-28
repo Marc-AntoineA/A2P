@@ -1,5 +1,4 @@
-
-gi<template>
+<template>
   <div>
     <div class='edit-status'>
       <h3>Accept this student?</h3>
@@ -23,41 +22,46 @@ gi<template>
       </div>
     </div>
     <el-tabs tab-position="left" stretch>
-      <el-tab-pane v-for='(step, stepIndex) in process.steps' :label='step.label'>
+      <el-tab-pane v-for='(step, stepIndex) in process.steps' :label='step.label' :key='stepIndex'>
         <h3>{{ step.label }}</h3>
         <div class='action-buttons'>
           <div :class='"status-box " + step.status'>
             <i :class='"status-icon " + getStatusSymbol(step.status)'></i>
             {{ step.status }}
           </div>
-          <el-button v-if='step.status === "pending"' type='success'
-            @click='acceptStep(stepIndex)'>
-            Accept
-          </el-button>
-          <el-button v-if='step.status === "pending"' type='danger'
-            @click='rejectStep(stepIndex)'>
-            Reject
-          </el-button>
 
-          <div v-if='step.status === "validated"'>
+        <div v-if='step.status === "validated"'>
             <el-input-number v-model="stepsMark[stepIndex]" :min="0" :max="10"></el-input-number>
             <el-button type='info' @click='noteStep(stepIndex)'>Change Mark</el-button>
           </div>
 
         </div>
-        <div class='feedback-box'>
-          <h5>Feedback</h5>
-          <textarea>
-
-          </textarea>
+        <div v-if='step.status === "pending"' class='feedback-box' :class='stepsResponsesTemplates[stepIndex].accepting ? "accepted-box" : "rejected-box"'>
+          <h4>Your feedback</h4>
+          <div class='row'>
+            <textarea class='code' v-model="stepsResponsesTemplates[stepIndex].template.template"></textarea>
+            <div class='preview' v-html='stepsResponsesTemplates[stepIndex].template.template'></div>
+          </div>
+          <div class='feedback-tools'>
+            <el-switch
+              style="display: block"
+              v-model="stepsResponsesTemplates[stepIndex].accepting"
+              active-color="#67c23a"
+              inactive-color="#f56c6c"
+              active-text="Accept"
+              inactive-text="Reject"
+              @change='switchTemplate(stepIndex)'>
+            </el-switch>
+            <el-button :type='stepsResponsesTemplates[stepIndex].accepting ? "success" : "danger"' @click='sendResponse()'>
+              {{ stepsResponsesTemplates[stepIndex].accepting ? 'Send Acceptation' : 'Send Rejection' }}
+            </el-button>
+          </div>
         </div>
             <el-table :data='questionsForStep(stepIndex)' class='no-break'>
               <el-table-column label='Question' prop='label'></el-table-column>
               <el-table-column label='Answer'>
                 <template slot-scope='scope'>
-                  <div class='answer-box'>
-                    {{ parseAnswer(scope.row) }}
-                  </div>
+                  <div class='answer-box'>{{ parseAnswer(scope.row) }}</div>
                   <div class='words-counter' v-if='scope.row.type==="text"'>
                     {{ nbWords(scope.row) }} words
                   </div>
@@ -83,10 +87,25 @@ export default {
   props: ['applicant', 'applicantId'],
   data: () => ({
     stepsMark: [],
-    notCollapsedQuestions: []
+    notCollapsedQuestions: [],
+    stepsResponsesTemplates: []
   }),
   beforeMount(){
     this.stepsMark = this.process.steps.map((step) => (step.mark));
+    this.stepsResponsesTemplates = this.process.steps.map((step) =>  (
+      {
+        accepting: undefined,
+        template:{ template: '', language: '', help: '' }
+      }));
+    this.$store.dispatch('GET_EMAIL_TEMPLATE', 'step_accepted').then((defaultTemplate) => {
+      this.stepsResponsesTemplates = this.process.steps.map((step) => {
+        if (step.status !== 'pending') {
+          return { accepting: undefined, template: {  template: '', language: '', help: '' }};
+        }
+        return { accepting: true, template: defaultTemplate };
+      });
+    });
+
     this.notCollapsedQuestions = this.process.steps.map((step, stepIndex) => {
       return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
     });
@@ -234,6 +253,18 @@ export default {
         applicantId: this.applicant._id,
         status: status
       });
+    },
+    switchTemplate(stepIndex) {
+      console.log(stepIndex);
+      const accepting = this.stepsResponsesTemplates[stepIndex].accepting;
+      this.$store.dispatch('GET_EMAIL_TEMPLATE', accepting ? 'step_accepted' : 'step_rejected').then((template) => {
+        this.stepsResponsesTemplates[stepIndex].template = template;
+      }).catch((error) => {
+        this.stepsResponsesTemplates[stepIndex].accepting = !accepting;
+        this.$alert(error.message, 'Error while downloading processes', {
+          confirmButtonText: 'OK'
+        });
+      });
     }
   }
 }
@@ -311,12 +342,12 @@ export default {
 }
 
 .feedback-box textarea {
-  display: block;
-  width: calc(100% - 30px);
-  height: calc(2.25rem + 2px);
+  /* display: block; */
+  /* width: calc(100% - 30px); */
+  /* height: calc(2.25rem + 2px); */
   padding: .375rem .75rem;
-  font-size: 1rem;
-  font-weight: 400;
+  /* font-size: 1rem; */
+  /* font-weight: 400; */
   line-height: 1.5;
   color: #495057;
   background-color: #fff;
@@ -324,5 +355,44 @@ export default {
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.feedback-box .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.feedback-box .preview {
+  border: 1px solid black;
+  padding: 20px;
+  flex: 1 0 400px;
+}
+
+.feedback-box .code {
+  flex: 1 0 400px;
+}
+
+.feedback-box.accepted-box {
+  border-color: green;
+  box-shadow: 4px 2px 3px #67c23a;
+}
+
+.feedback-box.rejected-box {
+  border-color: firebrick;
+  box-shadow: 4px 2px 3px #f56c6c;
+}
+
+.feedback-box {
+  margin: 10px;
+  border-radius: 3px;
+  border: 2px solid black;
+  padding: 10px;
+}
+
+.feedback-tools {
+  display: inline-flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 10px;
 }
 </style>
