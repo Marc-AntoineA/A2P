@@ -28,7 +28,7 @@
           </el-dialog>
           <aap-spinner :show="loading"></aap-spinner>
 
-          <el-table v-if='!broken' :data='applicants' @row-click='displayModal'>
+          <el-table v-if='!broken' :data='applicants' @row-click='displayModal' ref="applicantsTable">
             <el-table-column label='Process' prop='process.label' sortable></el-table-column>
             <el-table-column label='Name' prop='name' sortable></el-table-column>
             <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
@@ -50,7 +50,12 @@
                 <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Current step / Status' align='center'>
+            <el-table-column label='Current step / Status' align='center'
+              :filters="filterStatus"
+              :filter-method="filterStatusHandler"
+              filter-placement="bottom-end"
+              :filter-multiple="false"
+              prop='status'>
               <template slot-scope='scope'>
                 <div v-if='scope.row.status === "pending"'>
                   <span class='step-status todo'>
@@ -107,6 +112,11 @@ export default {
     applicantModalVisible: false,
     currentDisplayedApplicant: { applicantId: '', processId: '' },
     selectedProcesses: [],
+    filterStatus: [
+      { text: 'Accepted Students', value: 'accepted' },
+      { text: 'Rejected Students', value: 'rejected' },
+      { text: 'Required Task', value: 'required', default: true }
+    ]
   }),
   props: [],
   beforeMount() {
@@ -130,6 +140,9 @@ export default {
       this.selectedProcesses = [{ id: process._id, label: process.label }];
       this.handleMultiselect();
     }
+  },
+  mounted() {
+    this.setDefaultFilter('status', ['required']);
   },
   methods: {
     fetchApplicantsByProcessId(processId) {
@@ -175,6 +188,35 @@ export default {
           if (!this.$store.state.applicantsByProcessId[processId])
             this.fetchApplicantsByProcessId(processId);
       });
+    },
+    filterStatusHandler(value, row) {
+      if (value === 'accepted')
+        return row.status === 'accepted';
+
+      if (value === 'rejected')
+        return row.status === 'rejected';
+
+      if (row.status !== 'pending')
+        return false;
+
+      const status = this.computedStatus[row._id];
+      console.log(status);
+      if (value === 'required')
+        return status.pending > 0;
+
+      return false;
+    },
+    setDefaultFilter(colProp, filteredValue) {
+      if (!this.$refs.applicantsTable) {
+        throw new Error('Table should have a ref named applicantsTable.');
+      }
+      const typeColumn = this.$refs.applicantsTable.columns.find(col => col.property === colProp);
+      typeColumn.filteredValue = filteredValue;
+      this.$refs.applicantsTable.store.commit('filterChange', {
+        column: typeColumn,
+        values: filteredValue,
+      });
+      this.$refs.applicantsTable.store.updateAllSelected();
     }
   },
   computed: {// TODO passer par un getter pour uniquement les applicants qu'on souhaite
