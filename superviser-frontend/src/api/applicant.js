@@ -12,13 +12,13 @@ export function fetchApplicantsByProcessId(token, processId) {
   }, 'get', 'no-cache');
 }
 
-export function updateStepStatusByApplicantId(token, applicantId, stepIndex, status) {
+export function updateStepStatusByApplicantId(token, applicantId, stepIndex, status, template) {
   if (status !== 'validated' && status !== 'rejected')
     throw new Error(`status ${status} is undefined`);
 
   return request({
     url: API_PATH + `/applicants/${applicantId}/${stepIndex}/status/${status}`,
-    data: undefined,
+    data: template,
     token: token
   }, 'put');
 }

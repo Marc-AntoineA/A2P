@@ -144,11 +144,11 @@ export default {
       });
     });
   },
-  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, status }) => {
+  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, status, template }) => {
     return new Promise((resolve, reject) => {
-      updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status)
+      updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status, template)
       .then(() => {
-        commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status});
+        commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status });
         resolve();
       }).catch(({ code, error }) => {
         if (code === 401) dispatch('LOGOUT');

@@ -52,7 +52,7 @@
               inactive-text="Reject"
               @change='switchTemplate(stepIndex)'>
             </el-switch>
-            <el-button :type='stepsResponsesTemplates[stepIndex].accepting ? "success" : "danger"' @click='sendResponse()'>
+            <el-button :type='stepsResponsesTemplates[stepIndex].accepting ? "success" : "danger"' @click='sendResponse(stepIndex)'>
               {{ stepsResponsesTemplates[stepIndex].accepting ? 'Send Acceptation' : 'Send Rejection' }}
             </el-button>
           </div>
@@ -163,28 +163,26 @@ export default {
       if (!answer) return 0;
       return answer.split(' ').length;
     },
-    changeStepStatus(stepIndex, status){
+    sendResponse(stepIndex){
+      const status = this.stepsResponsesTemplates[stepIndex].accepting ? 'validated' : 'rejected';
+      const template = this.stepsResponsesTemplates[stepIndex].template;
+      console.log('send template');
       this.$store.dispatch('UPDATE_STATUS_STEP', {
         processId: this.process._id,
         applicantId: this.applicantId,
         stepIndex: stepIndex,
-        status: status
+        status: status,
+        template: template
       }).then(() => {
         this.$message({
           type: 'info',
-          message: 'The status has been updated'
+          message: 'The status has been updated and the email has been sent'
         });
       }).catch((error) => {
         this.$alert(error.message, `Error while updating the status.`, {
           confirmButtonText: 'OK'
         });
       });
-    },
-    acceptStep(stepIndex) {
-      this.changeStepStatus(stepIndex, 'validated');
-    },
-    rejectStep(stepIndex) {
-      this.changeStepStatus(stepIndex, 'rejected');
     },
     deleteApplicant() {
       this.$confirm('Once an applicant is deleted, it is definitive', 'Warning', {

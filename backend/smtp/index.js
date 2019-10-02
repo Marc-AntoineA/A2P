@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const Email = require('email-templates');
 const EMAIL_SETTINGS = require('../settings.json').EMAIL_SETTINGS;
+const Mustache = require('mustache');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -57,6 +58,21 @@ exports.sendResetPasswordMail = function(to, name, password, campaignName) {
 exports.sendReceivedStepMail = function(to, name, stepName, campaignName, location) {
   return sendMail(to, 'step_received', { name, stepName, campaignName, location });
 };
+
+exports.sendTemplatedMail = function(data, template, subject) {
+  const content = Mustache.render(template.template, data);
+  return new Promise((resolve, reject) => {
+    email.send({
+      html: content,
+      message: {
+        to: data.to,
+        html: content,
+        subject: subject
+      }
+    }).then((response) => { resolve(response); })
+    .catch((error) => { reject(error); });
+  });
+}
 
 exports.sendAcceptedStepMail = function(to, name, stepName, campaignName, location) {
   return sendMail(to, 'step_accepted', { name, stepName, campaignName, location });
