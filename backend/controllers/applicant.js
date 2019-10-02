@@ -17,8 +17,7 @@ const {
   sendApplicationMail,
   sendRejectedMail,
   sendAcceptedMail,
-  sendRejectedStepMail,
-  sendAcceptedStepMail,
+  sendTemplatedMail,
   sendReceivedStepMail,
   sendResetPasswordMail
 } = require('../smtp/');
@@ -315,6 +314,8 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
   const applicantId = req.params.applicantId;
   const stepIndex = req.params.stepIndex;
   const status = req.params.status;
+  const template = req.body;
+
   if (status !== 'validated' && status !== 'rejected') {
     res.status(404).json({ error: { message: `Status ${status} is undefined`}});
     return;
@@ -330,10 +331,16 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
       [`process.steps.${stepIndex}.status`]: status
     }).then((applicant) => {
 
-      if (status === 'validated')
-        sendAcceptedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
-      if (status === 'rejected')
-        sendRejectedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
+      const data = {
+        to: applicant.mailAddress,
+        name: applicant.name,
+        stepName: applicant.process.steps[stepIndex].label,
+        campaignName: applicant.process.label,
+        location: applicant.process.location
+      };
+
+      subject = '[SHA] Some news from your application';
+      sendTemplatedMail(data, template, subject);
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
