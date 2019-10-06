@@ -19,7 +19,8 @@ const {
   sendAcceptedMail,
   sendTemplatedMail,
   sendReceivedStepMail,
-  sendResetPasswordMail
+  sendResetPasswordMail,
+  loadAndSendEmail
 } = require('../smtp/');
 
 exports.getSigninForm = (req, res, next) => {
@@ -56,7 +57,7 @@ exports.createApplicant = (req, res, next) => {
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
-        sendApplicationMail(mailAddress, name, process.deadline, process.location);
+        sendApplicationMail(mailAddress, { name: name, deadline: process.deadline, location: process.location});
         res.status(201).json({
           message: 'Applicant created successfully',
           id: applicant._id,
@@ -115,10 +116,10 @@ exports.login = (req, res, next) => {
 };
 
 function generatePassword() {
-    const length = 10,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-    for (const i = 0, n = charset.length; i < length; ++i) {
+    const length = 10;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.random() * n);
     }
     return retVal;
@@ -144,7 +145,7 @@ exports.resetPassword = (req, res, next) => {
           message: outputMessage
         });
       }).then(() => {
-        sendResetPasswordMail(applicant.mailAddress, applicant.name, newPassword, applicant.process.label);
+        sendResetPasswordMail(applicant.mailAddress, { name: applicant.name, password: newPassword, campaignName: applicant.process.label });
       });
     });
   });
@@ -207,7 +208,8 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
       // TODO add here automatic validation
       if (confirm)  {
         step.status = 'pending';
-        sendReceivedStepMail(applicant.mailAddress, applicant.name, step.label, applicant.process.label, applicant.process.location);
+        sendReceivedStepMail(applicant.mailAddress, { name: applicant.name, stepLabel: step.label,
+          campaignName: applicant.process.label, location: applicant.process.location });
       }
 
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
@@ -332,18 +334,16 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
     }).then((applicant) => {
 
       const data = {
-        to: applicant.mailAddress,
         name: applicant.name,
         stepName: applicant.process.steps[stepIndex].label,
         campaignName: applicant.process.label,
         location: applicant.process.location
       };
-
-      subject = '[SHA] Some news from your application';
-      sendTemplatedMail(data, template, subject);
+      loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
+      console.log(error);
       res.status(500).json({ error: error });
     });
   }).catch((errorMessage) => {
@@ -368,9 +368,9 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
     .then((applicant) => {
       if (status === 'validated')
-        sendAcceptedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+        sendAcceptedMail(applicant.mailAddress, { name: applicant.name, campaignName: applicant.process.label, location: applicant.process.location });
       if (status === 'rejected')
-        sendRejectedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+        sendRejectedMail(applicant.mailAddress, { name: applicant.name, campaignName: applicant.process.label, location: applicant.process.location });
 
       res.status(200).json({ message: `Status for applicant ${applicantId} updated successfully`});
     }).catch((error) => {

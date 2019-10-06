@@ -240,7 +240,7 @@ export default {
       }
     },
     acceptApplicant() {
-      this.changeApplicantStatus('accepted');
+      this.changeApplicantStatus('validated');
     },
     rejectApplicant() {
       this.changeApplicantStatus('rejected');

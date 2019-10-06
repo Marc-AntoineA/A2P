@@ -3,7 +3,8 @@
   "version": "1.0.0-dev",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "mocha"
   },
   "dependencies": {
     "bcryptjs": "^2.4.0",
@@ -17,6 +18,7 @@
     "http-errors": "~1.6.2",
     "jsdom": "^13.2.0",
     "jsonwebtoken": "^8.5.0",
+    "mocha": "^6.2.1",
     "moment": "^2.24.0",
     "mongoose": "^5.4.16",
     "mongoose-unique-validator": "^2.0.2",
