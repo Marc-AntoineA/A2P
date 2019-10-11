@@ -9,7 +9,7 @@ const Superviser = require('../models/superviser').model;
 
 exports.createSuperviser = (req, res, next) => {
   const body = req.body;
-  const username = body.username;
+  const username = body.username.toLowerCase();
   const password = body.password;
   if (username === undefined || password === undefined) {
     res.status(500).json({
@@ -40,7 +40,7 @@ exports.createSuperviser = (req, res, next) => {
 
 // 401 Unauthorized error
 exports.loginSuperviser = (req, res, next) => {
-  const username = req.body.username;
+  const username = req.body.username.toLowerCase();
   const password = req.body.password;
   Superviser.findOne({
     username: username
