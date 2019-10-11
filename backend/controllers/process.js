@@ -89,7 +89,6 @@ exports.deleteProcessById = (req, res, next) => {
 };
 
 const updateOpenedProcessById = (req, res, next) => {
-  console.log('upadestts')
   const processId = req.params.processId;
   const process = req.body;
   Process.findOne({ _id: processId }).then((oldProcess) => {

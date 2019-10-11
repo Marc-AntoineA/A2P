@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
+const schedulers = require('./schedulers/');
+
 const settings = require('./settings.json');
 
 const app = express();
