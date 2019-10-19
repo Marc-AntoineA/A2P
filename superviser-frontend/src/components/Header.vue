@@ -8,6 +8,7 @@
         Processes
       </el-menu-item>
       <el-menu-item index='/administration/applicants' route='/administration/applicants'>Applicants</el-menu-item>
+      <el-menu-item index='/administration/templates' route='/administration/templates'>Templates</el-menu-item>
       <el-menu-item class='last' index='/administration/login' route='/administration/login'>Logout</el-menu-item>
     </el-menu>
   </el-header>

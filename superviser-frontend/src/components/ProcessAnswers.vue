@@ -7,7 +7,7 @@
         {{ applicant.status }}
       </div>
 
-      <p v-if='!canBeValidated'>
+      <p v-if='!canBeValidated && this.applicant.status ==="pending"'>
         To accept one student, please validate firstly all the steps.
       </p>
       <div class='tools-buttons'>
@@ -40,7 +40,7 @@
           <h4>Your feedback</h4>
           <div class='row'>
             <textarea class='code' v-model="stepsResponsesTemplates[stepIndex].template.template"></textarea>
-            <div class='preview' v-html='stepsResponsesTemplates[stepIndex].template.template'></div>
+            <div class='preview' v-html='renderStepsResponsesTemplates[stepIndex]'></div>
           </div>
           <div class='feedback-tools'>
             <el-switch
@@ -81,6 +81,8 @@
 
 <script>
 import { dateFormatter, phoneFormatter } from '../filters';
+import Mustache from 'mustache';
+
 
 export default {
   name: 'aap-process-answers',
@@ -115,12 +117,19 @@ export default {
       return this.applicant.process;
     },
     canBeValidated() {
+      if (this.applicant.status !== 'pending') return false;
       const steps = this.process.steps;
       for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
         const step = steps[stepIndex];
         if (step.status !== 'validated') return false;
       }
       return true;
+    },
+    renderStepsResponsesTemplates() {
+      const output = this.stepsResponsesTemplates.map((template, index) => {
+        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+      });
+      return output;
     }
   },
   methods: {
@@ -166,21 +175,29 @@ export default {
     sendResponse(stepIndex){
       const status = this.stepsResponsesTemplates[stepIndex].accepting ? 'validated' : 'rejected';
       const template = this.stepsResponsesTemplates[stepIndex].template;
-      console.log('send template');
-      this.$store.dispatch('UPDATE_STATUS_STEP', {
-        processId: this.process._id,
-        applicantId: this.applicantId,
-        stepIndex: stepIndex,
-        status: status,
-        template: template
-      }).then(() => {
-        this.$message({
-          type: 'info',
-          message: 'The status has been updated and the email has been sent'
-        });
-      }).catch((error) => {
-        this.$alert(error.message, `Error while updating the status.`, {
-          confirmButtonText: 'OK'
+
+      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
+       this applicant with this email? <br/> <div class='email'> ${this.renderStepsResponsesTemplates[stepIndex]}</div>`, 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          dangerouslyUseHTMLString: true,
+          customClass: 'email-confirmation-box'
+        }).then(() => {
+          this.$store.dispatch('UPDATE_STATUS_STEP', {
+            processId: this.process._id,
+            applicantId: this.applicantId,
+            stepIndex: stepIndex,
+            status: status,
+            template: template,
+          }).then(() => {
+            this.$message({
+              type: 'info',
+              message: 'The status has been updated and the email has been sent'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, `Error while updating the status.`, {
+              confirmButtonText: 'OK'
+            });
         });
       });
     },
@@ -246,14 +263,30 @@ export default {
       this.changeApplicantStatus('rejected');
     },
     changeApplicantStatus(status) {
-      this.$store.dispatch('UPDATE_STATUS_APLICANT', {
-        processId: this.process._id,
-        applicantId: this.applicant._id,
-        status: status
+      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
+       this applicant? He will get an email`, 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          dangerouslyUseHTMLString: true,
+          customClass: 'email-confirmation-box'
+        }).then(() => {
+          this.$store.dispatch('UPDATE_STATUS_APLICANT', {
+            processId: this.process._id,
+            applicantId: this.applicant._id,
+            status: status
+          }).then(() => {
+            this.$message({
+              type: 'info',
+              message: 'The status has been updated and the email has been sent'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, `Error while updating the status.`, {
+              confirmButtonText: 'OK'
+            });
+        });
       });
     },
     switchTemplate(stepIndex) {
-      console.log(stepIndex);
       const accepting = this.stepsResponsesTemplates[stepIndex].accepting;
       this.$store.dispatch('GET_EMAIL_TEMPLATE', accepting ? 'step_accepted' : 'step_rejected').then((template) => {
         this.stepsResponsesTemplates[stepIndex].template = template;
@@ -340,12 +373,7 @@ export default {
 }
 
 .feedback-box textarea {
-  /* display: block; */
-  /* width: calc(100% - 30px); */
-  /* height: calc(2.25rem + 2px); */
   padding: .375rem .75rem;
-  /* font-size: 1rem; */
-  /* font-weight: 400; */
   line-height: 1.5;
   color: #495057;
   background-color: #fff;
@@ -392,5 +420,16 @@ export default {
   justify-content: space-around;
   width: 100%;
   margin-top: 10px;
+}
+
+.el-message-box.email-confirmation-box {
+	width: 600px;
+}
+
+.email-confirmation-box .email {
+	border: 1px solid gray;
+	padding: 5px;
+	background-color: #fbfbfb;
+	font-style: italic;
 }
 </style>

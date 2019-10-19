@@ -57,7 +57,7 @@ exports.createApplicant = (req, res, next) => {
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
-        sendApplicationMail(mailAddress, { name: name, deadline: process.deadline, location: process.location});
+        sendApplicationMail(mailAddress, { applicant: applicant });
         res.status(201).json({
           message: 'Applicant created successfully',
           id: applicant._id,
@@ -145,7 +145,7 @@ exports.resetPassword = (req, res, next) => {
           message: outputMessage
         });
       }).then(() => {
-        sendResetPasswordMail(applicant.mailAddress, { name: applicant.name, password: newPassword, campaignName: applicant.process.label });
+        sendResetPasswordMail(applicant.mailAddress, { applicant: applicant, password: newPassword });
       });
     });
   });
@@ -208,8 +208,7 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
       // TODO add here automatic validation
       if (confirm)  {
         step.status = 'pending';
-        sendReceivedStepMail(applicant.mailAddress, { name: applicant.name, stepLabel: step.label,
-          campaignName: applicant.process.label, location: applicant.process.location });
+        sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
       }
 
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
@@ -334,10 +333,8 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
     }).then((applicant) => {
 
       const data = {
-        name: applicant.name,
-        stepName: applicant.process.steps[stepIndex].label,
-        campaignName: applicant.process.label,
-        location: applicant.process.location
+        applicant: applicant,
+        step: step
       };
       loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
 
@@ -368,9 +365,9 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
     .then((applicant) => {
       if (status === 'validated')
-        sendAcceptedMail(applicant.mailAddress, { name: applicant.name, campaignName: applicant.process.label, location: applicant.process.location });
+        sendAcceptedMail(applicant.mailAddress, { applicant: applicant });
       if (status === 'rejected')
-        sendRejectedMail(applicant.mailAddress, { name: applicant.name, campaignName: applicant.process.label, location: applicant.process.location });
+        sendRejectedMail(applicant.mailAddress, { applicant: applicant });
 
       res.status(200).json({ message: `Status for applicant ${applicantId} updated successfully`});
     }).catch((error) => {

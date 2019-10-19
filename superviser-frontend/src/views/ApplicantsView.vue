@@ -200,9 +200,8 @@ export default {
         return false;
 
       const status = this.computedStatus[row._id];
-      console.log(status);
       if (value === 'required')
-        return status.pending > 0;
+        return status.pending > 0 || status.accepted === row.process.steps.length;
 
       return false;
     },
