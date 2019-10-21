@@ -63,3 +63,11 @@ export function getEmailTemplate(token, templateId) {
     token: token
   }, 'get');
 }
+
+export function saveEmailTemplate(token, templateId, template) {
+  return request({
+    url: API_PATH + `/emails/${templateId}`,
+    data: { template },
+    token: token
+  }, 'put');
+}

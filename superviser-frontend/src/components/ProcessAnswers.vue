@@ -97,14 +97,19 @@ export default {
     this.stepsResponsesTemplates = this.process.steps.map((step) =>  (
       {
         accepting: undefined,
-        template:{ template: '', language: '', help: '' }
+        template:{ template: '', language: '', help: '', subject: ''}
       }));
     this.$store.dispatch('GET_EMAIL_TEMPLATE', 'step_accepted').then((defaultTemplate) => {
       this.stepsResponsesTemplates = this.process.steps.map((step) => {
         if (step.status !== 'pending') {
-          return { accepting: undefined, template: {  template: '', language: '', help: '' }};
+          return { accepting: undefined, template: {  template: '', language: '', help: '', subject: '' }};
         }
         return { accepting: true, template: defaultTemplate };
+      });
+    }).catch((error) => {
+      broken = true;
+      this.$alert(error.message, `Error while downloading the email template`, {
+        confirmButtonText: 'OK'
       });
     });
 
@@ -128,6 +133,12 @@ export default {
     renderStepsResponsesTemplates() {
       const output = this.stepsResponsesTemplates.map((template, index) => {
         return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+      });
+      return output;
+    },
+    renderStepsResponsesSubjects() {
+      const output = this.stepsResponsesTemplates.map((template, index) => {
+        return Mustache.render(template.template.subject, { applicant: this.applicant, step: this.applicant.process.steps[index] });
       });
       return output;
     }
@@ -177,7 +188,9 @@ export default {
       const template = this.stepsResponsesTemplates[stepIndex].template;
 
       this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
-       this applicant with this email? <br/> <div class='email'> ${this.renderStepsResponsesTemplates[stepIndex]}</div>`, 'Warning', {
+       this applicant with this email? <br/>
+       <div class='email'> <div class='subject'>${this.renderStepsResponsesSubjects[stepIndex]}</div>
+       ${this.renderStepsResponsesTemplates[stepIndex]}</div>`, 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',
           dangerouslyUseHTMLString: true,
@@ -431,5 +444,10 @@ export default {
 	padding: 5px;
 	background-color: #fbfbfb;
 	font-style: italic;
+}
+
+.email-confirmation-box .email .subject {
+  font-style: normal;
+  font-weight: bold;
 }
 </style>

@@ -1,6 +1,6 @@
 {
   "name": "superviser-frontend",
-  "version": "1.0.0-dev",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",

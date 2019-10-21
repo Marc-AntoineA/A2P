@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="8">
         <p>
-          Platform developed by
+          Platform developed by Marc-Antoine Augé for
             <a href='https://socialhackersacademy.org/' target='_blank' rel='noopener noreferrer'>Social Hackers Academy</a>.
         </p>
         <p>
@@ -16,7 +16,7 @@
           )
         </p>
         <p> <!-- TODO compute it from package.json -->
-          Version 1.0.0-dev
+          Version 1.0.0
         </p>
       </el-col>
       <el-col :span="8">

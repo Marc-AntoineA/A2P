@@ -25,7 +25,8 @@ router.put('/applicants/:applicantId/status/:status', auth, applicantCtrl.update
 router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicantCtrl.updateStepStatusByApplicantId);
 
-router.get('/emails/:templateId', auth, emailsCtrl.getEmailTemplate); 
+router.get('/emails/:templateId', auth, emailsCtrl.getEmailTemplate);
+router.put('/emails/:templateId', auth, emailsCtrl.saveEmailTemplate);
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);

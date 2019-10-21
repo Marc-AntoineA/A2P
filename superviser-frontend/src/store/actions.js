@@ -17,7 +17,8 @@ import {
   updateStatusByApplicantId,
   deleteApplicantById,
   downloadProcessAnswers,
-  getEmailTemplate
+  getEmailTemplate,
+  saveEmailTemplate
 } from '../api/applicant.js';
 
 export default {
@@ -200,6 +201,17 @@ export default {
           if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
+    });
+  },
+  SAVE_EMAIL_TEMPLATE: ({ commit, state, dispatch }, { templateId, template }) => {
+    return new Promise((resolve, reject) => {
+      saveEmailTemplate(state.user.token, templateId, template)
+      .then((response) => {
+        resolve(response);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
     });
   }
 }
