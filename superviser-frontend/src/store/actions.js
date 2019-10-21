@@ -15,7 +15,10 @@ import {
   updateStepStatusByApplicantId,
   updateStepMarkByApplicantId,
   updateStatusByApplicantId,
-  deleteApplicantById
+  deleteApplicantById,
+  downloadProcessAnswers,
+  getEmailTemplate,
+  saveEmailTemplate
 } from '../api/applicant.js';
 
 export default {
@@ -142,11 +145,11 @@ export default {
       });
     });
   },
-  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, status }) => {
+  UPDATE_STATUS_STEP: ({ commit, state, dispatch }, { processId, applicantId, stepIndex, status, template }) => {
     return new Promise((resolve, reject) => {
-      updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status)
+      updateStepStatusByApplicantId(state.user.token, applicantId, stepIndex, status, template)
       .then(() => {
-        commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status});
+        commit('SET_STEP_STATUS', { processId, applicantId, stepIndex, status });
         resolve();
       }).catch(({ code, error }) => {
         if (code === 401) dispatch('LOGOUT');
@@ -176,6 +179,39 @@ export default {
           if (code == 401) dispatch('LOGOUT');
           reject(error);
         });
+    });
+  },
+  DOWNLOAD_EXCEL_ANSWERS: ({ commit, state, dispatch }, processId) => {
+    return new Promise((resolve, reject) => {
+      downloadProcessAnswers(state.user.token, processId)
+        .then((response) => {
+          resolve(response);
+        }).catch(({ code, error }) => {
+          if (code == 401) dispatch('LOGOUT');
+          reject(error);
+        });
+    });
+  },
+  GET_EMAIL_TEMPLATE: ({ commit, state, dispatch }, templateId) => {
+    return new Promise((resolve, reject) => {
+      getEmailTemplate(state.user.token, templateId)
+        .then((response) => {
+          resolve(response);
+        }).catch(({ code, error }) => {
+          if (code == 401) dispatch('LOGOUT');
+          reject(error);
+        });
+    });
+  },
+  SAVE_EMAIL_TEMPLATE: ({ commit, state, dispatch }, { templateId, template }) => {
+    return new Promise((resolve, reject) => {
+      saveEmailTemplate(state.user.token, templateId, template)
+      .then((response) => {
+        resolve(response);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
     });
   }
 }

@@ -126,3 +126,22 @@ h2 {
     font-size: 17px;
     text-align: center;
 }
+
+.results-box {
+  border: 2px solid gray;
+  padding: 8px;
+  margin: 9px;
+  font-size: 20px;
+  text-align: center;
+  background-color: #ededed;
+}
+
+.results-box.rejected {
+  border-color: red;
+  background-color: red;
+}
+
+.results-box.validated {
+  border-color: green;
+  background-color: #a3ffa3;
+}

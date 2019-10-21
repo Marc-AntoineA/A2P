@@ -97,7 +97,6 @@ class App extends Component {
           this.handleModal(TEXTS.SUCCESS_MESSAGES.LOGGED_OUT, 'Success');
         resolve();
       } else {
-        console.log('handlelogin');
         ApiRequests.saveLogin(user.id, user.token);
         this.setState((prevState) => {
           prevState.user = user;

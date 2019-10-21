@@ -1,4 +1,4 @@
-export function request({url, data, token}, method, cache) {
+export function request({url, data, token, type}, method, cache) {
   return new Promise((resolve, reject) => {
     fetch(url, {
       method: method,
@@ -16,7 +16,11 @@ export function request({url, data, token}, method, cache) {
           .catch((error) => reject({code: 0, error: error}));
           return;
       }
-      resolve(results.json());
+      if (type === 'blob') {
+        resolve(results.blob());
+      } else {
+        resolve(results.json());
+      }
     }).catch((err) => {
       reject({code: 0, error: err});
     });

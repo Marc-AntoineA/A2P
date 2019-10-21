@@ -1,0 +1,1 @@
+[SHA] Hi {{ applicant.name }}, welcome to the application process for the next coding class in {{ applicant.process.location }}

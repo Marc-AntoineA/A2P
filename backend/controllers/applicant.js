@@ -1,9 +1,11 @@
-'using strict';
+ 'using strict';
 
 const bcrypt = require('bcryptjs');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
 const jwt = require('jsonwebtoken');
 const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
+const Excel = require('exceljs');
+const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
@@ -15,10 +17,10 @@ const {
   sendApplicationMail,
   sendRejectedMail,
   sendAcceptedMail,
-  sendRejectedStepMail,
-  sendAcceptedStepMail,
+  sendTemplatedMail,
   sendReceivedStepMail,
-  sendResetPasswordMail
+  sendResetPasswordMail,
+  loadAndSendEmail
 } = require('../smtp/');
 
 exports.getSigninForm = (req, res, next) => {
@@ -42,13 +44,11 @@ exports.createApplicant = (req, res, next) => {
   const phoneNumber = body[2].questions[1].answer;
   const mailAddress = body[3].questions[0].answer.toLowerCase();
   const password = body[3].questions[1].answer;
-
   Process.findOne({
     label: campaign
   }).then(process => {
     bcrypt.hash(password, BCRYPT_SALTROUNDS).then((hash) => {
       const applicant = new Applicant({
-        campaign: campaign,
         name: name,
         password: hash,
         mailAddress: mailAddress,
@@ -58,7 +58,7 @@ exports.createApplicant = (req, res, next) => {
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
-        sendApplicationMail(mailAddress, name, process.deadline, process.location);
+        sendApplicationMail(mailAddress, { applicant: applicant });
         res.status(201).json({
           message: 'Applicant created successfully',
           id: applicant._id,
@@ -117,10 +117,10 @@ exports.login = (req, res, next) => {
 };
 
 function generatePassword() {
-    var length = 10,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
+    const length = 10;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.random() * n);
     }
     return retVal;
@@ -146,7 +146,7 @@ exports.resetPassword = (req, res, next) => {
           message: outputMessage
         });
       }).then(() => {
-        sendResetPasswordMail(applicant.mailAddress, applicant.name, newPassword, applicant.process.label);
+        sendResetPasswordMail(applicant.mailAddress, { applicant: applicant, password: newPassword });
       });
     });
   });
@@ -209,7 +209,7 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
       // TODO add here automatic validation
       if (confirm)  {
         step.status = 'pending';
-        sendReceivedStepMail(applicant.mailAddress, applicant.name, step.label, applicant.process.label, applicant.process.location);
+        sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
       }
 
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
@@ -285,7 +285,6 @@ exports.getAllApplicantsByProcessId = (req, res, next) => {
   Applicant.find({
     "process._id": processId
   }).then((applicants) => {
-    applicants.forEach((applicant) => {applicant.password = undefined});
     res.status(200).json(applicants);
   });
 };
@@ -317,6 +316,8 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
   const applicantId = req.params.applicantId;
   const stepIndex = req.params.stepIndex;
   const status = req.params.status;
+  const template = req.body;
+
   if (status !== 'validated' && status !== 'rejected') {
     res.status(404).json({ error: { message: `Status ${status} is undefined`}});
     return;
@@ -332,13 +333,15 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
       [`process.steps.${stepIndex}.status`]: status
     }).then((applicant) => {
 
-      if (status === 'validated')
-        sendAcceptedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
-      if (status === 'rejected')
-        sendRejectedStepMail(applicant.mailAddress, applicant.name, applicant.process.steps[stepIndex].label, applicant.process.label, applicant.process.location);
+      const data = {
+        applicant: applicant,
+        step: step
+      };
+      loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
+      console.log(error);
       res.status(500).json({ error: error });
     });
   }).catch((errorMessage) => {
@@ -363,9 +366,9 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
     .then((applicant) => {
       if (status === 'validated')
-        sendAcceptedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+        sendAcceptedMail(applicant.mailAddress, { applicant: applicant });
       if (status === 'rejected')
-        sendRejectedMail(applicant.mailAddress, applicant.name, applicant.process.label, applicant.process.location);
+        sendRejectedMail(applicant.mailAddress, { applicant: applicant });
 
       res.status(200).json({ message: `Status for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
@@ -389,4 +392,138 @@ exports.deleteApplicantById = (req, res, next) => {
         error: error
       });
     });
+};
+
+exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
+  const processId = req.params.processId;
+  Applicant.find({
+    "process._id": processId
+  }).then((applicants) => {
+  Process.findOne({
+    "_id": processId
+  }).then((process) => {
+  if (!process) {
+    res.status(404).json({
+      error: { message: `No process with id ${process.id}`}
+    })
+  }
+  const label = process.label;
+
+  // First row = user
+  const firstRow = ['User information', '', '', '', '', ''];
+  const secondRow =  ['Name', 'Mail', 'Phone', 'status', 'Date application', 'Last modification']
+
+  for (let stepIndex = 0; stepIndex < process.steps.length; stepIndex++) {
+    const step = process.steps[stepIndex];
+    if (step.pages.length === 0) continue;
+    firstRow.push(step.label);
+    for (let pageIndex=0; pageIndex < step.pages.length-1; pageIndex++) {
+      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+        firstRow.push('');
+      }
+    }
+
+    for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+      const page = step.pages[pageIndex];
+      for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
+        const question = page.questions[questionIndex];
+        secondRow.push(question.label);
+      }
+    }
+  }
+  /* make worksheet */
+  const ws_data = [
+    firstRow,
+    secondRow
+  ];
+
+  for (let applicantIndex=0; applicantIndex < applicants.length; applicantIndex++) {
+    const applicant = applicants[applicantIndex];
+    const applicantAnswers = [applicant.name, applicant.mailAddress, applicant.phoneNumber, applicant.status, applicant.createdAt, applicant.updatedAt];
+
+    for (let stepIndex = 0; stepIndex < applicant.process.steps.length; stepIndex++) {
+      const step = applicant.process.steps[stepIndex];
+      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
+        const page = step.pages[pageIndex];
+        for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
+          const question = page.questions[questionIndex];
+          if (question.type === 'radio') {
+            applicantAnswers.push(question.choices[question.answer]);
+          } else if (question.type === 'date') {
+            const date = new Date(question.answer);
+            applicantAnswers.push(date);
+          } else {
+            applicantAnswers.push(question.answer);
+          }
+        }
+      }
+    }
+    ws_data.push(applicantAnswers);
+  }
+  const workbook = new Excel.Workbook();
+  const worksheet = workbook.addWorksheet(process.label.slice(1, 20));
+
+  // Why it doesn't work anymore???
+  worksheet.views = [
+    { state: 'frozen', xSplit: 2, ySplit: 2 }
+  ];
+
+  ws_data.forEach((row) => { worksheet.addRow(row)});
+
+  // Merging headers cells + header font
+  //for (let columnIndex=0; columnIndex)
+  worksheet.getRow(1).height = 20;
+  first = 0;
+  for (let columnIndex = 1; columnIndex < firstRow.length; columnIndex++) {
+    if(firstRow[columnIndex] === '') continue;
+    if (first + 1 === columnIndex) continue;
+    worksheet.mergeCells(1, first + 1, 1, columnIndex);
+    worksheet.getCell(1, first + 1).font = {
+      size: 15,
+      bold: true
+    };
+    first = columnIndex;
+  }
+  if (first + 1 !== firstRow.length)
+    worksheet.mergeCells(1, first + 1, firstRow.length);
+  worksheet.getCell(1, first + 1).font = {
+    size: 15,
+    bold: true
+  };
+
+  // Computing optimal width
+  secondRow.forEach((value, index) => {
+    worksheet.getColumn(1 + index).width = Math.max(20, value.length);
+    worksheet.getCell(2, 1 + index).font = {
+      italic: true
+    };
+  });
+
+
+  /*worksheet.autoFilter = {
+    from: {
+      row: 2,
+      column: 1
+    },
+    to: {
+      row: 2,
+      column: secondRow.length + 1
+    }
+  };*/
+  const today = new Date();
+  const tmpFilename = 'tmp/out.xlsx';
+  workbook.xlsx.writeFile(tmpFilename)
+    .then(() => {
+      const filePath = tmpFilename;
+      const stat = fileSystem.statSync(filePath);
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Length': stat.size,
+        'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+      });
+      const readStream = fileSystem.createReadStream(filePath);
+      readStream.pipe(res);
+    });
+  });
+});
 };

@@ -12,13 +12,13 @@ export function fetchApplicantsByProcessId(token, processId) {
   }, 'get', 'no-cache');
 }
 
-export function updateStepStatusByApplicantId(token, applicantId, stepIndex, status) {
+export function updateStepStatusByApplicantId(token, applicantId, stepIndex, status, template) {
   if (status !== 'validated' && status !== 'rejected')
     throw new Error(`status ${status} is undefined`);
 
   return request({
     url: API_PATH + `/applicants/${applicantId}/${stepIndex}/status/${status}`,
-    data: undefined,
+    data: template,
     token: token
   }, 'put');
 }
@@ -45,4 +45,29 @@ export function deleteApplicantById(token, applicantId) {
     data: undefined,
     token: token
   }, 'delete');
+}
+
+export function downloadProcessAnswers(token, processId) {
+  return request({
+    url: API_PATH + `/applicants/${processId}/download`,
+    data: undefined,
+    token: token,
+    type: 'blob'
+  }, 'get');
+}
+
+export function getEmailTemplate(token, templateId) {
+  return request({
+    url: API_PATH + `/emails/${templateId}`,
+    data: undefined,
+    token: token
+  }, 'get');
+}
+
+export function saveEmailTemplate(token, templateId, template) {
+  return request({
+    url: API_PATH + `/emails/${templateId}`,
+    data: { template },
+    token: token
+  }, 'put');
 }

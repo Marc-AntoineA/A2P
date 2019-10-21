@@ -7,7 +7,7 @@
         {{ applicant.status }}
       </div>
 
-      <p v-if='!canBeValidated'>
+      <p v-if='!canBeValidated && this.applicant.status ==="pending"'>
         To accept one student, please validate firstly all the steps.
       </p>
       <div class='tools-buttons'>
@@ -22,32 +22,46 @@
       </div>
     </div>
     <el-tabs tab-position="left" stretch>
-      <el-tab-pane v-for='(step, stepIndex) in process.steps' :label='step.label'>
+      <el-tab-pane v-for='(step, stepIndex) in process.steps' :label='step.label' :key='stepIndex'>
         <h3>{{ step.label }}</h3>
         <div class='action-buttons'>
           <div :class='"status-box " + step.status'>
             <i :class='"status-icon " + getStatusSymbol(step.status)'></i>
             {{ step.status }}
           </div>
-          <el-button v-if='step.status === "pending"' type='success'
-            @click='acceptStep(stepIndex)'>
-            Accept
-          </el-button>
-          <el-button v-if='step.status === "pending"' type='danger'
-            @click='rejectStep(stepIndex)'>
-            Reject
-          </el-button>
 
-          <div v-if='step.status === "validated"'>
+        <div v-if='step.status === "validated"'>
             <el-input-number v-model="stepsMark[stepIndex]" :min="0" :max="10"></el-input-number>
             <el-button type='info' @click='noteStep(stepIndex)'>Change Mark</el-button>
           </div>
+
         </div>
-            <el-table :data='questionsForStep(stepIndex)'>
+        <div v-if='step.status === "pending"' class='feedback-box' :class='stepsResponsesTemplates[stepIndex].accepting ? "accepted-box" : "rejected-box"'>
+          <h4>Your feedback</h4>
+          <div class='row'>
+            <textarea class='code' v-model="stepsResponsesTemplates[stepIndex].template.template"></textarea>
+            <div class='preview' v-html='renderStepsResponsesTemplates[stepIndex]'></div>
+          </div>
+          <div class='feedback-tools'>
+            <el-switch
+              style="display: block"
+              v-model="stepsResponsesTemplates[stepIndex].accepting"
+              active-color="#67c23a"
+              inactive-color="#f56c6c"
+              active-text="Accept"
+              inactive-text="Reject"
+              @change='switchTemplate(stepIndex)'>
+            </el-switch>
+            <el-button :type='stepsResponsesTemplates[stepIndex].accepting ? "success" : "danger"' @click='sendResponse(stepIndex)'>
+              {{ stepsResponsesTemplates[stepIndex].accepting ? 'Send Acceptation' : 'Send Rejection' }}
+            </el-button>
+          </div>
+        </div>
+            <el-table :data='questionsForStep(stepIndex)' class='no-break'>
               <el-table-column label='Question' prop='label'></el-table-column>
               <el-table-column label='Answer'>
                 <template slot-scope='scope'>
-                  {{ parseAnswer(scope.row) }}
+                  <div class='answer-box'>{{ parseAnswer(scope.row) }}</div>
                   <div class='words-counter' v-if='scope.row.type==="text"'>
                     {{ nbWords(scope.row) }} words
                   </div>
@@ -67,16 +81,38 @@
 
 <script>
 import { dateFormatter, phoneFormatter } from '../filters';
+import Mustache from 'mustache';
+
 
 export default {
   name: 'aap-process-answers',
   props: ['applicant', 'applicantId'],
   data: () => ({
     stepsMark: [],
-    notCollapsedQuestions: []
+    notCollapsedQuestions: [],
+    stepsResponsesTemplates: []
   }),
   beforeMount(){
     this.stepsMark = this.process.steps.map((step) => (step.mark));
+    this.stepsResponsesTemplates = this.process.steps.map((step) =>  (
+      {
+        accepting: undefined,
+        template:{ template: '', language: '', help: '', subject: ''}
+      }));
+    this.$store.dispatch('GET_EMAIL_TEMPLATE', 'step_accepted').then((defaultTemplate) => {
+      this.stepsResponsesTemplates = this.process.steps.map((step) => {
+        if (step.status !== 'pending') {
+          return { accepting: undefined, template: {  template: '', language: '', help: '', subject: '' }};
+        }
+        return { accepting: true, template: defaultTemplate };
+      });
+    }).catch((error) => {
+      broken = true;
+      this.$alert(error.message, `Error while downloading the email template`, {
+        confirmButtonText: 'OK'
+      });
+    });
+
     this.notCollapsedQuestions = this.process.steps.map((step, stepIndex) => {
       return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
     });
@@ -86,12 +122,25 @@ export default {
       return this.applicant.process;
     },
     canBeValidated() {
+      if (this.applicant.status !== 'pending') return false;
       const steps = this.process.steps;
       for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
         const step = steps[stepIndex];
         if (step.status !== 'validated') return false;
       }
       return true;
+    },
+    renderStepsResponsesTemplates() {
+      const output = this.stepsResponsesTemplates.map((template, index) => {
+        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+      });
+      return output;
+    },
+    renderStepsResponsesSubjects() {
+      const output = this.stepsResponsesTemplates.map((template, index) => {
+        return Mustache.render(template.template.subject, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+      });
+      return output;
     }
   },
   methods: {
@@ -134,28 +183,36 @@ export default {
       if (!answer) return 0;
       return answer.split(' ').length;
     },
-    changeStepStatus(stepIndex, status){
-      this.$store.dispatch('UPDATE_STATUS_STEP', {
-        processId: this.process._id,
-        applicantId: this.applicantId,
-        stepIndex: stepIndex,
-        status: status
-      }).then(() => {
-        this.$message({
-          type: 'info',
-          message: 'The status has been updated'
-        });
-      }).catch((error) => {
-        this.$alert(error.message, `Error while updating the status.`, {
-          confirmButtonText: 'OK'
+    sendResponse(stepIndex){
+      const status = this.stepsResponsesTemplates[stepIndex].accepting ? 'validated' : 'rejected';
+      const template = this.stepsResponsesTemplates[stepIndex].template;
+
+      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
+       this applicant with this email? <br/>
+       <div class='email'> <div class='subject'>${this.renderStepsResponsesSubjects[stepIndex]}</div>
+       ${this.renderStepsResponsesTemplates[stepIndex]}</div>`, 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          dangerouslyUseHTMLString: true,
+          customClass: 'email-confirmation-box'
+        }).then(() => {
+          this.$store.dispatch('UPDATE_STATUS_STEP', {
+            processId: this.process._id,
+            applicantId: this.applicantId,
+            stepIndex: stepIndex,
+            status: status,
+            template: template,
+          }).then(() => {
+            this.$message({
+              type: 'info',
+              message: 'The status has been updated and the email has been sent'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, `Error while updating the status.`, {
+              confirmButtonText: 'OK'
+            });
         });
       });
-    },
-    acceptStep(stepIndex) {
-      this.changeStepStatus(stepIndex, 'validated');
-    },
-    rejectStep(stepIndex) {
-      this.changeStepStatus(stepIndex, 'rejected');
     },
     deleteApplicant() {
       this.$confirm('Once an applicant is deleted, it is definitive', 'Warning', {
@@ -213,16 +270,44 @@ export default {
       }
     },
     acceptApplicant() {
-      this.changeApplicantStatus('accepted');
+      this.changeApplicantStatus('validated');
     },
     rejectApplicant() {
       this.changeApplicantStatus('rejected');
     },
     changeApplicantStatus(status) {
-      this.$store.dispatch('UPDATE_STATUS_APLICANT', {
-        processId: this.process._id,
-        applicantId: this.applicant._id,
-        status: status
+      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
+       this applicant? He will get an email`, 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          dangerouslyUseHTMLString: true,
+          customClass: 'email-confirmation-box'
+        }).then(() => {
+          this.$store.dispatch('UPDATE_STATUS_APLICANT', {
+            processId: this.process._id,
+            applicantId: this.applicant._id,
+            status: status
+          }).then(() => {
+            this.$message({
+              type: 'info',
+              message: 'The status has been updated and the email has been sent'
+            });
+          }).catch((error) => {
+            this.$alert(error.message, `Error while updating the status.`, {
+              confirmButtonText: 'OK'
+            });
+        });
+      });
+    },
+    switchTemplate(stepIndex) {
+      const accepting = this.stepsResponsesTemplates[stepIndex].accepting;
+      this.$store.dispatch('GET_EMAIL_TEMPLATE', accepting ? 'step_accepted' : 'step_rejected').then((template) => {
+        this.stepsResponsesTemplates[stepIndex].template = template;
+      }).catch((error) => {
+        this.stepsResponsesTemplates[stepIndex].accepting = !accepting;
+        this.$alert(error.message, 'Error while downloading processes', {
+          confirmButtonText: 'OK'
+        });
       });
     }
   }
@@ -290,5 +375,79 @@ export default {
   font-weight: bold;
   color: #808080;
   text-align: right;
+}
+
+.no-break .cell {
+  word-break: normal;
+}
+
+.answer-box {
+  white-space: pre-wrap;
+}
+
+.feedback-box textarea {
+  padding: .375rem .75rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.feedback-box .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.feedback-box .preview {
+  border: 1px solid black;
+  padding: 20px;
+  flex: 1 0 400px;
+}
+
+.feedback-box .code {
+  flex: 1 0 400px;
+}
+
+.feedback-box.accepted-box {
+  border-color: green;
+  box-shadow: 4px 2px 3px #67c23a;
+}
+
+.feedback-box.rejected-box {
+  border-color: firebrick;
+  box-shadow: 4px 2px 3px #f56c6c;
+}
+
+.feedback-box {
+  margin: 10px;
+  border-radius: 3px;
+  border: 2px solid black;
+  padding: 10px;
+}
+
+.feedback-tools {
+  display: inline-flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.el-message-box.email-confirmation-box {
+	width: 600px;
+}
+
+.email-confirmation-box .email {
+	border: 1px solid gray;
+	padding: 5px;
+	background-color: #fbfbfb;
+	font-style: italic;
+}
+
+.email-confirmation-box .email .subject {
+  font-style: normal;
+  font-weight: bold;
 }
 </style>

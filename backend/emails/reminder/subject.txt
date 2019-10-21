@@ -1,0 +1,1 @@
+[SHA] Hi {{ applicant.name }}, are you still here?

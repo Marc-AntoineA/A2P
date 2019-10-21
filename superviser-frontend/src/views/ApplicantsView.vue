@@ -29,7 +29,7 @@
           <aap-spinner :show="loading"></aap-spinner>
 
           <el-table v-if='!broken' :data='applicants' @row-click='displayModal' ref="applicantsTable">
-            <el-table-column label='Process' prop='campaign' sortable></el-table-column>
+            <el-table-column label='Process' prop='process.label' sortable></el-table-column>
             <el-table-column label='Name' prop='name' sortable></el-table-column>
             <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
               <template slot-scope='scope'>
@@ -200,9 +200,8 @@ export default {
         return false;
 
       const status = this.computedStatus[row._id];
-      console.log(status);
       if (value === 'required')
-        return status.pending > 0;
+        return status.pending > 0 || status.accepted === row.process.steps.length;
 
       return false;
     },

@@ -106,38 +106,57 @@ class Summary extends Component {
         );
     });
 
+    const resultsBox = (
+      <div className={'results-box ' + this.state.process.status}>
+        { this.state.process.status === 'validated' ? TEXTS.SUMMARY_VIEW.RESULTS_BOX.ACCEPTED : TEXTS.SUMMARY_VIEW.RESULTS_BOX.REJECTED }
+      </div>
+    );
+
+    const helpBox = (
+      <div className='help-box'>
+        <h3>Some help</h3>
+        { TEXTS.SUMMARY_VIEW.HELP_NOTE }
+        <ul className='help-list'>
+          <li>
+            <span className='small-icon-box todo'>2</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.TODO_ICON_DESCRIPTION }
+          </li>
+          <li>
+            <span className='small-icon-box pending'>...</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.PENDING_ICON_DESCRIPTION }
+          </li>
+          <li>
+            <span className='small-icon-box validated'>&#x2713;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.VALIDATED_ICON_DESCRIPTION }
+          </li>
+          <li>
+            <span className='small-icon-box rejected'>&#x2715;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.REJECTED_ICON_DESCRIPTION }
+          </li>
+        </ul>
+      </div>
+    );
+
+    const deadlineBox = (
+      <div className='warning-box'>
+        <FontAwesomeIcon icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
+      </div>
+    );
+
+    const summary = (
+      <div id='process'>
+        <ol className='steps-list'>
+          { steps }
+        </ol>
+      </div>
+    );
+
     const mainComponent = (
       <div>
         <Header user={ this.props.user }/>
         <Container>
           <h2>{ this.welcomeTemplate({ name: personalData.name }) }</h2>
           <p>{ TEXTS.SUMMARY_VIEW.WELCOME_DESCRIPTION }</p>
-          <div className='warning-box'>
-            <FontAwesomeIcon icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
-          </div>
-          <div className='help-box'>
-            <h3>Some help</h3>
-            { TEXTS.SUMMARY_VIEW.HELP_NOTE }
-            <ul className='help-list'>
-              <li>
-                <span className='small-icon-box todo'>2</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.TODO_ICON_DESCRIPTION }
-              </li>
-              <li>
-                <span className='small-icon-box pending'>...</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.PENDING_ICON_DESCRIPTION }
-              </li>
-              <li>
-                <span className='small-icon-box validated'>&#x2713;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.VALIDATED_ICON_DESCRIPTION }
-              </li>
-              <li>
-                <span className='small-icon-box rejected'>&#x2715;</span>{ TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.REJECTED_ICON_DESCRIPTION }
-              </li>
-            </ul>
-          </div>
-          <div id='process'>
-            <ol className='steps-list'>
-              { steps }
-            </ol>
-          </div>
+          { this.state.process.status !== 'pending' ? resultsBox : '' }
+          { this.state.process.status === 'pending' ? deadlineBox : '' }
+          { this.state.process.status === 'pending' ? helpBox : '' }
+          { this.state.process.status === 'pending' ? summary : '' }
         </Container>
         <Footer version={this.props.version}/>
       </div>

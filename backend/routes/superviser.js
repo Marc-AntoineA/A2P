@@ -7,6 +7,7 @@ const auth = require('../middleware/auth')(true);
 const processCtrl = require('../controllers/process');
 const applicantCtrl = require('../controllers/applicant');
 const superviserCtrl = require('../controllers/superviser');
+const emailsCtrl = require('../controllers/email');
 
 router.get('/processes', auth, processCtrl.getAllProcesses);
 router.get('/process/:processId', auth, processCtrl.getProcessById);
@@ -18,10 +19,14 @@ router.delete('/delete/applicant/:applicantId', auth, applicantCtrl.deleteApplic
 router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);
 
 router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
+router.get('/applicants/:processId/download', auth, applicantCtrl.getAllApplicantsByProcessIdExcelFile);
 
 router.put('/applicants/:applicantId/status/:status', auth, applicantCtrl.updateStatusByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicantCtrl.updateStepStatusByApplicantId);
+
+router.get('/emails/:templateId', auth, emailsCtrl.getEmailTemplate);
+router.put('/emails/:templateId', auth, emailsCtrl.saveEmailTemplate);
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);

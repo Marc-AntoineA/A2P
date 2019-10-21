@@ -1,0 +1,1 @@
+[SHA] Hi {{ applicant.name }}, some news from your application process for the {{ applicant.process.label }}

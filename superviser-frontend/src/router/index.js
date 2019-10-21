@@ -10,6 +10,7 @@ const ProcessesView = () => import('../views/ProcessesView.vue');
 const ProcessView = () => import('../views/ProcessView.vue');
 const ApplicantsView = () => import('../views/ApplicantsView.vue');
 const Error404View = () => import('../views/Error404View.vue');
+const TemplatesView = () => import('../views/TemplatesView.vue');
 
 export function createRouter() {
   return new Router({
@@ -52,6 +53,18 @@ export function createRouter() {
         name: 'applicantsInitialProcessId',
         component: ApplicantsView,
         meta: { requiresAuth: true },
+      },
+      {
+        path:'/administration/templates',
+        name: 'templatesNoSelected',
+        component: TemplatesView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path:'/administration/templates/:templateName',
+        name: 'template',
+        component: TemplatesView,
+        meta: { requiresAuth: true }
       },
       {
         path: '/administration/*',

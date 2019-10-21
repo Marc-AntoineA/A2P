@@ -1,6 +1,7 @@
 'use strict';
 
 const Process = require('../models/process').model;
+const Applicant = require('../models/applicant').model;
 
 const moment = require('moment');
 
@@ -27,10 +28,8 @@ exports.createEmptyProcess = (req, res, next) => {
   const process = new Process({
     label: 'New process',
     location: 'Choose location',
-    deadline: '2080-01-01T00:00:00.000Z',
+    deadline: '2025-01-01T00:00:00.000Z',
     status: 'draft',
-    //createdAt: today.format(),
-    //updatedAt: today.format(),
     steps: []
   });
 
@@ -52,7 +51,7 @@ exports.copyProcessById = (req, res, next) => {
     const processSchema = process.toObject();
     delete processSchema._id;
     processSchema.status = 'draft';
-    processSchema.deadline = '2080-01-01T00:00:00.000Z';
+    processSchema.deadline = '2020-01-01T00:00:00.000Z';
     processSchema.label = 'Copy of ' + processSchema.label;
     const copy = new Process (processSchema);
     copy.save().then(() => {
@@ -63,7 +62,6 @@ exports.copyProcessById = (req, res, next) => {
       });
     });
   }).catch((error) => {
-    console.log('line 66', error);
     res.status(500).json({
       error: error
     });
@@ -90,6 +88,48 @@ exports.deleteProcessById = (req, res, next) => {
     });
 };
 
+const updateOpenedProcessById = (req, res, next) => {
+  const processId = req.params.processId;
+  const process = req.body;
+  Process.findOne({ _id: processId }).then((oldProcess) => {
+    if (oldProcess.status !== process.status) {
+      res.status(500).json({ error: { message: `Status of process ${processId} cannot be modified in status ${process.status}`}});
+      return;
+    }
+    if (JSON.stringify(oldProcess.steps) != JSON.stringify(process.steps)) {
+      res.status(500).json({ error: { message: `Steps of process ${processId} cannot be edited in status open`}});
+      return;
+    }
+
+    Process.findOneAndUpdate({ _id: processId}, process).then(() => {
+      Applicant.find({
+        "process._id": processId
+      }).then((applicants) => {
+        applicants.forEach((applicant) => {
+          applicant.process.deadline = process.deadline;
+          applicant.process.label = process.label;
+          applicant.process.location = process.location;
+        });
+        const poolPromises = applicants.map((applicant) => {
+          return applicant.save();
+        });
+        Promise.all(poolPromises).then(() => {
+          res.status(200).json(process);
+        }).catch((error) => {
+          res.status(500).json({
+            error: error
+          });
+        });
+      });
+    }).catch((error) => {
+      console.log(error);
+      res.status(500).json({
+        error: error
+      });
+    });
+  });
+}
+
 exports.updateProcessById = (req, res, next) => {
   const processId = req.params.processId;
   const process = req.body;
@@ -98,14 +138,22 @@ exports.updateProcessById = (req, res, next) => {
     return;
   }
 
+  if (process.status === 'open') {
+    updateOpenedProcessById(req, res, next);
+    return;
+  }
+
   if (process.status !== 'draft') {
     res.status(500).json({ error: { message: `Process ${processId} cannot be modified in status ${process.status}`}});
     return;
   }
 
-  const now = moment();
-  //process.updatedAt = now.format();
-  Process.findOneAndUpdate({ _id: processId}, process)
+  Process.findOne({ _id: processId}).then((oldProcess) => {
+    if (oldProcess.status !== process.status) {
+      res.status(500).json({ error: { message: `Status of process ${processId} cannot be edited by this function `}});
+      return;
+    }
+    Process.findOneAndUpdate({ _id: processId}, process)
     .then(() => {
       res.status(200).json(process);
     }).catch((error) => {
@@ -113,6 +161,7 @@ exports.updateProcessById = (req, res, next) => {
         error: error
       });
     });
+  })
 };
 
 exports.openProcessById = (req, res, next) => {

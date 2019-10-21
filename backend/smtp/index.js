@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
 const Email = require('email-templates');
 const EMAIL_SETTINGS = require('../settings.json').EMAIL_SETTINGS;
+const Mustache = require('mustache');
+const fs = require('fs');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -25,43 +27,79 @@ const email = new Email({
   send: true
 });
 
-function sendMail(to, template, locals) {
+exports.sendTemplatedMail = function(to, data, htmlStringTemplate, subject) {
+  const content = Mustache.render(htmlStringTemplate, data);
+  const renderedSubject = Mustache.render(subject, data);
   return new Promise((resolve, reject) => {
     email.send({
-      template: template,
+      html: content,
       message: {
-        to: to
-      },
-      locals: locals
+        to: to,
+        html: content,
+        subject: renderedSubject
+      }
     }).then((response) => { resolve(response); })
     .catch((error) => { reject(error); });
   });
 }
 
-exports.sendApplicationMail = function(to, name, deadline, location) {
-  return sendMail(to, 'application', { name, deadline, location });
-};
-
-exports.sendAcceptedMail = function(to, name, campaignName) {
-  return sendMail(to, 'accepted', { name, campaignName});
-};
-
-exports.sendRejectedMail = function(to, name, campaignName) {
-  return sendMail(to, 'rejected', { name, campaignName });
-};
-
-exports.sendResetPasswordMail = function(to, name, password, campaignName) {
-  return sendMail(to, 'reset_password', { name, password, campaignName})
-};
-
-exports.sendReceivedStepMail = function(to, name, stepName, campaignName, location) {
-  return sendMail(to, 'step_received', { name, stepName, campaignName, location });
-};
-
-exports.sendAcceptedStepMail = function(to, name, stepName, campaignName, location) {
-  return sendMail(to, 'step_accepted', { name, stepName, campaignName, location });
+const loadText = function(name, file) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(`emails/${name}/${file}`, 'utf8', (err, template) => {
+      if (err) reject(err);
+      resolve(template);
+    });
+  });
 }
 
-exports.sendRejectedStepMail = function(to, name, stepName, campaignName, location) {
-  return sendMail(to, 'step_rejected', { name, stepName, campaignName, location });
+const loadTemplate = function(name, template) {
+  if (template)
+    return new Promise((resolve) => { resolve(template) });
+  return loadText(name, 'html.html');
+}
+
+const loadSubject = function(name, subject) {
+  if (subject)
+    return new Promise((resolve) => { resolve(subject) });
+  return loadText(name, 'subject.txt');
+}
+
+exports.loadAndSendEmail = function(emailName, to, data, template=undefined, subject=undefined) {
+  return new Promise((resolve, reject) => {
+    Promise.all([loadSubject(emailName, subject), loadTemplate(emailName, template)]).then(([subject, template]) => {
+      exports.sendTemplatedMail(to, data, template, subject).then(() => {
+        resolve(true);
+      }).catch((err) => {
+        reject(err);
+      });
+    });
+  });
+}
+
+exports.sendApplicationMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('application', to, data, template, subject);
+};
+
+exports.sendAcceptedMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('accepted', to, data, template, subject);
+};
+
+exports.sendRejectedMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('rejected', to, data, template, subject);
+};
+
+exports.sendResetPasswordMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('reset_password', to, data, template, subject);
+};
+
+exports.sendReceivedStepMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('step_received', to, data, template, subject);
+};
+
+exports.sendAcceptedStepMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('step_accepted', to, data, template, subject);
+};
+
+exports.sendRejectedStepMail = function(to, data, template=undefined, subject=undefined) {
+  return exports.loadAndSendEmail('step_rejected', to, data, template, subject);
 };
