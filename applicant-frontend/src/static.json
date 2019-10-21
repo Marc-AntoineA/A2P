@@ -57,6 +57,11 @@
       "VALIDATED_ICON_DESCRIPTION": "means that your answer was accepted by Social Hackers Academy, perfect!"
     },
     "DEADLINE_TEXT": "You have to complete all these steps before the {{ deadline }}",
-    "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)"
+    "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)",
+    "RESULTS_BOX":
+    {
+      "ACCEPTED": "Congratulation, you are now part of Social Hackers Academy. Check your emails to know when it starts!",
+      "REJECTED": "Unfortunately, you will not join our programm right now. A member of our team will contact you to explain to you the reasons that you got rejected and give you feedback on your application and how you can improve it! In any case, you can apply to next classes, that will be launched soon in our Academy. Check your e-mails often!"
+    }
   }
 }
