@@ -6,17 +6,8 @@
         <aap-broken v-show="broken"></aap-broken>
         <div v-if='!broken'>
           <h2>Applicants list</h2>
-          <div id='processes-input'>
-            <div class='label'>Processes</div>
-            <multiselect v-model='selectedProcesses' :options='existingProcesses'
-              :multiple='true'
-              label="label"
-              placeholder="Select processes"
-              track-by='id'
-              @input='handleMultiselect'>
-            </multiselect>
-            </div>
-          </el-form>
+          Process {{ process.label }}
+
           <el-dialog v-if='!loading && !broken' class='applicant-modal'
             :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
             width="90%" center>
@@ -26,10 +17,12 @@
               <el-button @click="applicantModalVisible = false">Cancel</el-button>
             </span>
           </el-dialog>
-          <aap-spinner :show="loading"></aap-spinner>
 
+          <aap-spinner :show="loading.processes"></aap-spinner>
+          aa
+          <aap-spinner :show="loading.applicants"></aap-spinner>
           <el-table v-if='!broken' :data='applicants' @row-click='displayModal' ref="applicantsTable">
-            <el-table-column label='Process' prop='process.label' sortable></el-table-column>
+            <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
             <el-table-column label='Name' prop='name' sortable></el-table-column>
             <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
               <template slot-scope='scope'>
@@ -101,17 +94,15 @@ import AapAsideMenu from '../components/AsideMenu.vue';
 import AapSpinner from '../components/Spinner.vue';
 import AapBroken from '../components/Broken.vue';
 import AapProcessAnswers from '../components/ProcessAnswers';
-import multiselect from 'vue-multiselect';
 
 export default {
   name: 'Applicants',
-  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers, multiselect },
+  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
   data: () => ({
-    loading: false,
+    loading: { processes: true, applicants: true },
     broken: false,
     applicantModalVisible: false,
-    currentDisplayedApplicant: { applicantId: '', processId: '' },
-    selectedProcesses: [],
+    currentDisplayedApplicant: { applicantId: '' },
     filterStatus: [
       { text: 'Accepted Students', value: 'accepted' },
       { text: 'Rejected Students', value: 'rejected' },
@@ -120,41 +111,43 @@ export default {
   }),
   props: [],
   beforeMount() {
-    if (Object.values(this.$store.state.processes).length === 0) {
-      this.$store.dispatch('FETCH_PROCESSES')
-      .then((processes) => {
-        if (!this.$route.params.processId) return;
-        const processId = this.$route.params.processId;
-        const process = this.$store.state.processes[processId];
-        this.selectedProcesses = [{ id: process._id, label: process.label }];
-        this.handleMultiselect();
-      }).catch((error) => {
-        this.$alert(error.message, 'Error while downloading processes', {
-          confirmButtonText: 'OK'
-        });
-      });
-    } else {
-      if (!this.$route.params.processId) return;
-      const processId = this.$route.params.processId;
-      const process = this.$store.state.processes[processId];
-      this.selectedProcesses = [{ id: process._id, label: process.label }];
-      this.handleMultiselect();
-    }
+    this.fetchProcesses().then(() => {
+      this.fetchApplicants();
+    });
   },
   mounted() {
     this.setDefaultFilter('status', ['required']);
   },
   methods: {
-    fetchApplicantsByProcessId(processId) {
+    fetchProcesses() {
       return new Promise((resolve, reject) => {
-        this.loading = true;
+        if (Object.values(this.$store.state.processes).length !== 0) { resolve(); return; }
+        this.loading.processes = true;
+        this.$store.dispatch('FETCH_PROCESSES')
+        .then((processes) => {
+          this.loading.processes = false;
+          resolve();
+        }).catch((error) => {
+          this.loading.processes = false;
+          this.broken = true;
+          this.$alert(error.message, 'Error while downloading processes', {
+            confirmButtonText: 'OK'
+          });
+          reject();
+        });
+      });
+    },
+    fetchApplicants() {
+      if (!this.process) return;
+      return new Promise((resolve, reject) => {
+        this.loading.applicants = true;
         this.broken = false;
-        this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', processId).then((applicants) => {
-          this.loading = false;
+        this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', this.process._id).then((applicants) => {
+          this.loading.applicants = false;
           resolve(applicants);
         }).catch((error) => {
           this.broken = true;
-          this.loading = false;
+          this.loading.applicants = false;
           this.$alert(error.message, 'Error while downloading applicants', {
             confirmButtonText: 'OK'
           });
@@ -181,13 +174,6 @@ export default {
     displayModal(row, column, evt) {
       this.applicantModalVisible = true;
       this.currentDisplayedApplicant = { applicantId: row._id, processId: row.process._id };
-    },
-    handleMultiselect() {
-      const selectedIds = this.selectedProcesses.map((process) => process.id);
-      selectedIds.forEach((processId) => {
-          if (!this.$store.state.applicantsByProcessId[processId])
-            this.fetchApplicantsByProcessId(processId);
-      });
     },
     filterStatusHandler(value, row) {
       if (value === 'accepted')
@@ -220,20 +206,18 @@ export default {
   },
   computed: {// TODO passer par un getter pour uniquement les applicants qu'on souhaite
     applicants() {
-      const selectedIds = this.selectedProcesses.map((process) => process.id);
-      const applicants = selectedIds.map((processId) =>
-        this.$store.state.applicantsByProcessId[processId] ?
-        Object.values(this.$store.state.applicantsByProcessId[processId])
-        :
-        []
-      );
-      return  [].concat.apply([], applicants);
+      if (!this.process._id) return [];
+      if (!this.$store.state.applicantsByProcessId[this.process._id]) return [];
+      return Object.values(this.$store.state.applicantsByProcessId[this.process._id]);
     },
     existingProcesses() {
       return Object.values(this.$store.state.processes).map((process) => ({
         label: process.label,
         id: process._id
       }));
+    },
+    process() {
+      return this.$store.state.processes[this.$route.params.processId];
     },
     computedStatus() {
       const result = {};
