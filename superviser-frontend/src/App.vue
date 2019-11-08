@@ -27,6 +27,10 @@
   color: green;
 }
 
+.closed {
+  color: firebrick;
+}
+
 .finished {
   color: red;
 }

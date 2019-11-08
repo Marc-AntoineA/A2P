@@ -24,8 +24,8 @@
             </el-table-column>
             <el-table-column label='Status' prop='status' sortable align='center'>
               <template slot-scope='scope'>
-                <span :class='scope.row.status'>&#11044;</span>
-                {{ scope.row.status }}
+                <span :class='$store.getters.processesStatus[scope.row._id]'>&#11044;</span>
+                {{ $store.getters.processesStatus[scope.row._id] }}
               </template>
             </el-table-column>
             <el-table-column label='Deadline' sortable>
@@ -36,16 +36,16 @@
             </el-table-column>
             <el-table-column label='Applications' align='center'>
               <template slot-scope='scope'>
-                <router-link v-if='scope.row.status === "open"'
+                <router-link v-if='$store.getters.processesStatus[scope.row._id] !== "draft"'
                    :to='{name: "applicantsInitialProcessId", params: {processId: scope.row._id} }'>
                    <el-tooltip class="item" effect="dark" content="See applicants" placement="bottom">
                      <i class='el-icon-tickets big round-boxed'/>
                    </el-tooltip>
                 </router-link>
-                <el-tooltip v-if='scope.row.status === "open"' class="item" effect="dark" content="Download applicants" placement="bottom">
+                <el-tooltip v-if='$store.getters.processesStatus[scope.row._id] !== "draft"' class="item" effect="dark" content="Download applicants" placement="bottom">
                   <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
                 </el-tooltip>
-                <span v-if='scope.row.status === "draft"'>
+                <span v-if='$store.getters.processesStatus[scope.row._id] === "draft"'>
                   Draft process
                 </span>
               </template>
@@ -67,10 +67,10 @@
                 {{ scope.status }}
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
                   <el-tooltip class="item" effect="dark" content="Edit this process" placement="bottom">
-                    <i v-if='scope.row.status === "draft"' class='el-icon-edit round-boxed big'></i>
+                    <i v-if='$store.getters.processesStatus[scope.row._id] === "draft"' class='el-icon-edit round-boxed big'></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="See this process" placement="bottom">
-                    <i v-if='scope.row.status !== "draft"' class='el-icon-search round-boxed big'></i>
+                    <i v-if='$store.getters.processesStatus[scope.row._id] !== "draft"' class='el-icon-search round-boxed big'></i>
                   </el-tooltip>
                 </router-link>
                 <el-tooltip class="item" effect="dark" content="Delete this process" placement="bottom">
@@ -105,7 +105,7 @@ export default {
     broken: true
   }),
   computed: {
-    processes() { return Object.values(this.$store.state.processes); }
+    processes() { return this.$store.getters.processes; }
   },
   beforeMount() { this.fetchProcesses() },
   methods: {

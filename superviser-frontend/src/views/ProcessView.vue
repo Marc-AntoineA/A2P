@@ -31,9 +31,9 @@
             </el-form-item>
 
             <el-form-item label='Status'>
-              <span :class='process.status'>&#11044;</span>
-              {{ process.status }}
-              <el-button v-if='process.status === "draft"'
+              <span :class='$store.getters.processesStatus[process._id]'>&#11044;</span>
+              {{ $store.getters.processesStatus[process._id] }}
+              <el-button v-if='$store.getters.processesStatus[process._id] === "draft"'
                 @click='openProcess'>Open
               </el-button>
             </el-form-item>
