@@ -4,11 +4,33 @@
     <el-container>
       <el-main>
         <aap-broken v-show="broken"></aap-broken>
-        <div v-if='!broken'>
+        <div v-show='!broken'>
           <h2>Applicants list</h2>
-          Process {{ process.label }}
 
-          <el-dialog v-if='!loading && !broken' class='applicant-modal'
+          <div class='process-box'>
+            <ul>
+              <li><span class='label'>Label: </span>{{ process.label }}</li>
+              <li><span class='label'>Location: </span>{{ process.location }}</li>
+              <li><span class='label'>Deadline: </span>{{ new Date(process.deadline) }}</li>
+            </ul>
+
+          </div>
+          <div class='filters-box'>
+            <el-radio-group v-model='selectedFilter'>
+              <el-radio-button label="all">All Students</el-radio-button>
+              <el-radio-button label="pending">Pending Students</el-radio-button>
+              <el-tooltip effect="dark" content="No modification for more than 5 days" placement="bottom">
+                <el-radio-button label="inactive">Inactive Students</el-radio-button>
+              </el-tooltip>
+              <el-radio-button label="accepted">Accepted Students</el-radio-button>
+              <el-radio-button label="rejected">Rejected Students</el-radio-button>
+              <el-tooltip  v-for="step, index in process.steps" :key="index" effect="dark" :content="step.label" placement="bottom">
+                <el-radio-button  :label="'step' + index">Step#{{ index + 1 }} completed</el-radio-button>
+              </el-tooltip>
+            </el-radio-group>
+          </div>
+
+          <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
             :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
             width="90%" center>
             <Aap-process-answers :applicant='getCurrentApplicant()'
@@ -19,9 +41,10 @@
           </el-dialog>
 
           <aap-spinner :show="loading.processes"></aap-spinner>
-          aa
           <aap-spinner :show="loading.applicants"></aap-spinner>
-          <el-table v-if='!broken' :data='applicants' @row-click='displayModal' ref="applicantsTable">
+
+          <p class='samll'> {{ applicants.length }} candidates displayed</p>
+          <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable">
             <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
             <el-table-column label='Name' prop='name' sortable></el-table-column>
             <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
@@ -43,12 +66,7 @@
                 <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
               </template>
             </el-table-column>
-            <el-table-column label='Current step / Status' align='center'
-              :filters="filterStatus"
-              :filter-method="filterStatusHandler"
-              filter-placement="bottom-end"
-              :filter-multiple="false"
-              prop='status'>
+            <el-table-column label='Current step / Status' align='center' prop='status'>
               <template slot-scope='scope'>
                 <div v-if='scope.row.status === "pending"'>
                   <span class='step-status todo'>
@@ -103,11 +121,7 @@ export default {
     broken: false,
     applicantModalVisible: false,
     currentDisplayedApplicant: { applicantId: '' },
-    filterStatus: [
-      { text: 'Accepted Students', value: 'accepted' },
-      { text: 'Rejected Students', value: 'rejected' },
-      { text: 'Required Task', value: 'required', default: true }
-    ]
+    selectedFilter: "all"
   }),
   props: [],
   beforeMount() {
@@ -116,7 +130,6 @@ export default {
     });
   },
   mounted() {
-    this.setDefaultFilter('status', ['required']);
   },
   methods: {
     fetchProcesses() {
@@ -144,6 +157,7 @@ export default {
         this.broken = false;
         this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', this.process._id).then((applicants) => {
           this.loading.applicants = false;
+          // this.setDefaultFilter('status', ['required']);
           resolve(applicants);
         }).catch((error) => {
           this.broken = true;
@@ -190,25 +204,46 @@ export default {
         return status.pending > 0 || status.accepted === row.process.steps.length;
 
       return false;
-    },
-    setDefaultFilter(colProp, filteredValue) {
-      if (!this.$refs.applicantsTable) {
-        throw new Error('Table should have a ref named applicantsTable.');
-      }
-      const typeColumn = this.$refs.applicantsTable.columns.find(col => col.property === colProp);
-      typeColumn.filteredValue = filteredValue;
-      this.$refs.applicantsTable.store.commit('filterChange', {
-        column: typeColumn,
-        values: filteredValue,
-      });
-      this.$refs.applicantsTable.store.updateAllSelected();
     }
   },
-  computed: {// TODO passer par un getter pour uniquement les applicants qu'on souhaite
+  computed: {
     applicants() {
-      if (!this.process._id) return [];
-      if (!this.$store.state.applicantsByProcessId[this.process._id]) return [];
-      return Object.values(this.$store.state.applicantsByProcessId[this.process._id]);
+      if (!this.$route.params.processId) return [];
+      if (!this.$store.state.applicantsByProcessId[this.$route.params.processId]) return [];
+      const applicants = Object.values(this.$store.state.applicantsByProcessId[this.process._id]);
+      return applicants.filter((applicant) => {
+        if (this.selectedFilter === 'all') return true;
+        if (this.selectedFilter === 'accepted') return applicant.status === 'accepted';
+        if (this.selectedFilter === 'rejected') return applicant.status === 'rejected';
+        if (this.selectedFilter === 'pending') {
+          if (applicant.status !== 'pending') return false;
+          let waitValidation = true;
+          for (let k=0; k<applicant.process.steps.length;k++) {
+            const step = applicant.process.steps[k];
+            if (step.status === 'pending') return true;
+            if (step.status !== 'validated') waitValidation = false;
+          }
+          return waitValidation;
+        }
+        if (this.selectedFilter === 'inactive') {
+          if (applicant.status !== 'pending') return false;
+          const updatedAt = new Date(applicant.update_at);
+          updatedAt.setDate(updatedAt.getDate() + 5);
+          if (updatedAt >= new Date()) return false;
+          for (let k=0; k<applicant.process.steps.length;k++) {
+            const step = applicant.process.steps[k];
+            if (step.status === 'todo' || step.status === 'rejected') return true;
+          }
+          return false;
+        }
+        for (let k=0; k<applicant.process.steps.length;k++) {
+          if (this.selectedFilter === 'step' + k) {
+            const step = applicant.process.steps[k];
+            return step.status === 'validated';
+          }
+        }
+        return false;
+      })
     },
     existingProcesses() {
       return Object.values(this.$store.state.processes).map((process) => ({
@@ -238,7 +273,7 @@ export default {
             div++;
           }
         });
-        counter['averageMark'] = Math.round(10 * averageMark / div)/10;
+        counter['averageMark'] = div > 0 ? Math.round(10 * averageMark / div)/10 : 0;
         result[applicant._id] = counter;
       });
       return result;
@@ -279,5 +314,42 @@ export default {
 	font-weight: bold;
 	margin: 3px;
 }
+
+.process-box ul {
+  list-style: none;
+}
+
+.process-box li {
+  display: inline-block;
+}
+
+.stat-number {
+	font-size: 30px;
+	font-weight: bold;
+	border: 2px solid teal;
+	border-radius: 100%;
+	padding: 6px 8px;
+	color: white;
+	background-color: teal;
+}
+
+.label {
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bolder;
+	color: teal;
+	margin-left: 10px;
+}
+
+.label-stats {
+	text-transform: uppercase;
+	font-size: 12px;
+	font-weight: bolder;
+	color: teal;
+	margin-left: 10px;
+	vertical-align: top;
+	margin-right: 5px;
+}
+
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
