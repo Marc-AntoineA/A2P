@@ -13,8 +13,14 @@
               <li><span class='label'>Location: </span>{{ process.location }}</li>
               <li><span class='label'>Deadline: </span>{{ new Date(process.deadline) }}</li>
             </ul>
-
+            <el-tooltip class="item" effect="dark" content="See this process" placement="bottom">
+              <i class='el-icon-search round-boxed big'></i>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="Download applicants" placement="bottom">
+              <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
+            </el-tooltip>
           </div>
+
           <div class='filters-box'>
             <el-radio-group v-model='selectedFilter'>
               <el-radio-button label="all">All Students</el-radio-button>
@@ -30,6 +36,13 @@
             </el-radio-group>
           </div>
 
+          <el-input
+            placeholder="Type a name, a mail address or a phone number"
+            prefix-icon="el-icon-search"
+            v-model="searchInput">
+          </el-input>
+          {{ searchInput }}
+
           <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
             :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
             width="90%" center>
@@ -44,7 +57,7 @@
           <aap-spinner :show="loading.applicants"></aap-spinner>
 
           <p class='samll'> {{ applicants.length }} candidates displayed</p>
-          <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable">
+          <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500">
             <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
             <el-table-column label='Name' prop='name' sortable></el-table-column>
             <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
@@ -69,7 +82,14 @@
             <el-table-column label='Current step / Status' align='center' prop='status'>
               <template slot-scope='scope'>
                 <div v-if='scope.row.status === "pending"'>
-                  <span class='step-status todo'>
+                  <div class='bar'>
+                    <div v-for='step, index in scope.row.process.steps' :key='index'
+                    v-bind:style="{ width: 100/scope.row.process.steps.length + '%', }" :class='"segment " + step.status'>
+                    </div>
+                  </div>
+
+
+                  <!-- <span class='step-status todo'>
                     {{ computedStatus[scope.row._id].todo }}
                     <i class='status-icon el-icon-service'></i>
                   </span>
@@ -84,7 +104,7 @@
                   <span class='step-status rejected'>
                     {{ computedStatus[scope.row._id].rejected }}
                     <i class='status-icon el-icon-close'></i>
-                  </span>
+                  </span> -->
                 </div>
                 <div v-if='scope.row.status !== "pending"'>
                   <span class='status-box'>{{ scope.row.status }}</span>
@@ -121,7 +141,8 @@ export default {
     broken: false,
     applicantModalVisible: false,
     currentDisplayedApplicant: { applicantId: '' },
-    selectedFilter: "all"
+    selectedFilter: "all",
+    searchInput: ""
   }),
   props: [],
   beforeMount() {
@@ -152,6 +173,7 @@ export default {
     },
     fetchApplicants() {
       if (!this.process) return;
+      if (this.$store.state.applicantsByProcessId[this.process._id]) return;
       return new Promise((resolve, reject) => {
         this.loading.applicants = true;
         this.broken = false;
@@ -211,7 +233,7 @@ export default {
       if (!this.$route.params.processId) return [];
       if (!this.$store.state.applicantsByProcessId[this.$route.params.processId]) return [];
       const applicants = Object.values(this.$store.state.applicantsByProcessId[this.process._id]);
-      return applicants.filter((applicant) => {
+      const filteredApplicants = applicants.filter((applicant) => {
         if (this.selectedFilter === 'all') return true;
         if (this.selectedFilter === 'accepted') return applicant.status === 'accepted';
         if (this.selectedFilter === 'rejected') return applicant.status === 'rejected';
@@ -243,7 +265,13 @@ export default {
           }
         }
         return false;
-      })
+      });
+      return filteredApplicants.filter((applicant) => {
+        if(applicant.name.toLowerCase().includes(this.searchInput.toLowerCase())) return true;
+        if(applicant.mailAddress.toLowerCase().includes(this.searchInput.toLowerCase())) return true;
+        if(applicant.phoneNumber.toLowerCase().includes(this.searchInput.toLowerCase())) return true;
+        if(applicant.name.toLowerCase().includes(this.searchInput.toLowerCase())) return true;
+      });
     },
     existingProcesses() {
       return Object.values(this.$store.state.processes).map((process) => ({
@@ -351,5 +379,49 @@ export default {
 	margin-right: 5px;
 }
 
+
+.bar {
+  width: 100%;
+  height: 30px;
+  border-radius: 10px;
+  background-color: #b3b3b3;
+  color: white;
+  text-align: center;
+}
+
+.segment {
+  /* width: 25%; */
+  height: 100%;
+  float: left;
+  color: white;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.segment:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.segment:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.segment.todo {
+  background-color: grey;
+}
+
+.segment.validated {
+  background-color: green;
+}
+
+.segment.rejected {
+  background-color: red;
+}
+
+.segment.pending {
+  background-color: orange;
+}
 </style>
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
