@@ -103,24 +103,6 @@
                       v-bind:style="{ width: 100/scope.row.process.steps.length + '%', }" :class='"segment " + step.status'>
                       </div>
                     </div>
-
-
-                    <!-- <span class='step-status todo'>
-                      {{ computedStatus[scope.row._id].todo }}
-                      <i class='status-icon el-icon-service'></i>
-                    </span>
-                    <span class='step-status pending'>
-                      {{ computedStatus[scope.row._id].pending }}
-                      <i class='status-icon el-icon-more'></i>
-                    </span>
-                    <span class='step-status validated'>
-                      {{ computedStatus[scope.row._id].validated }}
-                      <i class='status-icon el-icon-check'></i>
-                    </span>
-                    <span class='step-status rejected'>
-                      {{ computedStatus[scope.row._id].rejected }}
-                      <i class='status-icon el-icon-close'></i>
-                    </span> -->
                   </div>
                   <div v-if='scope.row.status !== "pending"'>
                     <span class='status-box'>{{ scope.row.status }}</span>

@@ -22,13 +22,13 @@ export default {
   openedProcesses(state) {
     const today = new Date();
     return Object.values(state.processes).filter((process) => {
-      return process.status === 'open' && new Date(process.deadline) <= today;
+      return process.status === 'open' && new Date(process.deadline) >= today;
     });
   },
   closedProcesses(state) {
     const today = new Date();
     return Object.values(state.processes).filter((process) => {
-      return process.status === 'closed' || new Date(process.deadline) <= today;
+      return process.status === 'closed' || (process.status === 'open' && new Date(process.deadline) < today);
     });
   },
   draftProcesses(state) {
@@ -56,20 +56,17 @@ export default {
 
     const pendingApplicants = allApplicants.filter((applicant) => {
       if (applicant.status !== 'pending') return false;
-      console.log(applicant);
       const steps = applicant.process.steps;
-      let waitingValidation = false;
+      let waitingValidation = true;
       for (let stepIndex=0; stepIndex<steps.length; stepIndex++) {
         const step = steps[stepIndex];
         if (step.status === 'todo')
-          waitingValidation = true;
+          waitingValidation = false;
         if (step.status === 'pending')
           return true;
       }
-      console.log(waitingValidation);
       return waitingValidation;
     });
-    console.log(pendingApplicants);
     return pendingApplicants;
   }
 }

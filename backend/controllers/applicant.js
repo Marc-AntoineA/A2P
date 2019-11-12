@@ -356,7 +356,7 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     res.status(500).json({ error: { message: `Status can be only "accepted" or "rejected". Not "${status}"`}});
     return;
   }
-  
+
   Applicant.findOne({ _id: applicantId })
   .then((applicant) => {
     if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
@@ -448,11 +448,11 @@ exports.getAllPendingApplicants = (req, res, next) => {
   }).then((applicants) => {
     const pendingApplicants = applicants.filter((applicant) => {
       const steps = applicant.process.steps;
-      let waitingValidation = false;
+      let waitingValidation = true;
       for (let stepIndex=0; stepIndex<steps.length; stepIndex++) {
         const step = steps[stepIndex];
-        if (step.status === 'todo')
-          waitingValidation = true;
+        if (step.status === 'todo' || step.status === 'rejected')
+          waitingValidation = false;
         if (step.status === 'pending')
           return true;
       }

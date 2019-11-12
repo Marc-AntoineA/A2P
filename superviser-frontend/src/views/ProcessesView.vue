@@ -64,7 +64,6 @@
             </el-table-column>
             <el-table-column label='Operations' align='center'>
               <template slot-scope='scope'>
-                {{ scope.status }}
                 <router-link :to='{name: "process", params: {processId: scope.row._id} }'>
                   <el-tooltip class="item" effect="dark" content="Edit this process" placement="bottom">
                     <i v-if='$store.getters.processesStatus[scope.row._id] === "draft"' class='el-icon-edit round-boxed big'></i>
@@ -187,7 +186,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-
+<style scoped>
 
 </style>
