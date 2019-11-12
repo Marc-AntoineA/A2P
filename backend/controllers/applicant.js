@@ -4,12 +4,12 @@ const bcrypt = require('bcryptjs');
 const BCRYPT_SALTROUNDS = require('../settings.json').BCRYPT_SALTROUNDS;
 const jwt = require('jsonwebtoken');
 const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
-const Excel = require('exceljs');
 const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
+const SheetExports = require('../utils/sheetExports');
 
 const signinForm = require('./signin-form.json');
 
@@ -356,7 +356,7 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     res.status(500).json({ error: { message: `Status can be only "accepted" or "rejected". Not "${status}"`}});
     return;
   }
-  
+
   Applicant.findOne({ _id: applicantId })
   .then((applicant) => {
     if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
@@ -401,134 +401,65 @@ exports.deleteApplicantById = (req, res, next) => {
 
 exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
   const processId = req.params.processId;
-  Applicant.find({
-    "process._id": processId
-  }).then((applicants) => {
   Process.findOne({
     "_id": processId
   }).then((process) => {
   if (!process) {
     res.status(404).json({
       error: { message: `No process with id ${process.id}`}
-    })
+    });
   }
-  const label = process.label;
-
-  // First row = user
-  const firstRow = ['User information', '', '', '', '', ''];
-  const secondRow =  ['Name', 'Mail', 'Phone', 'status', 'Date application', 'Last modification']
-
-  for (let stepIndex = 0; stepIndex < process.steps.length; stepIndex++) {
-    const step = process.steps[stepIndex];
-    if (step.pages.length === 0) continue;
-    firstRow.push(step.label);
-    for (let pageIndex=0; pageIndex < step.pages.length-1; pageIndex++) {
-      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
-        firstRow.push('');
-      }
-    }
-
-    for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
-      const page = step.pages[pageIndex];
-      for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
-        const question = page.questions[questionIndex];
-        secondRow.push(question.label);
-      }
-    }
-  }
-  /* make worksheet */
-  const ws_data = [
-    firstRow,
-    secondRow
-  ];
-
-  for (let applicantIndex=0; applicantIndex < applicants.length; applicantIndex++) {
-    const applicant = applicants[applicantIndex];
-    const applicantAnswers = [applicant.name, applicant.mailAddress, applicant.phoneNumber, applicant.status, applicant.createdAt, applicant.updatedAt];
-
-    for (let stepIndex = 0; stepIndex < applicant.process.steps.length; stepIndex++) {
-      const step = applicant.process.steps[stepIndex];
-      for (let pageIndex=0; pageIndex < step.pages.length; pageIndex++) {
-        const page = step.pages[pageIndex];
-        for (let questionIndex = 0; questionIndex < page.questions.length; questionIndex++) {
-          const question = page.questions[questionIndex];
-          if (question.type === 'radio') {
-            applicantAnswers.push(question.choices[question.answer]);
-          } else if (question.type === 'date') {
-            const date = new Date(question.answer);
-            applicantAnswers.push(date);
-          } else {
-            applicantAnswers.push(question.answer);
-          }
-        }
-      }
-    }
-    ws_data.push(applicantAnswers);
-  }
-  const workbook = new Excel.Workbook();
-  const worksheet = workbook.addWorksheet(process.label.slice(1, 20));
-
-  // Why it doesn't work anymore???
-  worksheet.views = [
-    { state: 'frozen', xSplit: 2, ySplit: 2 }
-  ];
-
-  ws_data.forEach((row) => { worksheet.addRow(row)});
-
-  // Merging headers cells + header font
-  //for (let columnIndex=0; columnIndex)
-  worksheet.getRow(1).height = 20;
-  first = 0;
-  for (let columnIndex = 1; columnIndex < firstRow.length; columnIndex++) {
-    if(firstRow[columnIndex] === '') continue;
-    if (first + 1 === columnIndex) continue;
-    worksheet.mergeCells(1, first + 1, 1, columnIndex);
-    worksheet.getCell(1, first + 1).font = {
-      size: 15,
-      bold: true
-    };
-    first = columnIndex;
-  }
-  if (first + 1 !== firstRow.length)
-    worksheet.mergeCells(1, first + 1, firstRow.length);
-  worksheet.getCell(1, first + 1).font = {
-    size: 15,
-    bold: true
-  };
-
-  // Computing optimal width
-  secondRow.forEach((value, index) => {
-    worksheet.getColumn(1 + index).width = Math.max(20, value.length);
-    worksheet.getCell(2, 1 + index).font = {
-      italic: true
-    };
-  });
-
-
-  /*worksheet.autoFilter = {
-    from: {
-      row: 2,
-      column: 1
-    },
-    to: {
-      row: 2,
-      column: secondRow.length + 1
-    }
-  };*/
-  const today = new Date();
-  const tmpFilename = 'tmp/out.xlsx';
-  workbook.xlsx.writeFile(tmpFilename)
-    .then(() => {
-      const filePath = tmpFilename;
-      const stat = fileSystem.statSync(filePath);
-      res.writeHead(200, {
-        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Length': stat.size,
-        'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+  Applicant.find({
+    "process._id": processId
+  }).then((applicants) => {
+      const processId = req.params.processId;
+      const today = new Date();
+      SheetExports.buildApplicantsAnswers(process, applicants, 'tmp/out.xlsx').then(() => {
+        const stat = fileSystem.statSync('tmp/out.xlsx');
+        res.writeHead(200, {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Length': stat.size,
+          'Content-Disposition': 'attachment; filename=' + `"applicants_${process.label}_${today.toISOString()}.xlsx"`
+        });
+        const readStream = fileSystem.createReadStream('tmp/out.xlsx');
+        readStream.pipe(res);
+      }).catch((error) => {
+        console.log(error);
+        res.status(404).json({
+          error: { messsage: error.toString() }
+        });
       });
-      const readStream = fileSystem.createReadStream(filePath);
-      readStream.pipe(res);
     });
   });
-});
+};
+
+exports.getLasts10Applicants = (req, res, next) => {
+  Applicant.find({
+  }).sort({ createdAt: 'desc' }).limit(10).then((applicants) => {
+    res.status(200).json(applicants);
+  }).catch((error) => {
+    res.status(404).json({ message: error.toString() });
+  })
+};
+
+exports.getAllPendingApplicants = (req, res, next) => {
+  Applicant.find({
+    "status": "pending"
+  }).then((applicants) => {
+    const pendingApplicants = applicants.filter((applicant) => {
+      const steps = applicant.process.steps;
+      let waitingValidation = true;
+      for (let stepIndex=0; stepIndex<steps.length; stepIndex++) {
+        const step = steps[stepIndex];
+        if (step.status === 'todo' || step.status === 'rejected')
+          waitingValidation = false;
+        if (step.status === 'pending')
+          return true;
+      }
+      return waitingValidation;
+    });
+    res.status(200).json(applicants);
+  }).catch((error) => {
+    res.status(404).json({ message: error.toString() });
+  });
 };

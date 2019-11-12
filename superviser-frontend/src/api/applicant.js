@@ -1,5 +1,5 @@
 'using strict';
-const settings = require('../settings.json');
+const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
 const { request } = require('./utils.js');
@@ -33,7 +33,7 @@ export function updateStepMarkByApplicantId(token, applicantId, stepIndex, mark)
 
 export function updateStatusByApplicantId(token, applicantId, status) {
   return request({
-    url: API_PATH + `/applicants/${applicantId}/status/${status}`,
+    url: API_PATH + `/applicants/${applicantId}/status/${status}`,
     data: undefined,
     token: token
   }, 'put');
@@ -41,7 +41,7 @@ export function updateStatusByApplicantId(token, applicantId, status) {
 
 export function deleteApplicantById(token, applicantId) {
   return request({
-    url: API_PATH + `/delete/applicant/${applicantId}`,
+    url: API_PATH + `/delete/applicant/${applicantId}`,
     data: undefined,
     token: token
   }, 'delete');
@@ -58,7 +58,7 @@ export function downloadProcessAnswers(token, processId) {
 
 export function getEmailTemplate(token, templateId) {
   return request({
-    url: API_PATH + `/emails/${templateId}`,
+    url: API_PATH + `/emails/${templateId}`,
     data: undefined,
     token: token
   }, 'get');
@@ -70,4 +70,20 @@ export function saveEmailTemplate(token, templateId, template) {
     data: { template },
     token: token
   }, 'put');
+}
+
+export function getLasts10Applicants(token) {
+  return request({
+    url: API_PATH + '/list/applicants/lasts',
+    data: undefined,
+    token: token
+  }, 'get');
+}
+
+export function getPendingApplicants(token) {
+  return request({
+    url: API_PATH + '/list/applicants/pending',
+    data: undefined,
+    token: token
+  }, 'get');
 }

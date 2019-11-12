@@ -18,6 +18,8 @@ router.delete('/delete/process/:processId', auth, processCtrl.deleteProcessById)
 router.delete('/delete/applicant/:applicantId', auth, applicantCtrl.deleteApplicantById);
 router.post('/copy/process/:processId', auth, processCtrl.copyProcessById);
 
+router.get('/list/applicants/lasts', auth, applicantCtrl.getLasts10Applicants);
+router.get('/list/applicants/pending', applicantCtrl.getAllPendingApplicants);
 router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
 router.get('/applicants/:processId/download', auth, applicantCtrl.getAllApplicantsByProcessIdExcelFile);
 

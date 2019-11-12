@@ -109,7 +109,15 @@ export default {
       if (applicant) Vue.set(state.applicantsByProcessId[processId], applicant._id, applicant);
     });
   },
-  SET_STEP_MARK: (state, { processId, applicantId, stepIndex, mark }) => {
+  SET_APPLICANTS: (state, applicants) => {
+    applicants.forEach((applicant) => {
+      if (!applicant) return;
+      const processId = applicant.process._id;
+      if (!state.applicantsByProcessId[processId]) Vue.set(state.applicantsByProcessId, processId, {});
+      Vue.set(state.applicantsByProcessId[processId], applicant._id, applicant);
+    });
+  },
+  SET_STEP_MARK: (state, { processId, applicantId, stepIndex, mark }) => {
     Vue.set(state.applicantsByProcessId[processId][applicantId].process.steps[stepIndex], 'mark', mark);
   },
   SET_STEP_STATUS: (state, { processId, applicantId, stepIndex, status }) => {

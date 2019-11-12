@@ -13,7 +13,7 @@ const processSchema = mongoose.Schema({
   //updatedAt: { type: Date, required: true },
   location: { type: String, required: true },
   label: { type: String, required: true },
-  status: { type: String, required: true },
+  status: { type: String, required: true }, // open, draft, close
   steps: { type: [stepSchema], required: true },
 }, { timestamps: { createdAt: 'createdAt' } });
 
