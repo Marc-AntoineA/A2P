@@ -365,7 +365,10 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     }
     Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
     .then((applicant) => {
-      if (status === 'validated')
+      if (status !== 'accepted' || status != 'rejected')
+        res.status(500).json({ error: { message: 'Status can be only "accepted" or "rejected". Not "${status}"'}});
+        
+      if (status === 'accepted')
         sendAcceptedMail(applicant.mailAddress, { applicant: applicant });
       if (status === 'rejected')
         sendRejectedMail(applicant.mailAddress, { applicant: applicant });

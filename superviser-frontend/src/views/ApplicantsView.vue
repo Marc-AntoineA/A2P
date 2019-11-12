@@ -5,118 +5,135 @@
       <el-main>
         <aap-broken v-show="broken"></aap-broken>
         <div v-show='!broken'>
-          <h2>Applicants list</h2>
+          <h2>Applicants</h2>
 
-          <div class='process-box'>
-            <ul>
-              <li><span class='label'>Label: </span>{{ process.label }}</li>
-              <li><span class='label'>Location: </span>{{ process.location }}</li>
-              <li><span class='label'>Deadline: </span>{{ new Date(process.deadline) }}</li>
-            </ul>
-            <el-tooltip class="item" effect="dark" content="See this process" placement="bottom">
-              <i class='el-icon-search round-boxed big'></i>
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="Download applicants" placement="bottom">
-              <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
-            </el-tooltip>
+          <div v-if='!this.process'>
+            Please select a process to continue
+
+            <el-select v-model="selectedProcess" placeholder="Select a process" @change='changeProcess'>
+              <el-option
+                v-for="process in Object.values(this.$store.state.processes)"
+                :key="process._id"
+                :label="process.label"
+                :value="process._id">
+              </el-option>
+            </el-select>
           </div>
 
-          <div class='filters-box'>
-            <el-radio-group v-model='selectedFilter'>
-              <el-radio-button label="all">All Students</el-radio-button>
-              <el-radio-button label="pending">Pending Students</el-radio-button>
-              <el-tooltip effect="dark" content="No modification for more than 5 days" placement="bottom">
-                <el-radio-button label="inactive">Inactive Students</el-radio-button>
+          <div v-if='this.process'>
+            <div class='process-box'>
+              <ul>
+                <li><span class='label'>Label: </span>{{ process.label }}</li>
+                <li><span class='label'>Location: </span>{{ process.location }}</li>
+                <li><span class='label'>Deadline: </span>{{ new Date(process.deadline) }}</li>
+              </ul>
+              <el-tooltip class="item" effect="dark" content="See this process" placement="bottom">
+                <router-link :to='{name: "process", params: {processId: process._id} }'>
+                  <i class='el-icon-search round-boxed big'></i>
+                </router-link>
               </el-tooltip>
-              <el-radio-button label="accepted">Accepted Students</el-radio-button>
-              <el-radio-button label="rejected">Rejected Students</el-radio-button>
-              <el-tooltip  v-for="step, index in process.steps" :key="index" effect="dark" :content="step.label" placement="bottom">
-                <el-radio-button  :label="'step' + index">Step#{{ index + 1 }} completed</el-radio-button>
+              <el-tooltip class="item" effect="dark" content="Download applicants" placement="bottom">
+                <i class='el-icon-download big round-boxed' @click='downloadApplicants()'/>
               </el-tooltip>
-            </el-radio-group>
-          </div>
+            </div>
 
-          <el-input
-            placeholder="Type a name, a mail address or a phone number"
-            prefix-icon="el-icon-search"
-            v-model="searchInput">
-          </el-input>
-          {{ searchInput }}
+            <div class='filters-box'>
+              <el-radio-group v-model='selectedFilter'>
+                <el-radio-button label="all">All Students</el-radio-button>
+                <el-radio-button label="pending">Pending Students</el-radio-button>
+                <el-tooltip effect="dark" content="No modification for more than 7 days" placement="bottom">
+                  <el-radio-button label="inactive">Inactive Students</el-radio-button>
+                </el-tooltip>
+                <el-radio-button label="accepted">Accepted Students</el-radio-button>
+                <el-radio-button label="rejected">Rejected Students</el-radio-button>
+                <el-tooltip  v-for="step, index in process.steps" :key="index" effect="dark" :content="step.label" placement="bottom">
+                  <el-radio-button  :label="'step' + index">Step#{{ index + 1 }} completed</el-radio-button>
+                </el-tooltip>
+              </el-radio-group>
+            </div>
 
-          <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
-            :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
-            width="90%" center>
-            <Aap-process-answers :applicant='getCurrentApplicant()'
-             :applicantId='currentDisplayedApplicant.applicantId'/>
-            <span slot="footer" class="dialog-footer">
-              <el-button @click="applicantModalVisible = false">Cancel</el-button>
-            </span>
-          </el-dialog>
+            <el-input
+              placeholder="Type a name, a mail address or a phone number"
+              prefix-icon="el-icon-search"
+              v-model="searchInput">
+            </el-input>
+            {{ searchInput }}
 
-          <aap-spinner :show="loading.processes"></aap-spinner>
-          <aap-spinner :show="loading.applicants"></aap-spinner>
+            <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
+              :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
+              width="90%" center>
+              <Aap-process-answers :applicant='getCurrentApplicant()'
+               :applicantId='currentDisplayedApplicant.applicantId'/>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="applicantModalVisible = false">Cancel</el-button>
+              </span>
+            </el-dialog>
 
-          <p class='samll'> {{ applicants.length }} candidates displayed</p>
-          <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500">
-            <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
-            <el-table-column label='Name' prop='name' sortable></el-table-column>
-            <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
-              <template slot-scope='scope'>
-                <a class='black-link' :href='"mailto:" + scope.row.mailAddress' target='_blank'>
-                  <i class='el-icon-message round-boxed big'></i>
-                </a>
-              </template>
-            </el-table-column>
-            <el-table-column label='Phone' prop='phoneNumber' sortable>
-              <template slot-scope='scope'>
-                <i class='el-icon-phone big'></i>
-                {{ scope.row.phoneNumber | phoneFormatter }}
-              </template>
-            </el-table-column>
-            <el-table-column label='Last Modification' prop='updatedAt' sortable>
-              <template slot-scope='scope'>
-                <i class='el-icon-time'></i>
-                <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label='Current step / Status' align='center' prop='status'>
-              <template slot-scope='scope'>
-                <div v-if='scope.row.status === "pending"'>
-                  <div class='bar'>
-                    <div v-for='step, index in scope.row.process.steps' :key='index'
-                    v-bind:style="{ width: 100/scope.row.process.steps.length + '%', }" :class='"segment " + step.status'>
+            <aap-spinner :show="loading.processes"></aap-spinner>
+            <aap-spinner :show="loading.applicants"></aap-spinner>
+
+            <p class='small'> {{ applicants.length }} candidates displayed</p>
+            <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500">
+              <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
+              <el-table-column label='Name' prop='name' sortable></el-table-column>
+              <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
+                <template slot-scope='scope'>
+                  <a class='black-link' :href='"mailto:" + scope.row.mailAddress' target='_blank'>
+                    <i class='el-icon-message round-boxed big'></i>
+                  </a>
+                </template>
+              </el-table-column>
+              <el-table-column label='Phone' prop='phoneNumber' sortable>
+                <template slot-scope='scope'>
+                  <i class='el-icon-phone big'></i>
+                  {{ scope.row.phoneNumber | phoneFormatter }}
+                </template>
+              </el-table-column>
+              <el-table-column label='Last Modification' prop='updatedAt' sortable>
+                <template slot-scope='scope'>
+                  <i class='el-icon-time'></i>
+                  <span style='margin-left: 10px'>{{ scope.row.updatedAt | dateFormatter }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label='Current step / Status' align='center' prop='status'>
+                <template slot-scope='scope'>
+                  <div v-if='scope.row.status === "pending"'>
+                    <div class='bar'>
+                      <div v-for='step, index in scope.row.process.steps' :key='index'
+                      v-bind:style="{ width: 100/scope.row.process.steps.length + '%', }" :class='"segment " + step.status'>
+                      </div>
                     </div>
+
+
+                    <!-- <span class='step-status todo'>
+                      {{ computedStatus[scope.row._id].todo }}
+                      <i class='status-icon el-icon-service'></i>
+                    </span>
+                    <span class='step-status pending'>
+                      {{ computedStatus[scope.row._id].pending }}
+                      <i class='status-icon el-icon-more'></i>
+                    </span>
+                    <span class='step-status validated'>
+                      {{ computedStatus[scope.row._id].validated }}
+                      <i class='status-icon el-icon-check'></i>
+                    </span>
+                    <span class='step-status rejected'>
+                      {{ computedStatus[scope.row._id].rejected }}
+                      <i class='status-icon el-icon-close'></i>
+                    </span> -->
                   </div>
-
-
-                  <!-- <span class='step-status todo'>
-                    {{ computedStatus[scope.row._id].todo }}
-                    <i class='status-icon el-icon-service'></i>
-                  </span>
-                  <span class='step-status pending'>
-                    {{ computedStatus[scope.row._id].pending }}
-                    <i class='status-icon el-icon-more'></i>
-                  </span>
-                  <span class='step-status validated'>
-                    {{ computedStatus[scope.row._id].validated }}
-                    <i class='status-icon el-icon-check'></i>
-                  </span>
-                  <span class='step-status rejected'>
-                    {{ computedStatus[scope.row._id].rejected }}
-                    <i class='status-icon el-icon-close'></i>
-                  </span> -->
-                </div>
-                <div v-if='scope.row.status !== "pending"'>
-                  <span class='status-box'>{{ scope.row.status }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label='Average Mark' align='center'>
-              <template slot-scope='scope'>
-                <span class='status-box'>{{ computedStatus[scope.row._id].averageMark }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
+                  <div v-if='scope.row.status !== "pending"'>
+                    <span class='status-box'>{{ scope.row.status }}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label='Average Mark' align='center'>
+                <template slot-scope='scope'>
+                  <span class='status-box'>{{ computedStatus[scope.row._id].averageMark }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -142,20 +159,34 @@ export default {
     applicantModalVisible: false,
     currentDisplayedApplicant: { applicantId: '' },
     selectedFilter: "all",
+    selectedProcess: '',
     searchInput: ""
   }),
   props: [],
   beforeMount() {
     this.fetchProcesses().then(() => {
-      this.fetchApplicants();
+      if (!this.process) {this.loading.applicants = false; return; }
+      if (this.$store.state.applicantsByProcessId[this.process._id]) { this.loading.applicants = false; return; }
+      this.fetchApplicants(this.process._id);
+    });
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.fetchProcesses().then(() => {
+        vm.fetchApplicants(to.params.processId);
+      });
     });
   },
   mounted() {
   },
   methods: {
+    changeProcess() {
+      this.$router.push({ name: 'applicantsInitialProcessId', params: { processId: this.selectedProcess }});
+      return;
+    },
     fetchProcesses() {
       return new Promise((resolve, reject) => {
-        if (Object.values(this.$store.state.processes).length !== 0) { resolve(); return; }
+        if (Object.values(this.$store.state.processes).length !== 0) { this.loading.processes = false; resolve(); return; }
         this.loading.processes = true;
         this.$store.dispatch('FETCH_PROCESSES')
         .then((processes) => {
@@ -171,15 +202,12 @@ export default {
         });
       });
     },
-    fetchApplicants() {
-      if (!this.process) return;
-      if (this.$store.state.applicantsByProcessId[this.process._id]) return;
+    fetchApplicants(processId) {
       return new Promise((resolve, reject) => {
         this.loading.applicants = true;
         this.broken = false;
-        this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', this.process._id).then((applicants) => {
+        this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', processId).then((applicants) => {
           this.loading.applicants = false;
-          // this.setDefaultFilter('status', ['required']);
           resolve(applicants);
         }).catch((error) => {
           this.broken = true;
@@ -226,6 +254,28 @@ export default {
         return status.pending > 0 || status.accepted === row.process.steps.length;
 
       return false;
+    },
+    downloadApplicants() {
+      this.$store.dispatch('DOWNLOAD_EXCEL_ANSWERS', this.process._id)
+      .then((blob) => {
+        const fileName = `answers_${this.process.label}.xlsx`;
+         if(window.navigator.msSaveOrOpenBlob) {
+           window.navigator.msSaveBlob(blob, fileName);
+         }else{
+           const downloadLink = window.document.createElement('a');
+           const contentTypeHeader = blob.type;
+           downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+           downloadLink.download = fileName;
+           document.body.appendChild(downloadLink);
+           downloadLink.click();
+           document.body.removeChild(downloadLink);
+          }
+      })
+      .catch((error) => {
+        this.$alert(error.message, 'Error while downloading process answers', {
+          confirmButtonText: 'OK'
+        });
+      });
     }
   },
   computed: {
@@ -250,7 +300,7 @@ export default {
         if (this.selectedFilter === 'inactive') {
           if (applicant.status !== 'pending') return false;
           const updatedAt = new Date(applicant.update_at);
-          updatedAt.setDate(updatedAt.getDate() + 5);
+          updatedAt.setDate(updatedAt.getDate() + 7);
           if (updatedAt >= new Date()) return false;
           for (let k=0; k<applicant.process.steps.length;k++) {
             const step = applicant.process.steps[k];
@@ -280,6 +330,7 @@ export default {
       }));
     },
     process() {
+      if (!this.$route.params.processId) return undefined;
       return this.$store.state.processes[this.$route.params.processId];
     },
     computedStatus() {
@@ -423,5 +474,19 @@ export default {
 .segment.pending {
   background-color: orange;
 }
+
+.small {
+	font-size: 13px;
+	text-transform: uppercase;
+	font-weight: bold;
+	text-align: right;
+	color: gray;
+	margin-right: 20px;
+	margin-top: 20px;
+}
+
+.process-box, .filters-box {
+  margin: 15px 0;
+}
+
 </style>
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
