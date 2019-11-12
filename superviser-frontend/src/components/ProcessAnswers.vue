@@ -184,10 +184,10 @@ export default {
       return answer.split(' ').length;
     },
     sendResponse(stepIndex){
-      const status = this.stepsResponsesTemplates[stepIndex].accepting ? 'accepted' : 'rejected';
+      const status = this.stepsResponsesTemplates[stepIndex].accepting ? 'validated' : 'rejected';
       const template = this.stepsResponsesTemplates[stepIndex].template;
 
-      this.$confirm(`Are you sure to <strong>${status === 'accepted' ? 'accept' : 'reject'}</strong>
+      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
        this applicant with this email? <br/>
        <div class='email'> <div class='subject'>${this.renderStepsResponsesSubjects[stepIndex]}</div>
        ${this.renderStepsResponsesTemplates[stepIndex]}</div>`, 'Warning', {

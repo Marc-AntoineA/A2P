@@ -352,6 +352,11 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
 exports.updateStatusByApplicantId = (req, res, next) => {
   const applicantId = req.params.applicantId;
   const status = req.params.status;
+  if (status !== 'accepted' && status !== 'rejected') {
+    res.status(500).json({ error: { message: `Status can be only "accepted" or "rejected". Not "${status}"`}});
+    return;
+  }
+  
   Applicant.findOne({ _id: applicantId })
   .then((applicant) => {
     if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
@@ -365,9 +370,6 @@ exports.updateStatusByApplicantId = (req, res, next) => {
     }
     Applicant.findOneAndUpdate({ _id: applicantId }, { status: status })
     .then((applicant) => {
-      if (status !== 'accepted' || status != 'rejected')
-        res.status(500).json({ error: { message: 'Status can be only "accepted" or "rejected". Not "${status}"'}});
-        
       if (status === 'accepted')
         sendAcceptedMail(applicant.mailAddress, { applicant: applicant });
       if (status === 'rejected')
