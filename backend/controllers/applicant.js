@@ -35,13 +35,14 @@ exports.getSigninForm = (req, res, next) => {
   });
 };
 
+// TODO WARNING - no verifications on email, phoneNumber, etc.
 exports.createApplicant = (req, res, next) => {
   const body = req.body;
   const campaignIndex = body[1].questions[0].answer;
   const campaign = body[1].questions[0].choices[campaignIndex];
   const name = body[2].questions[0].answer;
   const phoneNumber = body[2].questions[1].answer;
-  const mailAddress = body[3].questions[0].answer;
+  const mailAddress = body[3].questions[0].answer.toLowerCase();
   const password = body[3].questions[1].answer;
   Process.findOne({
     label: campaign
@@ -82,7 +83,7 @@ exports.createApplicant = (req, res, next) => {
 
 // 401 Unauthorized error
 exports.login = (req, res, next) => {
-  const mailAddress = req.body.mail;
+  const mailAddress = req.body.mail.toLowerCase();
   const password = req.body.password;
   Applicant.findOne({
     mailAddress: mailAddress
@@ -126,7 +127,7 @@ function generatePassword() {
 }
 
 exports.resetPassword = (req, res, next) => {
-  const mailAddress = req.body.mail;
+  const mailAddress = req.body.mail.toLowerCase();
   const outputMessage = "An email was sent to this mail address. If you don't see it soon, please double check your email address or contact us";
   Applicant.findOne({
     mailAddress: mailAddress
