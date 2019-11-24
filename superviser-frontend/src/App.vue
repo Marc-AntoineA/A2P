@@ -27,6 +27,10 @@
   color: green;
 }
 
+.closed {
+  color: firebrick;
+}
+
 .finished {
   color: red;
 }
@@ -54,5 +58,17 @@ i.round-boxed.disabled {
 
 i.round-boxed.disabled:hover {
   border-color: gray;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a {
+  text-decoration: none;
 }
 </style>

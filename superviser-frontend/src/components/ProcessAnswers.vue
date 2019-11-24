@@ -7,15 +7,15 @@
         {{ applicant.status }}
       </div>
 
-      <p v-if='!canBeValidated && this.applicant.status ==="pending"'>
+      <p v-if='!canBeAccepted && this.applicant.status ==="pending"'>
         To accept one student, please validate firstly all the steps.
       </p>
       <div class='tools-buttons'>
-        <el-button v-if='canBeValidated'
+        <el-button v-if='canBeAccepted'
           type='success' @click='acceptApplicant'>
           Accept
         </el-button>
-        <el-button v-if='canBeValidated'
+        <el-button v-if='canBeAccepted'
           type='danger' @click='rejectApplicant'>
           Reject
         </el-button>
@@ -121,7 +121,7 @@ export default {
     process() {
       return this.applicant.process;
     },
-    canBeValidated() {
+    canBeAccepted() {
       if (this.applicant.status !== 'pending') return false;
       const steps = this.process.steps;
       for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
@@ -270,13 +270,13 @@ export default {
       }
     },
     acceptApplicant() {
-      this.changeApplicantStatus('validated');
+      this.changeApplicantStatus('accepted');
     },
     rejectApplicant() {
       this.changeApplicantStatus('rejected');
     },
     changeApplicantStatus(status) {
-      this.$confirm(`Are you sure to <strong>${status === 'validated' ? 'accept' : 'reject'}</strong>
+      this.$confirm(`Are you sure to <strong>${status === 'accepted' ? 'accept' : 'reject'}</strong>
        this applicant? He will get an email`, 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',

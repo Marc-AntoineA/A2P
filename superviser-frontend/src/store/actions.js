@@ -18,7 +18,9 @@ import {
   deleteApplicantById,
   downloadProcessAnswers,
   getEmailTemplate,
-  saveEmailTemplate
+  saveEmailTemplate,
+  getLasts10Applicants,
+  getPendingApplicants
 } from '../api/applicant.js';
 
 export default {
@@ -208,6 +210,30 @@ export default {
       saveEmailTemplate(state.user.token, templateId, template)
       .then((response) => {
         resolve(response);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  GET_LASTS_10_APPLICANTS: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      getLasts10Applicants(state.user.token)
+      .then((applicants) => {
+        commit('SET_APPLICANTS', applicants);
+        resolve(applicants);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  GET_PENDING_APPLICANTS: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      getPendingApplicants(state.user.token)
+      .then((applicants) => {
+        commit('SET_APPLICANTS', applicants);
+        resolve(applicants);
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
