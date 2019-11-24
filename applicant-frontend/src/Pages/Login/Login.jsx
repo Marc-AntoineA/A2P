@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import Handlebars  from 'handlebars';
 
 import './styles.css';
@@ -15,6 +15,7 @@ const TEXTS = require('../../static.json');
 
 class Login extends Component {
   constructor(props) {
+   console.log(props)
     super(props);
     this.state = {
       'mail': '',
@@ -80,7 +81,14 @@ class Login extends Component {
             :
             <div>
               <Header/>
-              <Container>
+              <Container  style={{
+                padding: "36px",
+                paddingBottom: "24px",
+                border: "1px solid #e8e9e9",
+                width: "475px",
+                marginRight: "auto",
+                marginLeft: "auto"
+            }}>
                 <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
@@ -98,9 +106,16 @@ class Login extends Component {
                     <Button size='lg' onClick={ this.login } variant="primary" block>
                       { TEXTS.LOGIN_VIEW.SUBMIT_BUTTON }
                     </Button>
-                    <Button size='lg' onClick={ this.forgotPassword } variant="dark" block>
+                    {/* <Button size='lg' onClick={ this.forgotPassword } variant="dark" block>
                       { TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }
-                    </Button>
+                    </Button> */}
+                    <p style ={{textAlign:"end"}}>
+                        Forgot
+                        <Link to="/forgot-password" className="text-primery">
+                          {" "}
+                           Password?
+                      </Link> 
+                    </p>
                   </Form.Group>
                 </Form>
               </Container>
