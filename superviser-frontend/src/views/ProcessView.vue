@@ -257,7 +257,7 @@ export default {
       this.$alert(error.message, `Error while downloading process ${processId}`, {
         confirmButtonText: 'OK'
       });
-      this.$router.push('/administration/404-error');
+      this.$router.push({ name: 'error404'});
     });
   },
   beforeDestroy() {
