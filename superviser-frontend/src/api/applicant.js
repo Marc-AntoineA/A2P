@@ -87,3 +87,11 @@ export function getPendingApplicants(token) {
     token: token
   }, 'get');
 }
+
+export function updateArchivedByApplicantId(token, applicantId, value) {
+  return request({
+    url: API_PATH + `/applicants/${applicantId}/archived/${value}`,
+    data: undefined,
+    token: token
+  }, 'put');
+}

@@ -59,7 +59,7 @@ class App extends Component {
   }
 
   summary() {
-    return (<Summary  version={this.props.version} user={ this.state.user } handleError={ this.handleModal }></Summary>);
+    return (<Summary  version={this.props.version} user={ this.state.user } handleModal={ this.handleModal } handleError={ this.handleModal }></Summary>);
   }
 
   privacyPolicy() {

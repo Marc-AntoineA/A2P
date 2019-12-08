@@ -12,6 +12,7 @@ const applicantSchema = mongoose.Schema({
   password: { type: String, required: true },
   status: { type: String, required: true }, // TODO rejected, accepted class X...,
   process: { type: processSchema, required: true },
+  archived: { type: Boolean, required: false },
 }, { timestamps: { createdAt: 'createdAt' } });
 
 applicantSchema.plugin(uniqueValidator);

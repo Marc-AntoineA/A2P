@@ -7,13 +7,13 @@ const moment = require('moment');
 exports.sendEmailToInactiveApplicants = function(nbDays) {
   const today = moment();
   const lastUpdateDeadline = today.add(-nbDays, 'days');
-  console.log(lastUpdateDeadline.toString());
   Applicant.find({
     updatedAt: {$lt : lastUpdateDeadline.toDate()},
     status: 'pending',
   }).then((applicants) => {
     applicants.map((applicant) => {
       if (applicant.process.status !== 'open' || applicant.process.deadline <= today) return;
+      if (applicant.archived) return;
       const steps = applicant.process.steps;
 
       let oneStepIsTodo = false;

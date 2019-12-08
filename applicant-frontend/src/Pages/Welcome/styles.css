@@ -25,51 +25,57 @@
 
 .map-icon {
   margin-right: 3px;
-  color: darkgreen;
+  color: white;
 }
 
 .centered-title {
   text-align: center;
 }
 
-.html {
-  color: darkorange;
+.red-title {
+	color: var(--red);
+	font-weight: bold;
+	font-size: 50px;
 }
 
-.css {
-  color: blue;
+.subtitle {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 20px;
 }
 
-.javascript {
-  color: yellow;
+.red {
+  color: var(--red);
 }
 
-.node {
-  color: olive;
+strong {
+  color: var(--red);
 }
 
-.react {
-  color: teal;
+.apply-button {
+	border-radius: 30px;
+	padding: 10px 24px;
+	background-color: #df0101;
+	border-color: #df0101;
+	text-transform: uppercase;
+	font-weight: 500;
+  color: white!important;
 }
 
-.database {
-  color: firebrick;
+.button-toolbar {
+	display: flex;
+	justify-content: space-around;
+	margin: 10px 0px;
 }
 
-.technology {
-  font-size: 40px;
+a {
+  color: var(--red);
 }
 
-.citation {
-  font-style: italic;
-  font-size: 17px;
-  margin-bottom: 15px;
+a:hover {
+  color: var(--red);
 }
 
-.left-citation {
-  text-align: left;
-}
-
-.right-citation {
-  text-align: right;
+a:visited {
+  color: var(--red);
 }

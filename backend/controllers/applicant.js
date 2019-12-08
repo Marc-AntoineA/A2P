@@ -55,6 +55,7 @@ exports.createApplicant = (req, res, next) => {
         phoneNumber: phoneNumber,
         status: 'pending',
         process: process,
+        archived: false
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
@@ -444,7 +445,8 @@ exports.getLasts10Applicants = (req, res, next) => {
 
 exports.getAllPendingApplicants = (req, res, next) => {
   Applicant.find({
-    "status": "pending"
+    "status": "pending",
+    "archived": "false"
   }).then((applicants) => {
     const pendingApplicants = applicants.filter((applicant) => {
       const steps = applicant.process.steps;
@@ -463,3 +465,27 @@ exports.getAllPendingApplicants = (req, res, next) => {
     res.status(404).json({ message: error.toString() });
   });
 };
+
+exports.updateArchivedByApplicantId = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  const value = req.params.value;
+  if (value !== 'archive' && value !== 'unarchive') {
+    res.status(500).json({ error: { message: `Interest can be only "archive" or "unarchive". Not "${status}"`}});
+    return;
+  }
+
+  Applicant.findOne({ _id: applicantId })
+  .then((applicant) => {
+    if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
+
+    Applicant.findByIdAndUpdate(applicantId, { archived: value === 'archive' })
+    .then((updatedApplicant) => {
+      updatedApplicant.archived = (value === 'archive');
+      res.status(200).json({ message: `Archived for applicant ${applicantId} updated successfully`, applicant: updatedApplicant });
+    }).catch((error) => {
+      res.status(500).json({ error: error });
+    });
+  }).catch((error) => {
+    res.status(404).json({ error: { message: error.toString() } });
+  });
+}
