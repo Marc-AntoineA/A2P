@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSignOutAlt, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 import './styles.css';
 import logo from './logo.jpg';
@@ -19,11 +19,14 @@ class Header extends Component {
           <Navbar.Collapse className="justify-content-end">
             { this.props.user && this.props.user.token && this.props.user.id ?
               <Nav.Link href="/login">
-              Logout
+              Signout
               <FontAwesomeIcon className='signout-icon' size='lg' icon={faSignOutAlt}/>
               </Nav.Link>
               :
-              ''
+              <Nav.Link href="/login">
+              Signin
+              <FontAwesomeIcon className='signout-icon' size='lg' icon={faSignInAlt}/>
+              </Nav.Link>
             }
           </Navbar.Collapse>
         </Navbar>

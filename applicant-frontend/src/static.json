@@ -17,14 +17,15 @@
     "FIRST_COLUMN": "<ul> <li>Registered Greek Charity</li> <li>Social Hackers Academy </li> <li>Company No: 1152385</li> <li>Tax No: 996964152</li> </ul>"
   },
   "WELCOME_VIEW":{
-    "TITLE": "Apply in order to learn coding & work as a developer",
+    "TITLE": "Full Stack Web Developement Course",
+    "BLACK_SUBTITLE":"Learn how to design and develop websites (front and backend, webtechnologies) Not sure what that means? Apply to learn",
+    "RED_SUBTITLE": "Free for all students",
     "OPENED_LOCATIONS_LABEL": "Opened Locations",
     "CREATE_ACCOUNT_BUTTON": "Create your account to start the application process",
     "ALREADY_REGISTERED_BUTTON": "I have already created my account",
     "NO_OPENED_LOCATIONS": "No locations are currently opened. Please come back in few days",
-    "DESCRIPTION": "<p> Apply in order to learn coding & work as a developer. You can apply for the class, if you really want (and need) to start working as a developer, in Greece or abroad and you are <ul> <li>Refugee & Migrant (asylum seeker or with residence permit)</li> <li> or 12-month unemployed (with OAED Card)</li> </ul> </p> <p> This course lasts for <b>7-months</b> and is <b>free of charge for you!</b> Classes take place, <b>3 afternoons per week</b>, from <b>6-8 pm</b> and/or <b>8-10pm</b>. <br/>  Please read the full details here before applying: <a href='https://socialhackersacademy.org/coding-school/' target='_blank'>socialhackersacademy.org/coding-school</a> </p>",
-    "OFFICE_LOCATION": "Come to our classroom (<a href='https://goo.gl/maps/CqgKAahgkBV2AGFB7' target='_blank'>see on the map</a>) if you have questions or you need help in the application process! It is open every day from <b>11am - 6pm</b>.",
-    "ANY_QUESTION": "If you have any questions, please email us at: <a href='mailto:admissions@socialhackersacademy.org'>admissions@socialhackersacademy.org</a>"
+    "REQUIREMENTS": "<ul><li>You need to study for <strong>20-25 hours per week</strong>. If you do not have enough time, this is not the program for you.</li> <li><strong>Homework is required every week</strong>. If you do not complete the homework you cannot continue the class. Every class builds on the learning from the last.</li> <li>You need to come to class for <strong>two hours</strong>, three times a week. All classes are on a <strong>weekday evening (6-8 pm or 8-10pm) .</strong></li> <li>This course lasts for <strong>7 months (part-time)</strong>.You need to be here for all of it. The course is either <strong>in Athens or Crete</strong>.</li> <li>You must either be a <strong>registered refugee</strong> or <strong>asylum seeker</strong> or an EU resident who has been <strong>unemployed for at least 12 months.</strong></li> <li>You must have an <strong>interest in IT or programming.</strong></li></ul>",
+    "OFFICE_LOCATION": "Come to our classroom (<a href='https://goo.gl/maps/CqgKAahgkBV2AGFB7' target='_blank'>see on the map</a>) if you have questions or you need help in the application process! It is open every day from <strong>11am - 6pm</strong>."
   },
   "LOGIN_VIEW":{
     "TITLE": "Enter your email & password you have already created, to log in!",

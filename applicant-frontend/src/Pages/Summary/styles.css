@@ -91,4 +91,5 @@ h2 {
 .button-toolbar {
 	display: flex;
 	justify-content: space-around;
+	margin: 10px 0px;
 }

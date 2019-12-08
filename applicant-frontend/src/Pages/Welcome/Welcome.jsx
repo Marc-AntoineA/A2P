@@ -8,14 +8,16 @@ import ApiRequests from '../../Providers/ApiRequests';
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
 
-import { Button, Container, Row, Col } from 'react-bootstrap';
+import { Button, Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faDatabase, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 const TEXTS = require('../../static.json').WELCOME_VIEW;
+const FOOTER = require('../../static.json').FOOTER;
+
 
 library.add(fab);
 
@@ -53,7 +55,7 @@ class Welcome extends Component {
 
     const canApply = this.state.openedProcesses.length !== 0;
 
-    const mainComponent = (
+    const oldMainComponent = (
       <div>
         <Header></Header>
         <Container>
@@ -92,6 +94,57 @@ class Welcome extends Component {
 
               <Button href='/signin' variant='success' block disabled={!canApply}>{ TEXTS.CREATE_ACCOUNT_BUTTON }</Button>
               <Button href='/login' variant='info' block>{ TEXTS.ALREADY_REGISTERED_BUTTON }</Button>
+            </Col>
+          </Row>
+        </Container>
+        <Footer version={this.props.version}/>
+      </div>
+    );
+
+    const applyButtons = this.state.openedProcesses.map((process, index) => {
+      return (
+          <Button variant="danger" size="lg" key={index} className='apply-button' href='/signin'>
+            <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
+            Apply in {process.location}
+            </Button>
+          );
+    });
+
+    const mainComponent = (
+      <div>
+        <Header></Header>
+        <Container>
+          <Row className='first-row'>
+            <Col>
+              <h2 className='red-title'>{ TEXTS.TITLE }</h2>
+              <p className='subtitle'>{ TEXTS.BLACK_SUBTITLE }</p>
+              <p className='red subtitle'>{ TEXTS.RED_SUBTITLE }</p>
+            </Col>
+            <Col className='centered-col'>
+              <img src={computer} alt='webdevelopment illustration' width='350px'/>
+            </Col>
+          </Row>
+          <Row>
+          <Col>
+          <h2>{TEXTS.OPENED_LOCATIONS_LABEL}</h2>
+          { applyButtons.length > 0 ? <ButtonToolbar className='button-toolbar'>
+            { applyButtons }
+          </ButtonToolbar> :
+            'All the applications are curently closed. '
+          }
+          </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h2>Requirements</h2>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.REQUIREMENTS }}></div>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.OFFICE_LOCATION }}></div>
+              <ButtonToolbar className='button-toolbar'>
+                <Button variant="secondary" size="lg" href={'mailto:' + FOOTER.EMAIL}>
+                  <FontAwesomeIcon className='status-icon' icon={faEnvelope} />
+                  A question ? Contact us
+                </Button>
+              </ButtonToolbar>
             </Col>
           </Row>
         </Container>
