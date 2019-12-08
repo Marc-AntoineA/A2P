@@ -49,12 +49,13 @@
   "SUMMARY_VIEW": {
     "WELCOME_MESSAGE": "Welcome back {{ name }}",
     "WELCOME_DESCRIPTION": "In this page, you will find your current progress, you have to complete all these steps. You can do it in the order you prefer. You can save your answers and submit them later, or submit them directly!",
+    "NO_MORE_INTERESTED": "You archived your application. If you want to apply again, just unarchive it by clicking on the button above.",
     "ICONS_DESCRIPTIONS":
     {
-      "TODO_ICON_DESCRIPTION": "means that you have not yet completed this step, you have to answer and submit it (the number is the index of the step)",
-      "PENDING_ICON_DESCRIPTION": "means that your answers are waiting an approval from Social Hackers Academy, it would come soon",
-      "REJECTED_ICON_DESCRIPTION": "means that unfortunately, your answer was rejected by Social Hackers Academy: you can find on your emails some comments about it. You have to submit it again",
-      "VALIDATED_ICON_DESCRIPTION": "means that your answer was accepted by Social Hackers Academy, perfect!"
+      "TODO_ICON_DESCRIPTION": "You don't have this step yet, you have to answer and submit it before the deadline",
+      "PENDING_ICON_DESCRIPTION": "Your answer is waiting an approval from Social Hackers Academy, it would come soon. You cannot edit it anymore.",
+      "REJECTED_ICON_DESCRIPTION": "Unfortunately, your answer had been rejected by Social Hackers Academy: you can find on your emails some comments about it. You have to submit it again",
+      "VALIDATED_ICON_DESCRIPTION": "Your answer was accepted by Social Hackers Academy, perfect!"
     },
     "DEADLINE_TEXT": "You have to complete all these steps before the {{ deadline }}",
     "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)",

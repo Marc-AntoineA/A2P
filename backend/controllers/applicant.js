@@ -55,6 +55,7 @@ exports.createApplicant = (req, res, next) => {
         phoneNumber: phoneNumber,
         status: 'pending',
         process: process,
+        archived: false
       });
       const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {

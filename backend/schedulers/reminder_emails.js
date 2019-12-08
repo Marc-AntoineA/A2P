@@ -7,16 +7,13 @@ const moment = require('moment');
 exports.sendEmailToInactiveApplicants = function(nbDays) {
   const today = moment();
   const lastUpdateDeadline = today.add(-nbDays, 'days');
-  console.log('lastUpdateDeadline');
-  console.log(lastUpdateDeadline.toString());
   Applicant.find({
-    updatedAt: {$gt : lastUpdateDeadline.toDate()},
-    status: 'pending'
+    updatedAt: {$lt : lastUpdateDeadline.toDate()},
+    status: 'pending',
   }).then((applicants) => {
-    console.log('applicants');
-    console.log(applicants);
     applicants.map((applicant) => {
       if (applicant.process.status !== 'open' || applicant.process.deadline <= today) return;
+      if (applicant.archived) return;
       const steps = applicant.process.steps;
 
       let oneStepIsTodo = false;
@@ -32,5 +29,3 @@ exports.sendEmailToInactiveApplicants = function(nbDays) {
     });
   });
 }
-
-exports.sendEmailToInactiveApplicants(10);

@@ -189,6 +189,14 @@ export default {
   margin: 10px 5px;
 }
 
+.processes-box li a {
+  color: teal;
+}
+
+.processes-box li a:visited {
+  color: teal;
+}
+
 .processes-box li::before {
 	content: "\2B24";
 }

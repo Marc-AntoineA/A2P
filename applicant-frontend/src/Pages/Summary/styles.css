@@ -2,99 +2,24 @@
   margin-right: 10px;
 }
 
-span.small-icon-box.rejected {
+.rejected .step-explanation {
   border-color: red;
   color: red;
 }
 
-li.step-element.rejected::before {
-  border-color: red;
-  color: red;
-  content: "\2715";
-}
-
-span.small-icon-box.validated {
-  border-color: green;
-  color: green;
-}
-
-li.step-element.validated::before {
-  border-color: green;
-  color: green;
-  content: "\2713";
-}
-
-span.small-icon-box.todo {
-  border-color: teal;
-  color: teal;
-}
-
-li.step-element.todo::before {
-
-}
-
-span.small-icon-box.pending {
+.pending .step-explanation {
   color: orange;
   border-color: orange;
 }
 
-li.step-element.pending::before {
-  color: orange;
-  border-color: orange;
-  content: "...";
+.validated .step-explanation {
+  border-color: green;
+  color: green;
 }
 
-li.step-element {
-  counter-increment: step-counter;
-  margin: 30px 0px;
-}
-
-.step-element span {
-	font-size: 20px;
-	padding-left: 18px;
-	vertical-align: super;
-}
-
-span.small-icon-box {
-  border: 2px solid black;
-  border-radius: 100%;
-  width: 25px;
-  height: 25px;
-  display: inline-block;
-  text-align: center;
-  margin-right: 10px;
-}
-
-.help-list {
-  list-style: none;
-  padding-left: 10px;
-}
-
-.help-list li {
-  margin-bottom: 4px;
-  margin-top: 4px;
-}
-
-li.step-element::before {
-	content: counter(step-counter);
-	margin-right: 5px;
-	font-size: 35px;
-	/* background-color: teal; */
-	color: teal;
-	padding: 8px 19px;
-	border-radius: 100%;
-	border: 2px solid teal;
-	width: 70px;
-	display: inline-block;
-	height: 70px;
-	text-align: center;
-}
-
-.steps-list {
-  list-style: none;
-  width: max-content;
-  margin: auto;
-  padding-left: 0px;
+.step-explanation {
+	font-size: 15px !important;
+	font-style: italic;
 }
 
 .warning-box {
@@ -106,25 +31,18 @@ li.step-element::before {
 }
 
 .edit-button {
-	font-size: 25px;
+	font-size: 40px;
 	margin-right: 9px;
+  float:right;
+}
+
+.status-icon {
+  font-size: 15px;
+  margin-right: 8px;
 }
 
 h2 {
   text-align: center;
-}
-
-.help-box {
-    border: 2px solid gray;
-    padding: 8px;
-    margin: 9px;
-    font-size: 12px;
-    background-color: #ededed;
-}
-
-.help-box h3 {
-    font-size: 17px;
-    text-align: center;
 }
 
 .results-box {
@@ -141,7 +59,36 @@ h2 {
   background-color: red;
 }
 
-.results-box.validated {
+.results-box.accepted {
   border-color: green;
   background-color: #a3ffa3;
+}
+
+.step-card.card {
+	margin: 20px 5px;
+	display: flex;
+	flex-flow: row;
+}
+
+.answer-button {
+	line-height: 50px;
+  margin-bottom: 50%;
+	margin: auto 10px;
+}
+
+.step-nb {
+	color: red;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.card:hover .edit-button {
+	-webkit-transform: translateX(10px);
+	transform: translateX(10px);
+	color: red;
+}
+
+.button-toolbar {
+	display: flex;
+	justify-content: space-around;
 }
