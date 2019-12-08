@@ -72,7 +72,7 @@
             <aap-spinner :show="loading.applicants"></aap-spinner>
 
             <p class='small'> {{ applicants.length }} candidates displayed</p>
-            <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500">
+            <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500" :row-class-name="studentsClassName">
               <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
               <el-table-column label='Name' prop='name' sortable></el-table-column>
               <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
@@ -111,6 +111,16 @@
               <el-table-column label='Average Mark' align='center'>
                 <template slot-scope='scope'>
                   <span class='status-box'>{{ computedStatus[scope.row._id].averageMark }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label='Archived' align='center' prop="archived"
+                :filters="[{ text: 'Interested', value: 'unarchived' }, { text: 'Not Interested', value: 'archived' }]"
+                :filter-method="filterArchived"
+                :filter-multiple="false"
+                filter-placement="bottom-end">
+                <template slot-scope='scope'>
+                  <i v-if='scope.row.archived' class='el-icon-close'></i>
+                  <i v-if='!scope.row.archived' class='el-icon-check'></i>
                 </template>
               </el-table-column>
             </el-table>
@@ -220,22 +230,6 @@ export default {
       this.applicantModalVisible = true;
       this.currentDisplayedApplicant = { applicantId: row._id, processId: row.process._id };
     },
-    filterStatusHandler(value, row) {
-      if (value === 'accepted')
-        return row.status === 'accepted';
-
-      if (value === 'rejected')
-        return row.status === 'rejected';
-
-      if (row.status !== 'pending')
-        return false;
-
-      const status = this.computedStatus[row._id];
-      if (value === 'required')
-        return status.pending > 0 || status.accepted === row.process.steps.length;
-
-      return false;
-    },
     downloadApplicants() {
       this.$store.dispatch('DOWNLOAD_EXCEL_ANSWERS', this.process._id)
       .then((blob) => {
@@ -257,7 +251,18 @@ export default {
           confirmButtonText: 'OK'
         });
       });
-    }
+    },
+    studentsClassName({ row }) {
+      if (row.archived) return 'archived-row';
+      return '';
+    },
+    filterArchived(value, row) {
+      console.log(value, row);
+      if (value === 'archived')
+        return row.archived;
+      else
+        return !row.archived;
+    },
   },
   computed: {
     applicants() {
@@ -470,4 +475,34 @@ export default {
   margin: 15px 0;
 }
 
+
+.archived-row .status-box {
+	background-color: #bbb;
+	border-color: #bbb;
+	color: #888;
+}
+
+.archived-row i.round-boxed.big:hover {
+	border-color: #bbb;
+}
+
+.archived-row .segment.rejected {
+	background-color: #a40000;
+}
+
+.archived-row .segment.validated {
+	background-color: #005300;
+}
+
+.archived-row .segment.pending {
+	background-color: #d08700;
+}
+
+</style>
+
+<style>
+  tr.archived-row {
+    background-color: #e9e9e9!important;
+    color: #888!important;
+  }
 </style>

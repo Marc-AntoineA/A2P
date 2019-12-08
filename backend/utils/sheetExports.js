@@ -8,8 +8,8 @@ exports.buildApplicantsAnswers = (process, applicants, filename) => {
     const label = process.label;
 
     // First row = user
-    const firstRow = ['User information', '', '', '', '', ''];
-    const secondRow =  ['Name', 'Mail', 'Phone', 'status', 'Date application', 'Last modification']
+    const firstRow = ['User information', '', '', '', '', '', ''];
+    const secondRow =  ['Name', 'Mail', 'Phone', 'status', 'Date application', 'Last modification', 'Interested']
 
     for (let stepIndex = 0; stepIndex < process.steps.length; stepIndex++) {
       const step = process.steps[stepIndex];
@@ -34,7 +34,7 @@ exports.buildApplicantsAnswers = (process, applicants, filename) => {
 
     for (let applicantIndex=0; applicantIndex < applicants.length; applicantIndex++) {
       const applicant = applicants[applicantIndex];
-      const applicantAnswers = [applicant.name, applicant.mailAddress, applicant.phoneNumber, applicant.status, applicant.createdAt, applicant.updatedAt];
+      const applicantAnswers = [applicant.name, applicant.mailAddress, applicant.phoneNumber, applicant.status, applicant.createdAt, applicant.updatedAt, applicant.archived ? 'Not Interested' : 'Interested'];
 
       for (let stepIndex = 0; stepIndex < applicant.process.steps.length; stepIndex++) {
         const step = applicant.process.steps[stepIndex];
