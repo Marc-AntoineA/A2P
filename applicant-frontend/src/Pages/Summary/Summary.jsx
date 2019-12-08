@@ -7,7 +7,7 @@ import Handlebars  from 'handlebars';
 import { Redirect } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
 
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
@@ -149,7 +149,7 @@ class Summary extends Component {
     // Main block for interested applicants before the deadline
     const deadlineBox = (
       <Alert variant='warning'>
-        <FontAwesomeIcon icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
+        <FontAwesomeIcon className='status-icon' icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
       </Alert>
     );
     const steps = this.state.process.process === undefined ? []
@@ -202,9 +202,21 @@ class Summary extends Component {
 
     // Accepted/rejected applicants
     const resultsBox = (
-      <div className={'results-box ' + this.state.process.status}>
-        { this.state.process.status === 'accepted' ? TEXTS.SUMMARY_VIEW.RESULTS_BOX.ACCEPTED : ''}
-        { this.state.process.status === 'rejected' ? TEXTS.SUMMARY_VIEW.RESULTS_BOX.REJECTED : '' }
+      <div>
+        { this.state.process.status === 'accepted' ?
+            <Alert variant='success'>
+              <FontAwesomeIcon className='status-icon' icon={faThumbsUp} />{ TEXTS.SUMMARY_VIEW.RESULTS_BOX.ACCEPTED }
+            </Alert>
+          :
+          ''
+        }
+        { this.state.process.status === 'rejected' ?
+            <Alert variant='danger'>
+              <FontAwesomeIcon className='status-icon' icon={faFrown} />{ TEXTS.SUMMARY_VIEW.RESULTS_BOX.REJECTED }
+            </Alert>
+          :
+          ''
+        }
       </div>
     );
 
@@ -217,7 +229,7 @@ class Summary extends Component {
           { !loading && this.state.process.status === 'pending' && !this.state.process.archived  ? interestedBlock : '' }
           { !loading && this.state.process.status === 'pending' && this.state.process.archived  ? notInterestedBlock : '' }
           <ButtonToolbar className='button-toolbar'>
-            { !loading ?
+            { !loading && this.state.process.status === 'pending'?
               <Button variant="danger" size="lg" onClick={this.updateArchive}>
                 {this.state.process.archived ? 'Apply again !' : 'Archive my Application'}
               </Button>
