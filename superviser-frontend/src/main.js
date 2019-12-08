@@ -26,7 +26,7 @@ export function createApp() {
         next();
         return;
       }
-      next('/administration/login');
+      next({name: "login"});
     } else {
       next();
     }

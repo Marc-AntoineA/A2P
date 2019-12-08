@@ -1,7 +1,7 @@
 <template>
   <el-header>
     <el-menu mode='horizontal' :router='true'>
-      <el-menu-item index='/administration' route='/administration'>
+      <el-menu-item :index="{ name:'welcome' }">
         <img class='logo' src='../assets/images/logo.jpg'/>
       </el-menu-item>
       <el-menu-item :index="{ name: 'processes'}">Processes</el-menu-item>
