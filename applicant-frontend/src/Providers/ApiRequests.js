@@ -107,3 +107,8 @@ exports.postForgotPassword = function(data) {
 exports.getOpenedProcesses = function() {
   return getData(API_PATH + routes.GET_OPENED_PROCESSES);
 }
+
+exports.putArchive = function(user, value) {
+  const url = `${API_PATH}/archive/${user.id}/${value}`;
+  return putData({}, url, user.token);
+}

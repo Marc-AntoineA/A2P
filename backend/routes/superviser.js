@@ -23,6 +23,7 @@ router.get('/list/applicants/pending', applicantCtrl.getAllPendingApplicants);
 router.get('/applicants/:processId', auth, applicantCtrl.getAllApplicantsByProcessId);
 router.get('/applicants/:processId/download', auth, applicantCtrl.getAllApplicantsByProcessIdExcelFile);
 
+router.put('/applicants/:applicantId/archived/:value', auth, applicantCtrl.updateArchivedByApplicantId);
 router.put('/applicants/:applicantId/status/:status', auth, applicantCtrl.updateStatusByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/mark', auth, applicantCtrl.updateStepMarkByApplicantId);
 router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicantCtrl.updateStepStatusByApplicantId);

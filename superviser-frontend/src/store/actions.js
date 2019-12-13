@@ -20,7 +20,8 @@ import {
   getEmailTemplate,
   saveEmailTemplate,
   getLasts10Applicants,
-  getPendingApplicants
+  getPendingApplicants,
+  updateArchivedByApplicantId
 } from '../api/applicant.js';
 
 export default {
@@ -234,6 +235,18 @@ export default {
       .then((applicants) => {
         commit('SET_APPLICANTS', applicants);
         resolve(applicants);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
+  },
+  SWITCH_ARCHIVE_APPLICANT_BY_ID: ({ commit, state, dispatch }, { applicantId, processId }) => {
+    return new Promise((resolve, reject) => {
+      updateArchivedByApplicantId(state.user.token, applicantId, state.applicantsByProcessId[processId][applicantId].archived ? 'unarchive' : 'archive')
+      .then(({ message, applicant} ) => {
+        commit('SET_APPLICANT_BY_PROCESS_ID_AND_APPLICANT_ID', { processId, applicant });
+        resolve(message);
       }).catch(({ code, error }) => {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
