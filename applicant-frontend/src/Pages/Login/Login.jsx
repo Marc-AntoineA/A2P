@@ -7,8 +7,8 @@ import { Redirect, Link } from 'react-router-dom';
 import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
-import { postLogin } from '../../Providers/ApiRequests.js';
 import Input from '../../Components/Input/Input.jsx';
+import { postLogin } from '../../Providers/ApiRequests.js';
 import logo from '../../Components/Header/logo.jpg';
 
 
@@ -72,30 +72,29 @@ class Login extends Component {
               <Container className="wrapper">
          <h1>
            <Link className="login-header-link" to="/login">
-            <img src={logo} alt="SHA" className="login-header-image"/>
+            <img src={logo} alt="SHA" className="header-image"/>
            </Link>
           </h1>
             <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
-                    <Form.Label>Email address</Form.Label>
+                    <Form.Label className='red-label'>Email address</Form.Label>
                     <Input id='0' type='email' onChange={ this.handleChangeMail }
                       className='form-control' placeholder='Your email'>
                     </Input>
                   </Form.Group>
                   <Form.Group controlId="formGroupPassword" className='input-group mb-3'>
-                    <Form.Label>Password</Form.Label>
+                    <Form.Label className='red-label'>Password</Form.Label>
                     <Input id='1' type='password' onChange={ this.handleChangePassword }
                       className='form-control' placeholder='Your password'></Input>
                   </Form.Group>
                   <Form.Group>
-                    <Button className="submitButton" size='lg' onClick={ this.login } variant="primary" block>
+                    <Button className="submit-button btn btn-danger round-button" size='lg' onClick={ this.login } variant="primary" block>
                       { TEXTS.LOGIN_VIEW.SUBMIT_BUTTON }
                     </Button>
                   </Form.Group>
                   <Form.Group className='right-aligned'>
-                    <Form.Label><Link to="/forgot-password">{ TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }</Link>
-                    </Form.Label>
+                    <Link to="/forgot-password">{ TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }</Link>
                   </Form.Group>
                 </Form>
               </Container>

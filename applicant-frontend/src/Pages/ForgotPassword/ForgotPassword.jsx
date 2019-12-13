@@ -52,18 +52,18 @@ class ForgotPassword extends Component {
                 <img src={logo} alt="SHA" className="header-image"/>
              </Link>
             </h1>
-            <h2 className="mt-3 mb-3">Reset Password </h2>
+            <h2 className="mt-3 mb-3">Password forgot</h2>
             <p className="mt-3 mb-3">{ TEXTS.FORGOT_PASSWORD_VIEW.DESCRIPTION}</p>
 
             <Form>
               <Form.Group controlId="formGroupEmail" className="input-group mb-3">
-                <Form.Label>Your email address</Form.Label>
+                <Form.Label className='red-label'>Your email address</Form.Label>
                 <Input id='0' type='email' onChange={this.setEmail}
                   className='form-control' placeholder='Your email'>
                 </Input>
               </Form.Group>
               <Form.Group>
-                <Button className="submitButton" size='lg' onClick={ this.forgotPassword } variant="primary" block>
+                <Button className="submit-button btn btn-danger btn-lg round-button" size='lg' onClick={ this.forgotPassword } variant="primary" block>
                     Change your password
                 </Button>
               </Form.Group>

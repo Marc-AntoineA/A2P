@@ -47,7 +47,7 @@ class ResetPassword extends Component {
             <>
             <Header />
             <div className="resetpassword-wrapper">
-                 <h1>
+                <h1>
                     <Link  to="/reset">
                         <img src={logo} alt="SHA" className="header-image"/>
                     </Link>
@@ -56,13 +56,13 @@ class ResetPassword extends Component {
 
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
-                    <Form.Label>Your new password</Form.Label>
+                    <Form.Label className='red-label'>Your new password</Form.Label>
                     <Input id='0' type='password' onChange={this.setPassword}
                       className='form-control' placeholder='Your new password'>
                     </Input>
                   </Form.Group>
                   <Form.Group>
-                    <Button className="submitButton" size='lg' onClick={ this.resetPassword } variant="primary" block>
+                    <Button className="submit-button btn btn-danger round-button" size='lg' onClick={ this.resetPassword } variant="primary" block>
                         Change your password
                     </Button>
                   </Form.Group>

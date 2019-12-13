@@ -22,20 +22,6 @@ h1 {
   text-align: center;
 }
 
-.header-image {
-  height: 90px;
-}
-
-img {
-  vertical-align: middle;
-  border: 0;
-}
-
-.btn{
-  border-radius: 10em;
-  font-weight: 400;
-}
-
 @media screen and (max-width: 550px) {
   .forgotpassword-wrapper{
     width: auto;
