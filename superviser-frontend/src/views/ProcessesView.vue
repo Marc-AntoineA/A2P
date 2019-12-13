@@ -148,7 +148,7 @@ export default {
       this.$store.dispatch('CREATE_PROCESS')
         .then((process) => {
           const processId = process._id;
-          this.$router.push('/administration/process/' + processId);
+          this.$router.push({ name: 'process', params: { processId }});
         })
         .catch((error) => {
           this.$alert(error.message, 'Error while creating a new process', {

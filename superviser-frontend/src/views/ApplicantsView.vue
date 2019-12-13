@@ -57,7 +57,6 @@
               prefix-icon="el-icon-search"
               v-model="searchInput">
             </el-input>
-            {{ searchInput }}
 
             <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
               :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
@@ -155,7 +154,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.fetchProcesses().then(() => {
-        vm.fetchApplicants(to.params.processId);
+        if (to.params.processId) vm.fetchApplicants(to.params.processId);
       });
     });
   },

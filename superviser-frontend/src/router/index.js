@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Config from '../../vue.config.js';
 
 Vue.use(Router);
 
@@ -17,57 +18,58 @@ export function createRouter() {
     mode: 'history',
     fallback: false,
     scrollBehavior: () => ({ y: 0}),
+    base: Config.publicPath,
     routes: [
       {
-        path: '/administration/login',
+        path: '/login',
         name: 'login',
         component: LoginView,
         meta: { requiresAuth: false }
       },
       {
-        path: '/administration',
+        path: '/',
         name: 'welcome',
         component: WelcomeView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/administration/processes',
+        path: '/processes',
         name: 'processes',
         component: ProcessesView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/administration/process/:processId/',
+        path: '/process/:processId/',
         name: 'process',
         component: ProcessView,
         meta: { requiresAuth: true }
       },
       {
-        path:'/administration/applicants',
+        path:'/applicants',
         name: 'applicants',
         component: ApplicantsView,
         meta: { requiresAuth: true },
       },
       {
-        path:'/administration/applicants/:processId',
+        path:'/applicants/:processId',
         name: 'applicantsInitialProcessId',
         component: ApplicantsView,
         meta: { requiresAuth: true },
       },
       {
-        path:'/administration/templates',
+        path:'/templates',
         name: 'templatesNoSelected',
         component: TemplatesView,
         meta: { requiresAuth: true }
       },
       {
-        path:'/administration/templates/:templateName',
+        path:'/templates/:templateName',
         name: 'template',
         component: TemplatesView,
         meta: { requiresAuth: true }
       },
       {
-        path: '/administration/*',
+        path: '/*',
         name: 'error404',
         component: Error404View,
         meta: { requiresAuth: false }

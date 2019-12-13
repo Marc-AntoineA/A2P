@@ -4,15 +4,15 @@
     <el-container>
       <el-aside>
         <el-menu mode='vertical' :router='true'>
-          <el-menu-item index='/administration/templates/accepted' route='/administration/templates/accepted'>Accepted</el-menu-item>
-          <el-menu-item index='/administration/templates/rejected' route='/administration/templates/rejected'>Rejected</el-menu-item>
-          <el-menu-item index='/administration/templates/application' route='/administration/templates/application'>Application Received</el-menu-item>
-          <el-menu-item index='/administration/templates/reset_password' route='/administration/templates/reset_password'>Reset Password</el-menu-item>
-          <el-menu-item index='/administration/templates/step_accepted' route='/administration/templates/step_accepted'>Stepd Accepted</el-menu-item>
-          <el-menu-item index='/administration/templates/step_rejected' route='/administration/templates/step_rejected'>Step Rejected</el-menu-item>
-          <el-menu-item index='/administration/templates/step_received' route='/administration/templates/step_received'>Step Received</el-menu-item>
-          <el-menu-item index='/administration/templates/reset_password' route='/administration/templates/reset_password'>Reset Password</el-menu-item>
-          <el-menu-item index='/administration/templates/reminder' route='/administration/templates/reminder'>Reminder</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "accepted"}}'>Accepted</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "rejected"}}'>Rejected</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "application"}}'>Application Received</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_accepted"}}'>Step Accepted</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_rejected"}}'>Step Rejected</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_received"}}'>Step Received</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reminder"}}'>Reminder</el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
