@@ -31,6 +31,9 @@
     "SUBMIT_BUTTON": "Open my profile!",
     "FORGOT_PASSWORD_BUTTON": "I forgot my password"
   },
+  "FORGOT_PASSWORD_VIEW": {
+    "DESCRIPTION": "To reset your password, enter your email below and submit. An email will be sent to you with instructions about how to complete the process"
+  },
   "SUCCESS_MESSAGES": {
     "FORGOT_PASSWORD": "If an account is registered with the email address \"{{ mailAddress }}\", you should get an email there with your new password soon",
     "APPLICATION": "Thank your for your creating your account in the platform. You can now fill all the steps of the application process, to join the class!",

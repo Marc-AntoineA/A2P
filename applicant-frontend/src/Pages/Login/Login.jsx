@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Container } from 'react-bootstrap';
 import { Redirect, Link } from 'react-router-dom';
-// import Handlebars  from 'handlebars';
 
 import './styles.css';
 import Header from '../../Components/Header/Header.jsx';
@@ -80,14 +79,14 @@ class Login extends Component {
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
                     <Form.Label>Email address</Form.Label>
-                    <Input id='0' type='inline' onChange={ this.handleChangeMail }
+                    <Input id='0' type='email' onChange={ this.handleChangeMail }
                       className='form-control' placeholder='Your email'>
                     </Input>
                   </Form.Group>
                   <Form.Group controlId="formGroupPassword" className='input-group mb-3'>
                     <Form.Label>Password</Form.Label>
                     <Input id='1' type='password' onChange={ this.handleChangePassword }
-                      className='form-control'></Input>
+                      className='form-control' placeholder='Your password'></Input>
                   </Form.Group>
                   <Form.Group>
                     <Button className="submitButton" size='lg' onClick={ this.login } variant="primary" block>

@@ -24,11 +24,6 @@ h1{
   height: 90px;
 }
 
-img {
-  border: 0;
-  vertical-align: middle;
-}
-
 .submitButton {
   background: linear-gradient(40deg, #45cafc, #303f9f) !important;
   border-radius: 10em;

@@ -148,7 +148,7 @@ class Input extends Component {
         </div>
         <input type="text"
           className="form-control"
-          placeholder="mail address"
+          placeholder={this.props.placeholder ? this.props.placeholder : 'Email address'}
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);
@@ -180,7 +180,7 @@ class Input extends Component {
         </div>
         <input type="password"
           className="form-control"
-          placeholder="password"
+          placeholder={this.props.placeholder ? this.props.placeholder : 'Password'}
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);

@@ -98,9 +98,10 @@ exports.putStepForm = function(user, index, data, confirm) {
 exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
 };
+
 //This  return function must be putdata function not postdata function
 exports.postForgotPassword = function(data) {
-  return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
+  return postData(data, API_PATH + routes.POST_FORGOT_PASSWORD);
 };
 
 exports.getOpenedProcesses = function() {

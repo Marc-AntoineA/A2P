@@ -1,0 +1,52 @@
+* {
+  outline: 0;
+  box-sizing: border-box;
+}
+
+.forgotpassword-wrapper{
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   padding: 36px;
+   padding-bottom: 24px;
+   border: 1px solid #e8e9e9;
+   width: 475px;
+   margin-right: auto;
+   margin-left: auto;
+   box-shadow: 0 2px 5px 0 rgba(55, 161, 255, 0.26), 0 4px 12px 0
+    rgba(121, 155, 254, 0.25);
+   margin-top:2.4em;
+}
+
+h1 {
+  text-align: center;
+}
+
+.header-image {
+  height: 90px;
+}
+
+img {
+  vertical-align: middle;
+  border: 0;
+}
+
+.btn{
+  border-radius: 10em;
+  font-weight: 400;
+}
+
+@media screen and (max-width: 550px) {
+  .forgotpassword-wrapper{
+    width: auto;
+    margin-top: 0;
+    min-height: 100vh;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .forgotpassword-wrapper .forgotpassword-header-image {
+    width: auto;
+    margin-top: 0;
+  }
+}
