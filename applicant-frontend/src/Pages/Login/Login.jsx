@@ -17,7 +17,6 @@ const TEXTS = require('../../static.json');
 
 class Login extends Component {
   constructor(props) {
-   console.log(props)
     super(props);
     this.state = {
       'mail': '',
@@ -25,7 +24,6 @@ class Login extends Component {
       'isLogged': false
     };
     this.login = this.login.bind(this);
-    // this.forgotPassword = this.forgotPassword.bind(this);
     this.handleChangeMail = this.handleChangeMail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
   }
@@ -50,17 +48,6 @@ class Login extends Component {
     });
   }
 
-  // forgotPassword() {
-  //   postForgotPassword({ mail: this.state.mail.trim() })
-  //   .then((response) => {
-  //     const forgotPasswordTemplate = Handlebars.compile(TEXTS.SUCCESS_MESSAGES.FORGOT_PASSWORD);
-  //     this.props.handleModal(forgotPasswordTemplate({ mailAddress: this.state.mail.trim() }), 'Success');
-  //   })
-  //   .catch((error) => {
-  //     this.props.handleModal(error.message ? error.message : error.toString(), 'Error');
-  //   });
-  // }
-
   handleChangeMail(value) {
     this.setState((prevState) => {
       prevState.mail = value;
@@ -77,18 +64,16 @@ class Login extends Component {
 
   render() {
     return (
-        <div>{
+        <>{
           this.state.isLogged ?
             <Redirect to='/summary'/>
             :
             <div>
               <Header/>
               <Container className="wrapper">
-                
-            
          <h1>
            <Link className="login-header-link" to="/login">
-              <img src={logo} alt="SHA" className="login-header-image"/>
+            <img src={logo} alt="SHA" className="login-header-image"/>
            </Link>
           </h1>
             <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
@@ -108,20 +93,17 @@ class Login extends Component {
                     <Button className="submitButton" size='lg' onClick={ this.login } variant="primary" block>
                       { TEXTS.LOGIN_VIEW.SUBMIT_BUTTON }
                     </Button>
-                    <p>
-                        Forgot
-                        <Link to="/forgot-password" className="text-primery">
-                          {" "}
-                           Password?
-                      </Link> 
-                    </p>
+                  </Form.Group>
+                  <Form.Group className='right-aligned'>
+                    <Form.Label><Link to="/forgot-password">{ TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }</Link>
+                    </Form.Label>
                   </Form.Group>
                 </Form>
               </Container>
               <Footer version={this.props.version}/>
             </div>
           }
-      </div>
+      </>
     );
   }
 }
