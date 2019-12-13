@@ -10,7 +10,6 @@ const TEXTS = require('../../static.json');
 class Question extends Component {
 
   constructor(props) {
-    console.log(props)
       super(props);
       this.failedMessage = '';
       this.handleChangeValue = this.handleChangeValue.bind(this);

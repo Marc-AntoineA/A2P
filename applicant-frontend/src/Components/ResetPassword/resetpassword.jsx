@@ -1,7 +1,10 @@
 import React, { Component } from "react";
+import { Link } from 'react-router-dom';
 import { resetPassword } from "../../Providers/auth";
-import Header from '../../Components/Header/Header.jsx'
-import Footer from '../../Components/Footer/Footer.jsx'
+import Header from '../../Components/Header/Header.jsx';
+import Footer from '../../Components/Footer/Footer.jsx';
+import logo from '../../Components/Header/logo.jpg';
+import './resetpassword.css';
 
 class ResetPassword extends Component {
     constructor(props) {
@@ -34,17 +37,13 @@ class ResetPassword extends Component {
         return (
             <>
             <Header />
-            <div className="container" 
-             style={{
-                padding: "36px",
-                paddingBottom: "24px",
-                border: "1px solid #e8e9e9",
-                width: "475px",
-                marginRight: "auto",
-                marginLeft: "auto"
-            }}>
-                 <h1 className="mt-5 mb-5">Social Hackers Academy</h1>
-                <h2 className="mt-5 mb-5">Reset your Password</h2> 
+            <div className="resetpassword-wrapper">  
+                 <h1>
+                    <Link  to="/reset">
+                        <img src={logo} alt="SHA" className="resetpassword-header-image"/>
+                    </Link>
+                </h1>
+                <h2 className="mt-3 mb-3">Reset your Password</h2> 
                
                 {this.state.message && (
                     <h4 className="bg-success">{this.state.message}</h4>
@@ -54,7 +53,7 @@ class ResetPassword extends Component {
                 )}
 
                 <form>
-                    <div className="form-group mt-5">
+                    <div className="form-group mt-3 mb-3">
                         <input
                             type="password"
                             className="form-control"

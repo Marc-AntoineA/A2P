@@ -6,8 +6,8 @@ import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
-import ForgotPassword from './Components/forgetpassword/forgetpassword'
-import ResetPassword from './Components/resetpassword/resetpassword'
+import ForgotPassword from './Components/ForgotPassword/forgotpassword.jsx'
+import ResetPassword from './Components/ResetPassword/resetpassword.jsx'
 import ApiRequests from './Providers/ApiRequests';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -36,7 +36,7 @@ class App extends Component {
       this.handleCloseModal = this.handleCloseModal.bind(this);
       this.handleModal = this.handleModal.bind(this);
       this.handleLogin = this.handleLogin.bind(this);
-      this.forgetPassword = this.forgetPassword.bind(this);
+      this.forgotPassword = this.forgotPassword.bind(this);
   }
 
   // bug : use componentDidUpdate?
@@ -68,7 +68,7 @@ class App extends Component {
   privacyPolicy() {
     return (<PrivacyPolicy  version={this.props.version} user={ this.state.user }/>);
   }
-  forgetPassword() {
+  forgotPassword() {
     return (<ForgotPassword  version={this.props.version} handleModal={ this.handleModal }/>);
   }
 
@@ -137,7 +137,7 @@ class App extends Component {
           <Route exact path='/signin' component={ this.signin }/>
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
-          <Route exact path='/forgot-password' component={ this.forgetPassword }/>
+          <Route exact path='/reset' component={ this.forgotPassword }/>
           <Route exact path='/reset-password' component={ ResetPassword }/>
         </div>
       </Router>

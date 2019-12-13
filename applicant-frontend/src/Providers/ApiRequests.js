@@ -98,7 +98,7 @@ exports.putStepForm = function(user, index, data, confirm) {
 exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
 };
-//This function returns putdata function not postdata function
+//This  return function must be putdata function not postdata function
 exports.postForgotPassword = function(data) {
   return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
 };
