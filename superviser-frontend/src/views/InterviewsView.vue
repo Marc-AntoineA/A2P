@@ -22,13 +22,10 @@
 
           <div v-if='this.process'>
 
-            <el-dialog :visible.sync="itwModalVisible"
+            <!-- <el-dialog :visible.sync="itwModalVisible"
               width="90%" center>
               <h2>Itw choice</h2>
-              <!-- <span slot="footer" class="dialog-footer">
-                <el-button @click="applicantModalVisible = false">Cancel</el-button>
-              </span> -->
-            </el-dialog>
+            </el-dialog> -->
 
             <el-row>
               <el-col :span="18">
@@ -76,7 +73,7 @@
                     <!-- <div class='hours-cell'><span>22:00 </span></div>
                     <div class='hours-cell'><span>23:00 </span></div> -->
                   </div>
-                  <div class='slots-col'>
+                  <div class='slots-col' @click='createSlot'>
                     <div v-for='interview in interviewsByDate[currentDayStr]' class='slot-cell'
                       :style="{ top: timeToTop(interview.begin) + 'px', height: timeToHeight(interview.begin, interview.end) + 'px' }">
                       <span>{{ interview.applicantId }}</span>
@@ -111,7 +108,14 @@ export default {
     broken: false,
     selectedProcess: undefined,
     currentDay: new Date(),
-    itwModalVisible: true
+    itwModalVisible: true,
+    interviewsByDate:
+      {"2019-12-19": [
+      { "begin": "2019-12-19T12:00:00", "end": "2019-12-19T12:40:00", "applicantId": "Ahmed" },
+      { "begin": "2019-12-19T12:40:00", "end": "2019-12-19T13:00:00", "applicantId": "Marc-Antoine" },
+      { "begin": "2019-12-19T13:00:20", "end": "2019-12-19T13:20:00", "applicantId": "" },
+      { "begin": "2019-12-19T14:00:20", "end": "2019-12-19T14:20:00", "applicantId": "Aggelina" }
+    ]}
   }),
   props: [],
   beforeMount() {
@@ -154,11 +158,47 @@ export default {
       const pxls = (d.getHours() - 8 + d.getMinutes()/60 + d.getSeconds()/3600)*60;
       return pxls;
     },
+    topToTime(pxls) {
+      const time = pxls/60; // in secos
+      const hours = Math.floor(time) + 8;
+      const mins = Math.floor((time - Math.floor(time))*60);
+      const secs = 0;
+      return { hours, mins, secs };
+    },
     timeToHeight(begin, end) {
       const b = new Date(begin);
       const e = new Date(end);
       const pxls = (e.getHours() - b.getHours() + (e.getMinutes() - b.getMinutes())/60 + (e.getSeconds() - b.getSeconds())/3600)*60;
       return pxls - 2;
+    },
+    createSlot(evt) {
+      console.log('===================================')
+      console.log(evt.layerX);
+      console.log(evt.layerY);
+      const time = this.topToTime(evt.layerY);
+      // console.log(time);
+      const b = new Date();
+      b.setHours(time.hours)
+      b.setMinutes(time.mins);
+      b.setSeconds(time.secs);
+      console.log(b)
+
+      const e = new Date();
+      e.setHours(time.hours)
+      e.setMinutes(time.mins + 20);
+      e.setSeconds(time.secs);
+
+      const bm = moment(b);
+      console.log(bm);
+      const em = moment(e);
+      // console.log(e);
+      // console.log(em);
+      this.interviewsByDate["2019-12-19"].push({
+        begin: bm.format('YYYY-MM-DDTHH:MM:SS'),
+        end: em.format('YYYY-MM-DDTHH:MM:SS'),
+        applicantId: 'undef'
+      });
+      console.log(this.interviewsByDate["2019-12-19"]);
     }
   },
   computed: {
@@ -176,16 +216,6 @@ export default {
     process() {
       if (!this.$route.params.processId) return undefined;
       return this.$store.state.processes[this.$route.params.processId];
-    },
-    interviewsByDate() {
-      const interviewsByDate = {};
-      interviewsByDate["2019-12-19"] = [
-        { "begin": "2019-12-19T12:00:00", "end": "2019-12-19T12:40:00", "applicantId": "Ahmed" },
-        { "begin": "2019-12-19T12:40:00", "end": "2019-12-19T13:00:00", "applicantId": "Marc-Antoine" },
-        { "begin": "2019-12-19T13:00:20", "end": "2019-12-19T13:20:00", "applicantId": "" },
-        { "begin": "2019-12-19T14:00:20", "end": "2019-12-19T14:20:00", "applicantId": "Aggelina" }
-       ]
-      return interviewsByDate;
     },
   },
   filters: {
