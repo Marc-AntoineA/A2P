@@ -74,12 +74,14 @@
                     <div class='hours-cell'><span>23:00 </span></div> -->
                   </div>
                   <div class='slots-col' @click='createSlot'>
-                    <div v-for='interview in interviewsByDate[currentDayStr]' class='slot-cell'
-                      :style="{ top: timeToTop(interview.begin) + 'px', height: timeToHeight(interview.begin, interview.end) + 'px' }">
+                    <div v-for='interview, index in interviewsByDate[currentDayStr]' class='slot-cell' :index='index'
+                      :style="{ top: timeToTop(interview.begin) + 'px', height: timeToHeight(interview.begin, interview.end) + 'px' }"
+                      @click='editSlot'>
                       <span>{{ interview.applicantId }}</span>
                     </div>
                   </div>
                 </div>
+                <el-button @click='clearAllSlots'>Remove All Slots</el-button>
               </el-col>
             </el-row>
           </div>
@@ -104,27 +106,33 @@ export default {
   name: 'Interviews',
   components: { AapHeader, AapFooter, AapBroken, AapSpinner },
   data: () => ({
-    loading: { processes: true },
+    loading: { processes: true, interviews: true },
     broken: false,
     selectedProcess: undefined,
     currentDay: new Date(),
     itwModalVisible: true,
-    interviewsByDate:
-      {"2019-12-19": [
-      { "begin": "2019-12-19T12:00:00", "end": "2019-12-19T12:40:00", "applicantId": "Ahmed" },
-      { "begin": "2019-12-19T12:40:00", "end": "2019-12-19T13:00:00", "applicantId": "Marc-Antoine" },
-      { "begin": "2019-12-19T13:00:20", "end": "2019-12-19T13:20:00", "applicantId": "" },
-      { "begin": "2019-12-19T14:00:20", "end": "2019-12-19T14:20:00", "applicantId": "Aggelina" }
-    ]}
+    // interviewsByDate:
+    //   {"2019-12-19": [
+    //   { "begin": "2019-12-19T12:00:00", "end": "2019-12-19T12:40:00", "applicantId": "Ahmed" },
+    //   { "begin": "2019-12-19T12:40:00", "end": "2019-12-19T13:00:00", "applicantId": "Marc-Antoine" },
+    //   { "begin": "2019-12-19T13:00:20", "end": "2019-12-19T13:20:00", "applicantId": "" },
+    //   { "begin": "2019-12-19T14:00:20", "end": "2019-12-19T14:20:00", "applicantId": "Aggelina" }
+    // ]}
   }),
   props: [],
   beforeMount() {
-    this.fetchProcesses().then(() => {
-    });
+    // this.fetchProcesses().then(() => {
+    //   if (!this.process) return;
+    //   if (this.$store.state.interviewsByProcessId[this.process._id]) return;
+    //   this.fetchInterviews(this.process._id);
+    // });
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.fetchProcesses().then(() => {
+        if (!to.params.processId) return;
+        if (vm.$store.state.interviewsByProcessId[to.params.processId]) return;
+        vm.fetchInterviews(to.params.processId);
       });
     });
   },
@@ -134,6 +142,19 @@ export default {
     changeProcess() {
       this.$router.push({ name: 'interviews-processId', params: { processId: this.selectedProcess }});
       return;
+    },
+    fetchInterviews(processId) {
+      this.loading.interviews = true;
+      this.$store.dispatch('FETCH_INTERVIEWS_BY_PROCESS_ID', processId)
+      .then((interviews) => {
+        this.loading.interviews = false;
+      }).catch((error) => {
+        this.loading.interviews = false;
+        this.broken = true;
+        this.$alert(error.message, 'Error while downloading interviews', {
+          confirmButtonText: 'OK'
+        });
+      });
     },
     fetchProcesses() {
       return new Promise((resolve, reject) => {
@@ -162,8 +183,9 @@ export default {
       const time = pxls/60; // in secos
       const hours = Math.floor(time) + 8;
       const mins = Math.floor((time - Math.floor(time))*60);
+      const roundMins = 20*Math.round(mins/20);
       const secs = 0;
-      return { hours, mins, secs };
+      return { hours, mins: roundMins, secs };
     },
     timeToHeight(begin, end) {
       const b = new Date(begin);
@@ -172,33 +194,40 @@ export default {
       return pxls - 2;
     },
     createSlot(evt) {
-      console.log('===================================')
-      console.log(evt.layerX);
-      console.log(evt.layerY);
       const time = this.topToTime(evt.layerY);
-      // console.log(time);
-      const b = new Date();
+
+      const b = new Date(this.currentDay);
       b.setHours(time.hours)
       b.setMinutes(time.mins);
       b.setSeconds(time.secs);
-      console.log(b)
 
-      const e = new Date();
+      const e = new Date(this.currentDay);
       e.setHours(time.hours)
       e.setMinutes(time.mins + 20);
       e.setSeconds(time.secs);
 
-      const bm = moment(b);
-      console.log(bm);
-      const em = moment(e);
-      // console.log(e);
-      // console.log(em);
-      this.interviewsByDate["2019-12-19"].push({
-        begin: bm.format('YYYY-MM-DDTHH:MM:SS'),
-        end: em.format('YYYY-MM-DDTHH:MM:SS'),
-        applicantId: 'undef'
-      });
-      console.log(this.interviewsByDate["2019-12-19"]);
+      const itw = {
+        begin: b,
+        end: e,
+        supervisorId: this.$store.state.user.id,
+        processId: this.process._id
+      };
+      this.$store.dispatch('ADD_INTERVIEW_SLOT', itw);
+    },
+    editSlot(evt) {
+      console.log(evt);
+      evt.stopPropagation();
+    },
+    clearAllSlots() {
+      this.$confirm('Are you sure to remove all the slots for this day?', 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+        }).then(() => {
+          this.$store.dispatch('REMOVE_INTERVIEWS_BY_DAY', { processId: this.process._id, dateStr: this.currentDayStr });
+          this.$alert(error.message, 'Error while clearing all slots', {
+            confirmButtonText: 'OK'
+          });
+        });
     }
   },
   computed: {
@@ -217,6 +246,11 @@ export default {
       if (!this.$route.params.processId) return undefined;
       return this.$store.state.processes[this.$route.params.processId];
     },
+    interviewsByDate() {
+      if (!this.process) return {};
+      if(!this.$store.getters.interviewsByProcessIdAndByDate[this.process._id]) return {};
+      return this.$store.getters.interviewsByProcessIdAndByDate[this.process._id];
+    }
   },
   filters: {
     timeFormatter: timeFormatter,

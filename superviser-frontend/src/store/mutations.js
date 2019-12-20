@@ -131,5 +131,22 @@ export default {
   },
   SET_APPLICANT_BY_PROCESS_ID_AND_APPLICANT_ID: (state, { processId, applicant }) => {
     Vue.set(state.applicantsByProcessId[processId], applicant._id, applicant)
+  },
+  SET_INTERVIEWS_BY_PROCESS_ID: (state, { processId, interviews }) => {
+    if (!state.interviewsByProcessId[processId]) Vue.set(state.interviewsByProcessId, processId, {});
+    interviews.forEach((interview) => {
+      if (interview) Vue.set(state.interviewsByProcessId[processId], interview._id, interview);
+    });
+  },
+  REMOVE_INTERVIEW: (state, interview) => {
+    Vue.delete(state.interviewsByProcessId[interview.processId], interview._id);
+  },
+  REMOVE_INTERVIEWS: (state, { processId, begin, end }) => {
+    for (let itwId in state.interviewsByProcessId[processId]) {
+      const itw = state.interviewsByProcessId[processId][itwId];
+      if (new Date(itw.begin) < begin || new Date(itw.end) > end) continue;
+
+      Vue.delete(state.interviewsByProcessId[processId], itwId);
+    }
   }
 }

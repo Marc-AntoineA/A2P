@@ -8,6 +8,7 @@ const processCtrl = require('../controllers/process');
 const applicantCtrl = require('../controllers/applicant');
 const superviserCtrl = require('../controllers/superviser');
 const emailsCtrl = require('../controllers/email');
+const interviewCtrl = require('../controllers/interview');
 
 router.get('/processes', auth, processCtrl.getAllProcesses);
 router.get('/process/:processId', auth, processCtrl.getProcessById);
@@ -30,6 +31,12 @@ router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicant
 
 router.get('/emails/:templateId', auth, emailsCtrl.getEmailTemplate);
 router.put('/emails/:templateId', auth, emailsCtrl.saveEmailTemplate);
+
+// WARNING TODO add auth
+router.post('/interviews/create', interviewCtrl.createInterview);
+router.delete('/interviews/delete/:interviewId', interviewCtrl.deleteInterview);
+router.delete('/interviews/delete/:processId/:begin/:end', interviewCtrl.deleteInterviewsByProcessIdAndDate);
+router.get('/interviews/:processId', interviewCtrl.getInterviewsByProcessId);
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);

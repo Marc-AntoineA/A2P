@@ -4,7 +4,7 @@ const API_PATH = settings.API_PATH;
 
 const { request } = require('./utils.js');
 
-export function fetchProcesses(token){
+function fetchProcesses(token){
   return request({
       url: API_PATH + settings.GET_ALL_PROCESSES,
       data: undefined,
@@ -12,7 +12,7 @@ export function fetchProcesses(token){
     }, 'get', 'no-cache');
 }
 
-export function fetchProcess(token, processId) {
+function fetchProcess(token, processId) {
   return request({
     url: API_PATH + settings.GET_ONE_PROCESS + processId,
     data: undefined,
@@ -20,7 +20,7 @@ export function fetchProcess(token, processId) {
   }, 'get', 'no-cache');
 }
 
-export function createEmptyProcess(token) {
+function createEmptyProcess(token) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.CREATE_EMPTY_PROCESS,
@@ -34,7 +34,7 @@ export function createEmptyProcess(token) {
   });
 }
 
-export function createCopyProcess(token, processId) {
+function createCopyProcess(token, processId) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.CREATE_COPY_PROCESS + processId,
@@ -48,7 +48,7 @@ export function createCopyProcess(token, processId) {
   });
 }
 
-export function deleteProcessById(token, processId) {
+function deleteProcessById(token, processId) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.DELETE_PROCESS + processId,
@@ -62,7 +62,7 @@ export function deleteProcessById(token, processId) {
   });
 }
 
-export function updateProcessById(token, processId, process) {
+function updateProcessById(token, processId, process) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.GET_ONE_PROCESS + processId,
@@ -76,7 +76,7 @@ export function updateProcessById(token, processId, process) {
   });
 }
 
-export function openProcessById(token, processId, process) {
+function openProcessById(token, processId, process) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.OPEN_PROCESS + processId,
@@ -89,3 +89,5 @@ export function openProcessById(token, processId, process) {
     });
   });
 }
+
+export default { fetchProcesses, fetchProcess, createEmptyProcess, createCopyProcess, deleteProcessById, updateProcessById, openProcessById };

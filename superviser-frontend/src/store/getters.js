@@ -1,3 +1,7 @@
+ 'using strict';
+
+import moment from 'moment';
+
 export default {
   isLoggedIn(state) {
     return !(Object.entries(state.user).length === 0
@@ -68,5 +72,19 @@ export default {
       return waitingValidation;
     });
     return pendingApplicants;
+  },
+  interviewsByProcessIdAndByDate(state) {
+    const itws = {};
+    for (let processId in state.interviewsByProcessId) {
+      itws[processId] = {};
+      for (let itwId in state.interviewsByProcessId[processId]) {
+        const itw = state.interviewsByProcessId[processId][itwId];
+        const date = moment(itw.begin);
+        const dayStr = date.format('YYYY-MM-DD');
+        if (!itws[processId][dayStr]) itws[processId][dayStr] = [];
+        itws[processId][dayStr].push(itw);
+      }
+    }
+    return itws;
   }
 }
