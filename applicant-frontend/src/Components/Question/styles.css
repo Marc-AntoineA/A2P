@@ -2,6 +2,7 @@
   font-size: 16px;
   font-weight: bold;
   margin-top: 8px;
+  color: var(--red);
 }
 
 .question-box {
@@ -24,4 +25,23 @@
 	color: firebrick;
 	margin-top: -5px;
 	margin-bottom: 10px;
+}
+
+@media screen and (max-width: 550px) {
+  .question-box {
+    width: auto;
+    margin-top: 0;
+    background: inherit;
+    padding: 12px 20px;
+    margin: 0;
+    border: unset;
+    box-shadow: unset;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .forgotpassword-wrapper .forgotpassword-header-image {
+    width: auto;
+    margin-top: 0;
+  }
 }
