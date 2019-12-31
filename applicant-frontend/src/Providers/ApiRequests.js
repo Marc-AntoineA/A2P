@@ -111,3 +111,13 @@ exports.putArchive = function(user, value) {
   const url = `${API_PATH}/archive/${user.id}/${value}`;
   return putData({}, url, user.token);
 }
+
+exports.selectSlot = function(user, slotBegin) {
+  const url = `${API_PATH}/slot/${user.id}/${slotBegin}`;
+  return putData({}, url, user.token);
+}
+
+exports.listAvailableSlots = function(user) {
+  const url = `${API_PATH}/slot/${user.id}`;
+  return getData(url, user.token);
+}

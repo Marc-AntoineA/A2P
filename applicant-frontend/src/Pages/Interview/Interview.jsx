@@ -21,7 +21,8 @@ class Interview extends Component {
     super(props);
 
     this.state = {
-      'redirectPath': null
+      'redirectPath': null,
+      'slotsByDate': {}
     };
   }
 
@@ -41,9 +42,39 @@ class Interview extends Component {
   }
 
   componentDidMount() {
+    const user = this.props.user;
+    this.getAvailableSlots();
   }
 
   componentWillUnmount() {
+  }
+
+  getAvailableSlots() {
+    if (!this.props.user.token || !this.props.user.id) return;
+
+    const user = this.props.user;
+    ApiRequests.listAvailableSlots(user).then((slots) => {
+      const slotsByDate = {};
+      for (let k=0; k<slots.length; k++) {
+        const slot = slots[k];
+        const begin = new Date(slot.begin);
+        const date = begin.getFullYear() + '-' + (begin.getMonth() + 1) + '-' + begin.getDate();
+        if (!slotsByDate[date]) slotsByDate[date] = [];
+        slotsByDate[date].push(slot);
+        slotsByDate[date].sort();
+      }
+
+      this.setState((prevState) => {
+        prevState.slotsByDate = slotsByDate;
+        return prevState;
+      });
+
+      console.log('available slots');
+      console.log(slotsByDate);
+    }).catch((error) => {
+      this.props.handleError(error.message ? error.message : error.toString());
+    });
+
   }
 
   render() {
@@ -62,6 +93,41 @@ class Interview extends Component {
       </Modal.Footer>
     </Modal>);
 
+    const orderedDays = Object.keys(this.state.slotsByDate).sort();
+    const dayBoxes = orderedDays.map((date) => {
+      const slots = this.state.slotsByDate[date];
+      const slotBoxes = slots.map((slot) => {
+        const slotBegin = new Date(slot.begin);
+        const slotEnd = new Date(slot.end);
+
+        return (
+          <div className='slot'>
+          <span className='slot-label'>From: </span>
+          <span className='slot-time'>{ slot.begin.slice(11, 16) }</span>
+          <span className='slot-label'>To: </span>
+          <span className='slot-time'>{ slot.end.slice(11, 16) }</span>
+          </div>
+        );
+      });
+
+      const d = new Date(date);
+      const month = d.toLocaleString('default', { month: 'long' });
+      const number = date.slice(8, 10);
+
+      return (
+        <div className='day-box'>
+          <div className='day-label'>
+            <span className='day-number'>{ number }</span>
+            <span className='day-month'>{ month }</span>
+          </div>
+          <div className='slots-label'>
+            { slotBoxes }
+          </div>
+        </div>
+      );
+    });
+    // const dayBoxes = ty
+
     const mainComponent = (
       <div>
         { submitModal }
@@ -73,45 +139,7 @@ class Interview extends Component {
           </p>
 
           <div className='calendar-box'>
-            <div className='day-box'>
-              <div className='day-label'>
-                <span className='day-number'>19</span>
-                <span className='day-month'>December</span>
-              </div>
-              <div className='slots-label'>
-                <div className='slot'>
-                  <span className='slot-label'>From: </span>
-                  <span className='slot-time'>2:00 p.m. </span>
-                  <span className='slot-label'>To: </span>
-                  <span className='slot-time'>2:20 p.m. </span>
-                </div>
-                <div className='slot'>
-                  <span className='slot-label'>From: </span>
-                  <span className='slot-time'>2:20 p.m. </span>
-                  <span className='slot-label'>To: </span>
-                  <span className='slot-time'>2:40 p.m. </span>
-                </div>
-                <div className='slot'>
-                  <span className='slot-label'>From: </span>
-                  <span className='slot-time'>2:40 p.m. </span>
-                  <span className='slot-label'>To: </span>
-                  <span className='slot-time'>3:00 p.m. </span>
-                </div>
-                <div className='slot'>
-                  <span className='slot-label'>From: </span>
-                  <span className='slot-time'>3:20 p.m. </span>
-                  <span className='slot-label'>To: </span>
-                  <span className='slot-time'>3:40 p.m. </span>
-                </div>
-                <div className='slot'>
-                  <span className='slot-label'>From: </span>
-                  <span className='slot-time'>3:40 p.m. </span>
-                  <span className='slot-label'>To: </span>
-                  <span className='slot-time'>4:0 p.m.< /span>
-                </div>
-              </div>
-            </div>
-
+            { dayBoxes }
 
           </div>
         </Container>

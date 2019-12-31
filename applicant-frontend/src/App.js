@@ -69,7 +69,7 @@ class App extends Component {
   }
 
   interview() {
-    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal }/>)
+    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>)
   }
 
   handleCloseModal() {

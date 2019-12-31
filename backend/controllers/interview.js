@@ -1,6 +1,7 @@
 'using strict';
 
 const InterviewSlot = require('../models/interviewSlot').model;
+const Applicant = require('../models/applicant').model;
 
 exports.getInterviewsByProcessId = (req, res, next) => {
  const processId = req.params.processId;
@@ -71,6 +72,57 @@ exports.deleteInterviewsByProcessIdAndDate = (req, res, next) => {
   }).catch((error) => {
     res.status(500).json({
       error: error
+    });
+  });
+};
+
+exports.chooseItwSlot = (req, res, next) => {
+  const applicantId = req.params.userId;
+  const beginSlot = req.params.beginSlot;
+
+  Applicant.findOne({ _id: applicantId }).then((applicant) => {
+    if (!applicant) {
+      res.status(404).json({ error: { message: `The applicant ${applicantId} does not exist`}});
+      return;
+    }
+
+    InterviewSlot.find({
+      processId: applicant.process._id,
+      begin: new Date(beginSlot)
+    }).then((slot) => {
+      if (!slot) {
+        res.status(404).json({ error: { message: `No itw slots starts on ${beginSlot}`}});
+        return;
+      }
+
+      if (slot.applicantId) {
+        res.status(500).json({ error: { message: `This itw is no more available`}});
+      }
+
+      slot.applicantId = applicantId;
+      slot.save().then(() => {
+        res.status(200).json({
+          message: 'This itw slot was successfully selected'
+        });
+      })
+    });
+  });
+};
+
+exports.listAllAvailableSlots = (req, res, next) => {
+  console.log('list all av slots');
+  const applicantId = req.params.userId;
+
+  Applicant.findOne({ _id: applicantId }).then((applicant) => {
+    if (!applicant) {
+      res.status(404).json({ error: { message: `The applicant ${applicantId} does not exist`}});
+      return;
+    }
+
+    InterviewSlot.find({ processId: applicant.process._id }).then((slots) => {
+      const filteredSlots = slots.filter((slot) => slot.applicant === undefined);
+      res.status(200).json(slots);
+      return;
     });
   });
 };
