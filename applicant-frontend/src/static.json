@@ -65,5 +65,13 @@
       "ACCEPTED": "Congratulation, you are now part of Social Hackers Academy. Check your emails to know when it starts!",
       "REJECTED": "Unfortunately, you will not join our programm right now. A member of our team will contact you to explain to you the reasons that you got rejected and give you feedback on your application and how you can improve it! In any case, you can apply to next classes, that will be launched soon in our Academy. Check your e-mails often!"
     }
+  },
+  "ITW_VIEW": {
+    "TITLE": "Small Interview/conversation with our team!",
+    "WELCOME_MESSAGE": "We want to know more about you! This 20-30 minutes interview will get us to know you better. You'll be asked to answer a few questions regarding your qualification for the program. It will give you the chance to let as know of anything you consider worth mentioning as well!",
+    "SLOT_SELECTION": "Please select a date/time in the list above. The meeting will be in our office.",
+    "NO_AVAILABLE_SLOT": "No slots are available for your interview. Please contact us by email :)",
+    "CONTACT_US": "You don't find any available slot? Please contact us :)",
+    "SLOT_SELECTED": "Your interview will be on {{ begin }} in our office. If you have any problem with this slot, contact us."
   }
 }

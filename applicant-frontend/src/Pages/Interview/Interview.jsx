@@ -11,8 +11,10 @@ import './styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
+import { Button, ProgressBar, Modal, Container, ButtonToolbar } from 'react-bootstrap';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
+
+import Handlebars from 'handlebars';
 
 const TEXTS = require('../../static.json');
 
@@ -22,8 +24,11 @@ class Interview extends Component {
 
     this.state = {
       'redirectPath': null,
-      'slotsByDate': {}
+      'slotsByDate': {},
+      'interviewSlot': undefined
     };
+
+    this.selectSlot = this.selectSlot.bind(this);
   }
 
   isNotAuthorized() {
@@ -44,16 +49,41 @@ class Interview extends Component {
   componentDidMount() {
     const user = this.props.user;
     this.getAvailableSlots();
+    this.getSelectedSlot();
   }
 
   componentWillUnmount() {
   }
 
+  selectSlot(e) {
+    const target = e.currentTarget;
+    const begin = target.dataset.begin;
+    ApiRequests.selectSlot(this.props.user, begin)
+    .then(() => {
+      this.props.handleModal('Your interview will be on Dec');
+      this.setState((prevState) => {
+        prevState.redirectPath = '/summary';
+        return prevState;
+      });
+    }).catch((error) => {
+      this.props.handleError(error.message ? error.message : error.toString());
+    });
+    e.stopPropagation();
+  }
+
+  getSelectedSlot() {
+    if (!this.props.user.token || !this.props.user.id) return;
+    ApiRequests.getSelectedSlot(this.props.user).then((slot) => {
+      this.setState((prevState) => {
+        prevState.interviewSlot = slot;
+      });
+    })
+  }
+
   getAvailableSlots() {
     if (!this.props.user.token || !this.props.user.id) return;
 
-    const user = this.props.user;
-    ApiRequests.listAvailableSlots(user).then((slots) => {
+    ApiRequests.listAvailableSlots(this.props.user).then((slots) => {
       const slotsByDate = {};
       for (let k=0; k<slots.length; k++) {
         const slot = slots[k];
@@ -68,13 +98,9 @@ class Interview extends Component {
         prevState.slotsByDate = slotsByDate;
         return prevState;
       });
-
-      console.log('available slots');
-      console.log(slotsByDate);
     }).catch((error) => {
       this.props.handleError(error.message ? error.message : error.toString());
     });
-
   }
 
   render() {
@@ -94,14 +120,14 @@ class Interview extends Component {
     </Modal>);
 
     const orderedDays = Object.keys(this.state.slotsByDate).sort();
-    const dayBoxes = orderedDays.map((date) => {
+    const dayBoxes = orderedDays.map((date, dayIndex) => {
       const slots = this.state.slotsByDate[date];
-      const slotBoxes = slots.map((slot) => {
+      const slotBoxes = slots.map((slot, slotIndex) => {
         const slotBegin = new Date(slot.begin);
         const slotEnd = new Date(slot.end);
 
         return (
-          <div className='slot'>
+          <div key={ dayIndex + '-' + slotIndex} className='slot' onClick={ this.selectSlot } data-begin={ slot.begin }>
           <span className='slot-label'>From: </span>
           <span className='slot-time'>{ slot.begin.slice(11, 16) }</span>
           <span className='slot-label'>To: </span>
@@ -111,8 +137,8 @@ class Interview extends Component {
       });
 
       const d = new Date(date);
-      const month = d.toLocaleString('default', { month: 'long' });
-      const number = date.slice(8, 10);
+      const month = d.toLocaleString('en-GB', { month: 'long' });
+      const number = d.getDate();
 
       return (
         <div className='day-box'>
@@ -126,22 +152,39 @@ class Interview extends Component {
         </div>
       );
     });
-    // const dayBoxes = ty
+
+    const beginTemplate = Handlebars.compile(TEXTS.ITW_VIEW.SLOT_SELECTED);
+    const date = new Date(this.state.interviewSlot ? this.state.interviewSlot.begin : undefined);
 
     const mainComponent = (
       <div>
         { submitModal }
         <Header user={ this.props.user }/>
         <Container>
-          <h4>Please select a slot for your interview</h4>
-          <p>
-            You have to be available
-          </p>
+
+          <h2>{ TEXTS.ITW_VIEW.TITLE }</h2>
+
+          <p>{ TEXTS.ITW_VIEW.WELCOME_MESSAGE }</p>
+
+          <p>{ !this.state.interviewSlot && TEXTS.ITW_VIEW.SLOT_SELECTION }</p>
+
+          { this.state.interviewSlot && beginTemplate({
+            begin: date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                  + ' at ' + date.toLocaleTimeString('en-GB')})
+          }
 
           <div className='calendar-box'>
-            { dayBoxes }
-
+            { !this.state.interviewSlot && dayBoxes.length === 0 && TEXTS.ITW_VIEW.NO_MORE_INTERESTED }
+            { !this.state.interviewSlot && dayBoxes.length !== 0 && dayBoxes }
           </div>
+
+        <ButtonToolbar className='center'>
+          <Button variant="secondary" size="lg" href={'mailto:' + TEXTS.FOOTER.EMAIL}>
+            <FontAwesomeIcon className='status-icon' icon={faEnvelope} />
+            { TEXTS.ITW_VIEW.CONTACT_US }
+          </Button>
+        </ButtonToolbar>
+
         </Container>
       </div>
     );

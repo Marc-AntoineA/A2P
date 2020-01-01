@@ -86,31 +86,42 @@ exports.chooseItwSlot = (req, res, next) => {
       return;
     }
 
-    InterviewSlot.find({
-      processId: applicant.process._id,
-      begin: new Date(beginSlot)
-    }).then((slot) => {
-      if (!slot) {
-        res.status(404).json({ error: { message: `No itw slots starts on ${beginSlot}`}});
+    InterviewSlot.findOne({ applicantId: applicantId }).then((itwSlot) => {
+      if (itwSlot) {
+        res.status(500).json({ error: { message: `The applicant ${applicantId} has already selected a slot`}});
         return;
       }
 
-      if (slot.applicantId) {
-        res.status(500).json({ error: { message: `This itw is no more available`}});
-      }
+      InterviewSlot.findOne({
+        processId: applicant.process._id,
+        begin: new Date(beginSlot)
+      }).then((slot) => {
+        if (!slot) {
+          res.status(404).json({ error: { message: `No itw slots starts on ${beginSlot}`}});
+          return;
+        }
 
-      slot.applicantId = applicantId;
-      slot.save().then(() => {
-        res.status(200).json({
-          message: 'This itw slot was successfully selected'
+        if (slot.applicantId) {
+          res.status(500).json({ error: { message: `This itw is no more available`}});
+          return;
+        }
+
+        slot.applicantId = applicantId;
+
+        InterviewSlot.updateOne({ _id: slot._id}, { 'applicantId': applicantId }).then((x) => {
+          res.status(200).json({
+            message: 'This itw slot was successfully selected'
+          });
+        }).catch((error) => {
+          res.status(500).json({ error: { message: `Error while selected slot`}});
         });
-      })
+      });
+
     });
   });
 };
 
 exports.listAllAvailableSlots = (req, res, next) => {
-  console.log('list all av slots');
   const applicantId = req.params.userId;
 
   Applicant.findOne({ _id: applicantId }).then((applicant) => {
@@ -119,10 +130,18 @@ exports.listAllAvailableSlots = (req, res, next) => {
       return;
     }
 
-    InterviewSlot.find({ processId: applicant.process._id }).then((slots) => {
-      const filteredSlots = slots.filter((slot) => slot.applicant === undefined);
-      res.status(200).json(slots);
+    InterviewSlot.find({ processId: applicant.process._id, begin: {$gt: new Date() }}).then((slots) => {
+      const filteredSlots = slots.filter((slot) => {
+        return !slot.applicantId;
+      });
+      res.status(200).json(filteredSlots);
       return;
     });
+  });
+};
+
+exports.getSelectedSlot = (req, res, next) => {
+  InterviewSlot.findOne({ applicantId: req.params.userId }).then((slot) => {
+    res.status(200).json(slot);
   });
 };
