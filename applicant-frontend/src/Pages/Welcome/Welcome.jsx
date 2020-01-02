@@ -117,7 +117,7 @@ class Welcome extends Component {
           <Row className='first-row'>
             <Col>
               <h2 className='red-title'>{ TEXTS.TITLE }</h2>
-              <p className='subtitle'>{ TEXTS.BLACK_SUBTITLE }</p>
+              <p className='subtitle' dangerouslySetInnerHTML={{ __html: TEXTS.BLACK_SUBTITLE }}></p>
               <p className='red subtitle'>{ TEXTS.RED_SUBTITLE }</p>
             </Col>
             <Col className='centered-col'>

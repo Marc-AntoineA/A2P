@@ -18,7 +18,7 @@
   },
   "WELCOME_VIEW":{
     "TITLE": "Full Stack Web Developement Course",
-    "BLACK_SUBTITLE":"Learn how to design and develop websites (front and backend, webtechnologies) Not sure what that means? Apply to learn",
+    "BLACK_SUBTITLE":"Learn how to design and develop websites (front and backend, web technologies). <br/> Not sure what that means? Apply to learn",
     "RED_SUBTITLE": "Free for all students",
     "OPENED_LOCATIONS_LABEL": "Opened Locations",
     "CREATE_ACCOUNT_BUTTON": "Create your account to start the application process",
