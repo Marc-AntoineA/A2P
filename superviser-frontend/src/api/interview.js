@@ -23,13 +23,12 @@ function addInterviewSlot(token, interview) {
 function deleteInterview(token, interviewId) {
   return request({
     url: API_PATH + '/interviews/delete/' + interviewId,
-    data: undefined,
-    token: token
+    data: undefined,
+    token: token
   }, 'delete', 'no-cache');
 }
 
 function deleteInterviews(token, processId, beginStr, endStr) {
-  console.log(`interviews/delete/${processId}/${beginStr}/${endStr}`);
   return request({
     url: API_PATH + `/interviews/delete/${processId}/${beginStr}/${endStr}`,
     data: undefined,

@@ -4,15 +4,13 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 
 import Header from '../../Components/Header/Header.jsx';
-import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
 import ApiRequests from '../../Providers/ApiRequests.js';
 import './styles.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faFrown } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, ProgressBar, Modal, Container, ButtonToolbar, Alert } from 'react-bootstrap';
-import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
+import { Button, Container, ButtonToolbar, Alert } from 'react-bootstrap';
 
 import Handlebars from 'handlebars';
 
@@ -47,7 +45,6 @@ class Interview extends Component {
   }
 
   componentDidMount() {
-    const user = this.props.user;
     this.getAvailableSlots();
     this.getSelectedSlot();
   }
@@ -110,9 +107,6 @@ class Interview extends Component {
     const dayBoxes = orderedDays.map((date, dayIndex) => {
       const slots = this.state.slotsByDate[date];
       const slotBoxes = slots.map((slot, slotIndex) => {
-        const slotBegin = new Date(slot.begin);
-        const slotEnd = new Date(slot.end);
-
         return (
           <div key={ dayIndex + '-' + slotIndex} className='slot' onClick={ this.selectSlot } data-begin={ slot.begin }>
           <span className='slot-label'>From: </span>

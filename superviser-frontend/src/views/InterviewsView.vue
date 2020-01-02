@@ -20,7 +20,8 @@
             </el-select>
           </div>
 
-          <div v-if='this.process' style='overflow-x: hidden'>
+          <div v-if='this.process' style='overflow-x: hidden'>
+            <aap-spinner :show="loading.applicants || loading.interviews"></aap-spinner>
 
             <el-dialog v-if='$store.state.interviewsByProcessId[process._id] && $store.state.interviewsByProcessId[process._id][selectedSlotId]'
               :visible.sync="itwModalVisible"
@@ -59,13 +60,13 @@
               </el-form>
             </el-dialog>
 
-            <el-row>
+            <el-row v-if='!this.loading.applicants && !this.loading.interviews'>
               <el-col :span="18">
                 <el-calendar v-model='currentDay'>
                   <template slot="dateCell" slot-scope="{date, data}">
                     <div class='cell-date'>{{ data.day.split('-')[2] }}</div>
                     <ul class='cell-slots'>
-                    <li v-for='interview in interviewsByDate[data.day]'>
+                    <li v-for='(interview, index) in interviewsByDate[data.day]' :key='index'>
                       <div :class='interview.applicantId ? "itw-slot" : "itw-slot free"'>
                         <span class='begin'>{{ interview.begin | timeFormatter}}</span>
                         <span class='people'>{{ interview.applicant ? interview.applicant.name : ''}}</span>
@@ -106,9 +107,9 @@
                     <div class='hours-cell'><span>23:00 </span></div> -->
                   </div>
                   <div class='slots-col' @click='createSlot'>
-                    <div v-for='interview, index in interviewsByDate[currentDayStr]'
+                    <div v-for='(interview, index) in interviewsByDate[currentDayStr]'
                       :class='"slot-cell " + (interview.applicant ? "selected" : "free")'
-                      :index='index'
+                      :key='index'
                       :style="{ top: timeToTop(interview.begin) + 'px', height: timeToHeight(interview.begin, interview.end) + 'px' }"
                       @click='evt => editSlot(evt, interview._id)'>
                       <span>{{ interview.applicant ? interview.applicant.name : '?' }}</span>
@@ -140,7 +141,7 @@ export default {
   name: 'Interviews',
   components: { AapHeader, AapFooter, AapBroken, AapSpinner },
   data: () => ({
-    loading: { processes: true, interviews: true, applicants: true },
+    loading: { processes: true, interviews: true, applicants: true },
     broken: false,
     selectedProcess: undefined,
     currentDay: new Date(),
@@ -179,7 +180,7 @@ export default {
     fetchInterviews(processId) {
       this.loading.interviews = true;
       this.$store.dispatch('FETCH_INTERVIEWS_BY_PROCESS_ID', processId)
-      .then((interviews) => {
+      .then(() => {
         this.loading.interviews = false;
       }).catch((error) => {
         this.loading.interviews = false;
@@ -192,7 +193,7 @@ export default {
     fetchApplicants(processId) {
       this.loading.applicants = true;
       this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', processId)
-      .then((applicants) => {
+      .then(() => {
         this.loading.applicants = false;
       }).catch((error) => {
         this.loading.applicants = false;
@@ -207,7 +208,7 @@ export default {
         if (Object.values(this.$store.state.processes).length !== 0) { this.loading.processes = false; resolve(); return; }
         this.loading.processes = true;
         this.$store.dispatch('FETCH_PROCESSES')
-        .then((processes) => {
+        .then(() => {
           this.loading.processes = false;
           resolve();
         }).catch((error) => {
@@ -304,7 +305,7 @@ export default {
       this.$confirm('Are you sure to remove all the slots for this day?', 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',
-        }).then(() => {
+        }).then((error) => {
           this.$store.dispatch('REMOVE_INTERVIEWS_BY_DAY', { processId: this.process._id, dateStr: this.currentDayStr });
           this.$alert(error.message, 'Error while clearing all slots', {
             confirmButtonText: 'OK'

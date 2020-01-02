@@ -50,17 +50,6 @@ exports.deleteInterviewsByProcessIdAndDate = (req, res, next) => {
   const begin = new Date(req.params.begin);
   const end = new Date(req.params.end);
 
-  console.log(begin);
-  console.log(end);
-  console.log(processId);
-  InterviewSlot.find({
-    processId: processId,
-    begin: {$gt: begin },
-    end: {$lt: end }
-  }).then((itws) => {
-    console.log(itws);
-  });
-
   InterviewSlot.deleteMany({
     processId: processId,
     begin: {$gt: begin },

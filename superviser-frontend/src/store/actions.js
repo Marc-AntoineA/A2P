@@ -240,7 +240,6 @@ export default {
     return new Promise((resolve, reject) => {
       interviewApi.fetchInterviewsByProcessId(state.user.token, processId)
       .then((interviews) => {
-        console.log('fetch inter', interviews);
         commit('SET_INTERVIEWS_BY_PROCESS_ID', { processId, interviews });
         resolve(interviews);
       }).catch(({ code, error }) => {
@@ -263,11 +262,8 @@ export default {
   },
   REMOVE_INTERVIEWS_BY_DAY: ({ commit, state, dispatch }, { processId, dateStr }) => {
     return new Promise((resolve, reject) => {
-      console.log('REMOVE Itw');
       const begin = moment(dateStr + "T00:00:00");
       const end = moment(dateStr + "T23:59:59");
-      console.log(begin, end);
-      console.log(begin.format('YYYY-MM-DDTHH:MM:SS'), end.format('YYYY-MM-DDTHH:MM:SS'));
       interviewApi.deleteInterviews(state.user.token, processId, begin.format('YYYY-MM-DDTHH:mm:ss') + 'Z', end.format('YYYY-MM-DDTHH:mm:ss') + 'Z')
       .then(() => {
         commit('REMOVE_INTERVIEWS', { processId, begin, end });
@@ -281,7 +277,7 @@ export default {
   REMOVE_INTERVIEW: ({ commit, state, dispatch }, itw) => {
     return new Promise((resolve, reject) => {
       interviewApi.deleteInterview(state.user.token, itw._id)
-      .then((interview) => {
+      .then(() => {
         commit('REMOVE_INTERVIEW', itw);
         resolve();
       }).catch(({ code, error }) => {

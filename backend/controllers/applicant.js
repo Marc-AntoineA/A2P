@@ -163,7 +163,6 @@ exports.getApplicant = (req, res, next) => {
     appCopy.password = undefined;
     InterviewSlot.findOne({ applicantId: req.params.userId }).then((slot) => {
       appCopy.interviewSlot = slot;
-      console.log(appCopy);
       res.status(200).json(appCopy);
     });
   }).catch((error) => {
@@ -349,7 +348,6 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
-      console.log(error);
       res.status(500).json({ error: error });
     });
   }).catch((errorMessage) => {
@@ -432,7 +430,6 @@ exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
         const readStream = fileSystem.createReadStream('tmp/out.xlsx');
         readStream.pipe(res);
       }).catch((error) => {
-        console.log(error);
         res.status(404).json({
           error: { messsage: error.toString() }
         });
