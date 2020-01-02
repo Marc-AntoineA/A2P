@@ -6,10 +6,10 @@ import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
+
 import ForgotPassword from './Pages/ForgotPassword/ForgotPassword.jsx'
 import ResetPassword from './Pages/ResetPassword/ResetPassword.jsx'
-
-import ApiRequests from './Providers/ApiRequests';
+import Interview from './Pages/Interview/Interview.jsx';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
@@ -33,6 +33,7 @@ class App extends Component {
       this.login = this.login.bind(this);
       this.welcome = this.welcome.bind(this);
       this.privacyPolicy = this.privacyPolicy.bind(this);
+      this.interview = this.interview.bind(this);
 
       this.handleCloseModal = this.handleCloseModal.bind(this);
       this.handleModal = this.handleModal.bind(this);
@@ -78,6 +79,10 @@ class App extends Component {
 
   resetPassword() {
     return (<ResetPassword version={this.props.version} handleModal={ this.handleModal }/>);
+
+  interview() {
+    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>)
+
   }
 
   handleCloseModal() {
@@ -147,6 +152,7 @@ class App extends Component {
           <Route exact path='/step/:index' component={ this.stepForm }/>
           <Route exact path='/forgot-password' component={ this.forgotPassword }/>
           <Route exact path='/reset-password' component={ this.resetPassword }/>
+          <Route exact path='/interview' component={ this.interview }/>
         </div>
       </Router>
     );

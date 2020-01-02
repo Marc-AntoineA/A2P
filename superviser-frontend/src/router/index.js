@@ -12,6 +12,7 @@ const ProcessView = () => import('../views/ProcessView.vue');
 const ApplicantsView = () => import('../views/ApplicantsView.vue');
 const Error404View = () => import('../views/Error404View.vue');
 const TemplatesView = () => import('../views/TemplatesView.vue');
+const InterviewsView = () => import('../views/InterviewsView.vue');
 
 export function createRouter() {
   return new Router({
@@ -66,6 +67,18 @@ export function createRouter() {
         path:'/templates/:templateName',
         name: 'template',
         component: TemplatesView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/interviews',
+        name: 'interviews',
+        component: InterviewsView,
+        meta: { requiresAuth: true }
+      },
+      {
+        path:'/interviews/:processId',
+        name: 'interviews-processId',
+        component: InterviewsView,
         meta: { requiresAuth: true }
       },
       {
