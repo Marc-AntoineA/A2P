@@ -38,10 +38,10 @@
           :disabled='!editable'
           @change='onModification'>
           <el-option
-            v-for="option in settings.validators"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value">
+            v-for="key in Object.keys(validators)"
+            :key="key"
+            :label="validators[key].label"
+            :value="key">
           </el-option>
         </el-select>
       </el-form-item>
@@ -75,7 +75,7 @@ import AapChoice from './Choice.vue';
 // TODO handling types in settings.json
 export default {
   name: 'aap-question',
-  props: ['question', 'settings', 'editable', 'state-key', 'on-modification'],
+  props: ['question', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
   data: () => ({
     newChoice: ''
   }),

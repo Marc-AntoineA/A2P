@@ -148,5 +148,11 @@ export default {
 
       Vue.delete(state.interviewsByProcessId[processId], itwId);
     }
+  },
+  SET_VALIDATORS: (state, validators) => {
+    const keys = Object.keys(validators);
+    keys.forEach((key) => {
+      Vue.set(state.validators, key, validators[key]);
+    });
   }
 }

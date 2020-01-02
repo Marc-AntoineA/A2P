@@ -21,6 +21,7 @@
         :key='questionIndex'
         :question='question'
         :settings='settings'
+        :validators='validators'
         :editable='editable'
         :on-modification='onModification'
         :state-key='{
@@ -39,11 +40,10 @@
 
 import AapQuestion from './Question.vue';
 
-// TODO handling types in settings.json
 export default {
   name: 'aap-page-process',
   components: { AapQuestion },
-  props: ['page', 'settings', 'editable', 'state-key', 'on-modification'],
+  props: ['page', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
   beforeMount() {
   },
   methods: {

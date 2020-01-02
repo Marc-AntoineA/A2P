@@ -9,6 +9,7 @@ const applicantCtrl = require('../controllers/applicant');
 const superviserCtrl = require('../controllers/superviser');
 const emailsCtrl = require('../controllers/email');
 const interviewCtrl = require('../controllers/interview');
+const validatorCtrl = require('../controllers/validator');
 
 router.get('/processes', auth, processCtrl.getAllProcesses);
 router.get('/process/:processId', auth, processCtrl.getProcessById);
@@ -37,6 +38,8 @@ router.put('/interviews/update', auth, interviewCtrl.updateInterview);
 router.delete('/interviews/delete/:interviewId', auth, interviewCtrl.deleteInterview);
 router.delete('/interviews/delete/:processId/:begin/:end', auth, interviewCtrl.deleteInterviewsByProcessIdAndDate);
 router.get('/interviews/:processId', auth, interviewCtrl.getInterviewsByProcessId);
+
+router.get('/validators/', auth, validatorCtrl.listAllValidators);
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);

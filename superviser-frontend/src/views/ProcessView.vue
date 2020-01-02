@@ -93,6 +93,7 @@
                       :page='page'
                       :editable='editable'
                       :settings='settings'
+                      :validators='$store.state.validators'
                       :on-modification='incrementModifications'
                       :stateKey='pageIdentifier(stepIndex, pageIndex)'/>
                   </el-tab-pane>
@@ -127,7 +128,7 @@ export default {
   components: { AapSpinner, AapFooter, AapHeader, AapPageProcess },
   data: () => ({
     loading: true,
-    settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS },
+    settings: { types: settings.QUESTION_TYPES },
     unsavedModifications: 0,
     editable: false,
     deadlineEditable: false
@@ -250,8 +251,16 @@ export default {
     const processId = this.$route.params.processId;
     this.loading = true;
     this.$store.dispatch('FETCH_PROCESS', processId).then((process)=> {
-      this.loading = false;
-      this.editable = (process.status === 'draft');
+      this.$store.dispatch('GET_ALL_VALIDATORS').then(() => {
+        this.loading = false;
+        this.editable = (process.status === 'draft');
+      }).catch((error) => {
+        this.loading = false;
+        alert(error);
+        // this.$alert(error.message, `Error while downloading validators`, {
+        //   confirmButtonText: 'OK'
+        // });
+      });
     }).catch((error) => {
       this.loading = false;
       this.$alert(error.message, `Error while downloading process ${processId}`, {
