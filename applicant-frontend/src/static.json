@@ -25,12 +25,14 @@
     "ALREADY_REGISTERED_BUTTON": "I have already created my account",
     "NO_OPENED_LOCATIONS": "No locations are currently opened. Please come back in few days",
     "REQUIREMENTS": "<ul><li>You need to study for <strong>20-25 hours per week</strong>. If you do not have enough time, this is not the program for you.</li> <li><strong>Homework is required every week</strong>. If you do not complete the homework you cannot continue the class. Every class builds on the learning from the last.</li> <li>You need to come to class for <strong>two hours</strong>, three times a week. All classes are on a <strong>weekday evening (6-8 pm or 8-10pm) .</strong></li> <li>This course lasts for <strong>7 months (part-time)</strong>.You need to be here for all of it. The course is either <strong>in Athens or Crete</strong>.</li> <li>You must either be a <strong>registered refugee</strong> or <strong>asylum seeker</strong> or an EU resident who has been <strong>unemployed for at least 12 months.</strong></li> <li>You must have an <strong>interest in IT or programming.</strong></li></ul>",
-    "OFFICE_LOCATION": "Come to our classroom (<a href='https://goo.gl/maps/CqgKAahgkBV2AGFB7' target='_blank'>see on the map</a>) if you have questions or you need help in the application process! It is open every day from <strong>11am - 6pm</strong>."
+    "OFFICE_LOCATION": "Come to our classroom (<a href='https://goo.gl/maps/CqgKAahgkBV2AGFB7' target='_blank'>see on the map</a>) if you have questions or you need help in the application process! It is open every day from <strong>11am - 6pm</strong>.",
+    "SIGN_IN": "I already have an account, sign In."
   },
   "LOGIN_VIEW":{
     "TITLE": "Enter your email & password you have already created, to log in!",
     "SUBMIT_BUTTON": "Open my profile!",
-    "FORGOT_PASSWORD_BUTTON": "I forgot my password"
+    "FORGOT_PASSWORD_BUTTON": "I forgot my password",
+    "APPLY_BUTTON": "I want to apply for the first time"
   },
   "FORGOT_PASSWORD_VIEW": {
     "DESCRIPTION": "To reset your password, enter your email below and submit. An email will be sent to you with instructions about how to complete the process"

@@ -320,13 +320,13 @@ class StepForm extends Component {
           { pages }
           <div className='buttons-flexbar'>
             {this.state.currentPage !== 1 ?
-              <Button onClick={ this.previousPage } size='lg' className='fixed-width'> { TEXTS.BUTTONS.PREVIOUS_PAGE }</Button> : ''}
+              <Button onClick={ this.previousPage } size='lg' className='fixed-width' variant='dark'> { TEXTS.BUTTONS.PREVIOUS_PAGE }</Button> : ''}
             {
                 this.state.canBeEdited && this.props.index !== undefined ?
                   <Button
                     onClick={ this.saveForm }
                     size='lg'
-                    variant='success'
+                    variant='secondary'
                     className='fixed-width'>
                     { TEXTS.BUTTONS.SAVE }
                   </Button>
@@ -338,7 +338,7 @@ class StepForm extends Component {
                 <Button
                   onClick={ this.openSubmitModal }
                   size='lg'
-                  variant='success'
+                  variant='danger'
                   className='fixed-width'>
                   { TEXTS.BUTTONS.SUBMIT }
                 </Button>
@@ -346,7 +346,7 @@ class StepForm extends Component {
                 ''
             }
             {this.state.currentPage !== pages.length ?
-              <Button onClick={ this.nextPage } size='lg' className='fixed-width'>{ TEXTS.BUTTONS.NEXT_PAGE }</Button> : ''}
+              <Button onClick={ this.nextPage } size='lg' className='fixed-width' variant='dark'>{ TEXTS.BUTTONS.NEXT_PAGE }</Button> : ''}
           </div>
         </Container>
       </div>

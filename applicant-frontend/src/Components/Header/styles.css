@@ -13,3 +13,12 @@
   font-size: 25px;
   margin-left: 8px;
 }
+
+.big-link.nav-link {
+	font-size: 25px;
+	font-weight: 400;
+}
+
+.big-link.nav-link:hover svg {
+	font-size: 35px;
+}

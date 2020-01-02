@@ -46,9 +46,9 @@ class ResetPassword extends Component {
         return (
             <>
             <Header />
-            <div className="resetpassword-wrapper">
+            <div className="single-box-form">
                 <h1>
-                    <Link  to="/reset">
+                    <Link  to="/">
                         <img src={logo} alt="SHA" className="header-image"/>
                     </Link>
                 </h1>

@@ -9,7 +9,8 @@ exports.saveLogin = (id, token) => {
 };
 
 exports.logout = () => {
-  let wasConnected = this.getLogin().id !== undefined && this.getLogin().token !== undefined;
+  console.log(this.getLogin());
+  const wasConnected = this.getLogin().id && this.getLogin().token;
   localStorage.removeItem('id');
   localStorage.removeItem('token');
   return wasConnected;

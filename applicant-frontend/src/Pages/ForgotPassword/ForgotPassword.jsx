@@ -46,9 +46,9 @@ class ForgotPassword extends Component {
       return (
        <>
         <Header/>
-          <div className="forgotpassword-wrapper">
+          <div className="single-box-form">
             <h1>
-             <Link  to="/login">
+             <Link  to="/">
                 <img src={logo} alt="SHA" className="header-image"/>
              </Link>
             </h1>

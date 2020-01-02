@@ -69,9 +69,9 @@ class Login extends Component {
             :
             <div>
               <Header/>
-              <Container className="wrapper">
+              <Container className="single-box-form">
          <h1>
-           <Link className="login-header-link" to="/login">
+           <Link className="login-header-link" to="/">
             <img src={logo} alt="SHA" className="header-image"/>
            </Link>
           </h1>
@@ -95,6 +95,9 @@ class Login extends Component {
                   </Form.Group>
                   <Form.Group className='right-aligned'>
                     <Link to="/forgot-password">{ TEXTS.LOGIN_VIEW.FORGOT_PASSWORD_BUTTON }</Link>
+                  </Form.Group>
+                  <Form.Group className='right-aligned'>
+                  <Link to="/apply">{ TEXTS.LOGIN_VIEW.APPLY_BUTTON }</Link>
                   </Form.Group>
                 </Form>
               </Container>

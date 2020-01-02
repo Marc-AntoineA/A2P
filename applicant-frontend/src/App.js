@@ -29,7 +29,7 @@ class App extends Component {
           message: ''
         }
       };
-      this.signin = this.signin.bind(this);
+      this.apply = this.apply.bind(this);
       this.summary = this.summary.bind(this);
       this.stepForm = this.stepForm.bind(this)
       this.login = this.login.bind(this);
@@ -58,7 +58,7 @@ class App extends Component {
     return (<Login  version={this.props.version} user={ this.state.user } handleModal={ this.handleModal } handleLogin={ this.handleLogin }></Login>);
   }
 
-  signin() {
+  apply() {
     return (<StepForm  version={this.props.version} user={ this.state.user } handleLogin={ this.handleLogin } handleModal={ this.handleModal }></StepForm>);
   }
 
@@ -149,7 +149,7 @@ class App extends Component {
           <Route exact path='/' component={ this.welcome }/>
           <Route exact path='/login' component={ this.login }/>
           <Route exact path='/summary' component={ this.summary }/>
-          <Route exact path='/signin' component={ this.signin }/>
+          <Route exact path='/apply' component={ this.apply }/>
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
           <Route exact path='/forgot-password' component={ this.forgotPassword }/>
