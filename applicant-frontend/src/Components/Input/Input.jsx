@@ -1,4 +1,4 @@
-'using strict';
+ 'using strict';
 
 import React, { Component } from 'react';
 
@@ -39,7 +39,11 @@ class Input extends Component {
 
   initState(type) {
     if (this.props.data && this.props.data.answer !== undefined) {
-      if (type !== 'text')
+      if (type === 'date')  {
+        this.state = { 'currentValue': new Date(this.props.data.answer)};
+        console.log(this.state);
+      }
+      else if (type !== 'text')
         this.state = { 'currentValue': this.props.data.answer };
       else
         this.state = { 'currentValue': this.props.data.answer, 'nbWords': this.props.data.answer.split(' ').length };
@@ -48,7 +52,7 @@ class Input extends Component {
 
     switch (type) {
       case 'date':
-        this.state = {'currentValue': null};
+        this.state = {'currentValue': new Date() };
         break;
       case 'radio':
         this.state = {'currentValue': -1};
@@ -133,10 +137,10 @@ class Input extends Component {
           <span className='input-group-text'>
             <FontAwesomeIcon icon={faCalendarAlt} />
           </span>
+          <DatePicker
+            selected={this.state.currentValue}
+            onChange={this.handleChangeDate}/>
         </div>
-        <DatePicker
-          selected={this.state.currentValue}
-          onChange={this.handleChangeDate}/>
       </div>);
   }
 
