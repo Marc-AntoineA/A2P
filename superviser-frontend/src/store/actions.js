@@ -280,7 +280,7 @@ export default {
   },
   REMOVE_INTERVIEW: ({ commit, state, dispatch }, itw) => {
     return new Promise((resolve, reject) => {
-      interviewApi.deleteInterview(state.user.token, itw)
+      interviewApi.deleteInterview(state.user.token, itw._id)
       .then((interview) => {
         commit('REMOVE_INTERVIEW', itw);
         resolve();
@@ -289,5 +289,17 @@ export default {
         reject(error);
       });
     });
+  },
+  UPDATE_INTERVIEW_SLOT: ({ commit, state, dispatch }, itw) => {
+    return new Promise((resolve, reject) => {
+      interviewApi.updateInterview(state.user.token, itw)
+      .then((interview) => {
+        commit('SET_INTERVIEWS_BY_PROCESS_ID', { processId: interview.processId, interviews: [interview] });
+        resolve([interview]);
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    })
   }
 }

@@ -106,8 +106,6 @@ exports.chooseItwSlot = (req, res, next) => {
           return;
         }
 
-        slot.applicantId = applicantId;
-
         InterviewSlot.updateOne({ _id: slot._id}, { 'applicantId': applicantId }).then((x) => {
           res.status(200).json({
             message: 'This itw slot was successfully selected'
@@ -143,5 +141,35 @@ exports.listAllAvailableSlots = (req, res, next) => {
 exports.getSelectedSlot = (req, res, next) => {
   InterviewSlot.findOne({ applicantId: req.params.userId }).then((slot) => {
     res.status(200).json(slot);
+  });
+};
+
+exports.updateInterview = (req, res, next) => {
+  const sentSlot = req.body;
+
+  InterviewSlot.findOne({ _id: sentSlot._id }).then((slot) => {
+    if (!slot) {
+      res.status(404).json({ error: { message: `The slot ${sentSlot._id} does not exist`}});
+      return;
+    }
+
+    InterviewSlot.find({ _id: { $ne: sentSlot._id }, applicantId: sentSlot.applicantId }).then((slots) => {
+      if (sentSlot.applicantId && slots.length > 0) {
+        res.status(500).json({ error: { message: `The applicant ${sentSlot.applicantId} has already selected a slot (on ${slots[0].begin})` }});
+        return;
+      }
+      if (!sentSlot.applicantId) {
+        sentSlot.$unset = { applicantId: '' }
+      }
+
+      InterviewSlot.updateOne({ _id: sentSlot._id}, sentSlot).then((x) => {
+        sentSlot.$unset = undefined;
+        res.status(200).json(sentSlot);
+      }).catch((error) => {
+        res.status(500).json({ error: { message: error.toString() }});
+      });
+    });
+  }).catch((error) => {
+    res.status(500).json({ error: { message: error.toString() }});
   });
 };

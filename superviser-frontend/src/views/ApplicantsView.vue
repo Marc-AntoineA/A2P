@@ -257,7 +257,6 @@ export default {
       return '';
     },
     filterArchived(value, row) {
-      console.log(value, row);
       if (value === 'archived')
         return row.archived;
       else

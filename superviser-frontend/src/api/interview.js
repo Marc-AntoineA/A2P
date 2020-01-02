@@ -37,4 +37,12 @@ function deleteInterviews(token, processId, beginStr, endStr) {
   }, 'delete', 'no-cache');
 }
 
-export default { fetchInterviewsByProcessId, addInterviewSlot, deleteInterview, deleteInterviews };
+function updateInterview(token, interview) {
+  return request({
+    url: `${API_PATH}/interviews/update/`,
+    data: interview,
+    token: token
+  }, 'put', 'no-cache');
+}
+
+export default { fetchInterviewsByProcessId, addInterviewSlot, deleteInterview, deleteInterviews, updateInterview };

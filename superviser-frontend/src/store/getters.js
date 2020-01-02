@@ -82,7 +82,9 @@ export default {
         const date = moment(itw.begin);
         const dayStr = date.format('YYYY-MM-DD');
         if (!itws[processId][dayStr]) itws[processId][dayStr] = [];
+        itw.applicant = state.applicantsByProcessId[processId] ? state.applicantsByProcessId[processId][itw.applicantId] : undefined;
         itws[processId][dayStr].push(itw);
+        itws[processId][dayStr].sort((x, y) => x.begin > y.begin);
       }
     }
     return itws;

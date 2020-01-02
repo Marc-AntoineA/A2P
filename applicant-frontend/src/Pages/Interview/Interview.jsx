@@ -11,7 +11,7 @@ import './styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, ProgressBar, Modal, Container, ButtonToolbar } from 'react-bootstrap';
+import { Button, ProgressBar, Modal, Container, ButtonToolbar, Alert } from 'react-bootstrap';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
 import Handlebars from 'handlebars';
@@ -60,7 +60,8 @@ class Interview extends Component {
     const begin = target.dataset.begin;
     ApiRequests.selectSlot(this.props.user, begin)
     .then(() => {
-      this.props.handleModal('Your interview will be on Dec');
+      const beginDate = new Date(begin);
+      this.props.handleModal('Your interview will be on ' + beginDate.toLocaleDateString('en-GB') + ' at ' + beginDate.toLocaleTimeString('en-GB'));
       this.setState((prevState) => {
         prevState.redirectPath = '/summary';
         return prevState;
@@ -104,20 +105,6 @@ class Interview extends Component {
   }
 
   render() {
-    const submitModal = (<Modal>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirmation</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{ TEXTS.SUBMIT_FORM_VALIDATION }</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary">
-          Close
-        </Button>
-        <Button variant='primary'>
-          Submit
-        </Button>
-      </Modal.Footer>
-    </Modal>);
 
     const orderedDays = Object.keys(this.state.slotsByDate).sort();
     const dayBoxes = orderedDays.map((date, dayIndex) => {
@@ -158,7 +145,6 @@ class Interview extends Component {
 
     const mainComponent = (
       <div>
-        { submitModal }
         <Header user={ this.props.user }/>
         <Container>
 
@@ -168,13 +154,27 @@ class Interview extends Component {
 
           <p>{ !this.state.interviewSlot && TEXTS.ITW_VIEW.SLOT_SELECTION }</p>
 
-          { this.state.interviewSlot && beginTemplate({
-            begin: date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-                  + ' at ' + date.toLocaleTimeString('en-GB')})
+          {
+            this.state.interviewSlot ?
+            <Alert variant='success'>
+              { beginTemplate({
+                begin: date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+                      + ' at ' + date.toLocaleTimeString('en-GB')})
+              }
+            </Alert>
+            :
+            ''
+          }
+
+          { !this.state.interviewSlot && dayBoxes.length === 0 ?
+            <Alert variant='warning'>
+              <FontAwesomeIcon className='status-icon' icon={faFrown} />{ TEXTS.ITW_VIEW.NO_AVAILABLE_SLOT }
+            </Alert>
+            :
+            ''
           }
 
           <div className='calendar-box'>
-            { !this.state.interviewSlot && dayBoxes.length === 0 && TEXTS.ITW_VIEW.NO_MORE_INTERESTED }
             { !this.state.interviewSlot && dayBoxes.length !== 0 && dayBoxes }
           </div>
 

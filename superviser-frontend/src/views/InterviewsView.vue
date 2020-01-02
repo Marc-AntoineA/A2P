@@ -20,12 +20,44 @@
             </el-select>
           </div>
 
-          <div v-if='this.process'>
+          <div v-if='this.process' style='overflow-x: hidden'>
 
-            <!-- <el-dialog :visible.sync="itwModalVisible"
-              width="90%" center>
-              <h2>Itw choice</h2>
-            </el-dialog> -->
+            <el-dialog v-if='$store.state.interviewsByProcessId[process._id] && $store.state.interviewsByProcessId[process._id][selectedSlotId]'
+              :visible.sync="itwModalVisible"
+              width="50%" center>
+              <h2>Edit this slot</h2>
+              <el-form :model="selectedSlotForm" label-width="120px">
+                <el-form-item label="Day">
+                  <el-date-picker type="date" placeholder="Pick a date" v-model="selectedSlotForm.day" style="width: 100%;"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="Time">
+                  <el-time-picker
+                      is-range
+                      v-model="selectedSlotForm.time"
+                      range-separator="To"
+                      start-placeholder="Start time"
+                      end-placeholder="End time"
+                      :picker-options='{ format: "HH:mm"}'>
+                    </el-time-picker>
+                </el-form-item>
+                <el-form-item label="Applicant">
+                  <el-select v-model="selectedSlotForm.applicantId" filterable placeholder="Select">
+                    <el-option :value='undefined' label='None'/>
+                    <el-option
+                      v-for="applicant in $store.state.applicantsByProcessId[process._id]"
+                      :key="applicant._id"
+                      :label="applicant.name"
+                      :value="applicant._id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="danger" @click="deleteSelectedSlot">Delete</el-button>
+                  <el-button type="primary" @click="saveSlot">Save</el-button>
+                  <el-button>Cancel</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
 
             <el-row>
               <el-col :span="18">
@@ -34,9 +66,9 @@
                     <div class='cell-date'>{{ data.day.split('-')[2] }}</div>
                     <ul class='cell-slots'>
                     <li v-for='interview in interviewsByDate[data.day]'>
-                      <div :class='interview.applicantId !== "" ? "itw-slot free" : "itw-slot"'>
+                      <div :class='interview.applicantId ? "itw-slot" : "itw-slot free"'>
                         <span class='begin'>{{ interview.begin | timeFormatter}}</span>
-                        <span class='people'>{{ interview.applicantId }}</span>
+                        <span class='people'>{{ interview.applicant ? interview.applicant.name : ''}}</span>
                       </div>
                     </li>
                   </ul>
@@ -74,10 +106,12 @@
                     <div class='hours-cell'><span>23:00 </span></div> -->
                   </div>
                   <div class='slots-col' @click='createSlot'>
-                    <div v-for='interview, index in interviewsByDate[currentDayStr]' class='slot-cell' :index='index'
+                    <div v-for='interview, index in interviewsByDate[currentDayStr]'
+                      :class='"slot-cell " + (interview.applicant ? "selected" : "free")'
+                      :index='index'
                       :style="{ top: timeToTop(interview.begin) + 'px', height: timeToHeight(interview.begin, interview.end) + 'px' }"
-                      @click='editSlot'>
-                      <span>{{ interview.applicantId }}</span>
+                      @click='evt => editSlot(evt, interview._id)'>
+                      <span>{{ interview.applicant ? interview.applicant.name : '?' }}</span>
                     </div>
                   </div>
                 </div>
@@ -106,29 +140,28 @@ export default {
   name: 'Interviews',
   components: { AapHeader, AapFooter, AapBroken, AapSpinner },
   data: () => ({
-    loading: { processes: true, interviews: true },
+    loading: { processes: true, interviews: true, applicants: true },
     broken: false,
     selectedProcess: undefined,
     currentDay: new Date(),
-    itwModalVisible: true,
-    // interviewsByDate:
-    //   {"2019-12-19": [
-    //   { "begin": "2019-12-19T12:00:00", "end": "2019-12-19T12:40:00", "applicantId": "Ahmed" },
-    //   { "begin": "2019-12-19T12:40:00", "end": "2019-12-19T13:00:00", "applicantId": "Marc-Antoine" },
-    //   { "begin": "2019-12-19T13:00:20", "end": "2019-12-19T13:20:00", "applicantId": "" },
-    //   { "begin": "2019-12-19T14:00:20", "end": "2019-12-19T14:20:00", "applicantId": "Aggelina" }
-    // ]}
+    itwModalVisible: false,
+    selectedSlotId: undefined,
+    selectedSlotForm: {
+      day: undefined,
+      time: [undefined, undefined],
+      applicantId: undefined
+    }
   }),
   props: [],
   beforeMount() {
-    // this.fetchProcesses().then(() => {
-    //   if (!this.process) return;
-    //   if (this.$store.state.interviewsByProcessId[this.process._id]) return;
-    //   this.fetchInterviews(this.process._id);
-    // });
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      if (to.params.processId) {
+        if (vm.$store.state.applicantsByProcessId[to.params.processId]) return;
+        vm.fetchApplicants(to.params.processId);
+      }
+
       vm.fetchProcesses().then(() => {
         if (!to.params.processId) return;
         if (vm.$store.state.interviewsByProcessId[to.params.processId]) return;
@@ -152,6 +185,19 @@ export default {
         this.loading.interviews = false;
         this.broken = true;
         this.$alert(error.message, 'Error while downloading interviews', {
+          confirmButtonText: 'OK'
+        });
+      });
+    },
+    fetchApplicants(processId) {
+      this.loading.applicants = true;
+      this.$store.dispatch('FETCH_APPLICANTS_BY_PROCESS_ID', processId)
+      .then((applicants) => {
+        this.loading.applicants = false;
+      }).catch((error) => {
+        this.loading.applicants = false;
+        this.broken = true;
+        this.$alert(error.message, 'Error while downloading applicants', {
           confirmButtonText: 'OK'
         });
       });
@@ -183,7 +229,7 @@ export default {
       const time = pxls/60; // in secos
       const hours = Math.floor(time) + 8;
       const mins = Math.floor((time - Math.floor(time))*60);
-      const roundMins = 20*Math.round(mins/20);
+      const roundMins = 30*Math.round(mins/30);
       const secs = 0;
       return { hours, mins: roundMins, secs };
     },
@@ -203,7 +249,7 @@ export default {
 
       const e = new Date(this.currentDay);
       e.setHours(time.hours)
-      e.setMinutes(time.mins + 20);
+      e.setMinutes(time.mins + 30);
       e.setSeconds(time.secs);
 
       const itw = {
@@ -214,9 +260,45 @@ export default {
       };
       this.$store.dispatch('ADD_INTERVIEW_SLOT', itw);
     },
-    editSlot(evt) {
-      console.log(evt);
+    editSlot(evt, slotId) {
+      this.itwModalVisible = true;
+      this.selectedSlotId = slotId;
+      const slot = this.$store.state.interviewsByProcessId[this.process._id][slotId];
+      this.selectedSlotForm.day = slot.begin;
+      this.selectedSlotForm.time[0] = slot.begin;
+      this.selectedSlotForm.time[1] = slot.end;
+      this.selectedSlotForm.applicantId = slot.applicantId;
       evt.stopPropagation();
+    },
+    saveSlot() {
+      const slot = JSON.parse(JSON.stringify(this.$store.state.interviewsByProcessId[this.process._id][this.selectedSlotId]));
+      slot.applicant = undefined;
+      const timeBegin = new Date(this.selectedSlotForm.time[0]);
+      const timeEnd  = new Date(this.selectedSlotForm.time[1]);
+      const day = new Date(this.selectedSlotForm.day);
+      timeBegin.setDate(day.getDate());
+      timeEnd.setDate(day.getDate());
+
+      slot.begin = timeBegin,
+      slot.end = timeEnd;
+      slot.applicantId = this.selectedSlotForm.applicantId;
+      this.$store.dispatch('UPDATE_INTERVIEW_SLOT', slot).then(() => {
+        this.$message({
+          type: 'success',
+          message: 'Slot successfully updated'
+        });
+        this.itwModalVisible = false;
+      }).catch((error) => {
+        this.$alert(error.message, 'Error while updating slot', {
+          confirmButtonText: 'OK'
+        });
+      })
+    },
+    deleteSelectedSlot() {
+      this.$confirm("Are your sure to delete this slot? ", 'Warning', { confirmButtonText: 'Yes', cancelButtonText: 'No' })
+      .then(() => {
+        this.$store.dispatch('REMOVE_INTERVIEW', this.$store.state.interviewsByProcessId[this.process._id][this.selectedSlotId]);
+      });
     },
     clearAllSlots() {
       this.$confirm('Are you sure to remove all the slots for this day?', 'Warning', {
@@ -250,7 +332,7 @@ export default {
       if (!this.process) return {};
       if(!this.$store.getters.interviewsByProcessIdAndByDate[this.process._id]) return {};
       return this.$store.getters.interviewsByProcessIdAndByDate[this.process._id];
-    }
+    },
   },
   filters: {
     timeFormatter: timeFormatter,
@@ -276,9 +358,13 @@ ul.cell-slots {
 
 .cell-slots .itw-slot {
   margin: 2px;
-  background-color: lightblue;
+  background-color: firebrick;
   border-radius: 2px;
+  color: white;
+}
 
+.cell-slots .itw-slot.free {
+  background-color: #fb9292;
 }
 
 .day-table {
@@ -322,6 +408,14 @@ ul.cell-slots {
   display: flex;
 }
 
+.slot-cell.free {
+  background-color: #fb9292;
+}
+
+.slot-cell.selected {
+  background-color: firebrick;
+}
+
 .slot-cell span {
 	margin: auto;
 	display: block;
@@ -336,11 +430,23 @@ ul.cell-slots {
   position: relative;
 }
 
+.begin {
+	display: block;
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.people {
+	display: block;
+	/* font-weight: bold; */
+	/* font-size: 13px; */
+}
+
 </style>
 
 <style>
 
 .el-calendar-table .el-calendar-day {
-  height: 130px;
+  height: auto;
 }
 </style>

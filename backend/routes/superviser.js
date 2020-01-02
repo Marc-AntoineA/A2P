@@ -32,11 +32,11 @@ router.put('/applicants/:applicantId/:stepIndex/status/:status', auth, applicant
 router.get('/emails/:templateId', auth, emailsCtrl.getEmailTemplate);
 router.put('/emails/:templateId', auth, emailsCtrl.saveEmailTemplate);
 
-// WARNING TODO add auth
-router.post('/interviews/create', interviewCtrl.createInterview);
-router.delete('/interviews/delete/:interviewId', interviewCtrl.deleteInterview);
-router.delete('/interviews/delete/:processId/:begin/:end', interviewCtrl.deleteInterviewsByProcessIdAndDate);
-router.get('/interviews/:processId', interviewCtrl.getInterviewsByProcessId);
+router.post('/interviews/create', auth, interviewCtrl.createInterview);
+router.put('/interviews/update', auth, interviewCtrl.updateInterview);
+router.delete('/interviews/delete/:interviewId', auth, interviewCtrl.deleteInterview);
+router.delete('/interviews/delete/:processId/:begin/:end', auth, interviewCtrl.deleteInterviewsByProcessIdAndDate);
+router.get('/interviews/:processId', auth, interviewCtrl.getInterviewsByProcessId);
 
 router.post('/signin', auth, superviserCtrl.createSuperviser);
 router.post('/login', superviserCtrl.loginSuperviser);
