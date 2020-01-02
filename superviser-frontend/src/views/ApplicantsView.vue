@@ -119,8 +119,8 @@
                 :filter-multiple="false"
                 filter-placement="bottom-end">
                 <template slot-scope='scope'>
-                  <i v-if='scope.row.archived' class='el-icon-close'></i>
-                  <i v-if='!scope.row.archived' class='el-icon-check'></i>
+                  <i v-if='!scope.row.archived' class='el-icon-close'></i>
+                  <i v-if='scope.row.archived' class='el-icon-check'></i>
                 </template>
               </el-table-column>
             </el-table>
@@ -257,7 +257,6 @@ export default {
       return '';
     },
     filterArchived(value, row) {
-      console.log(value, row);
       if (value === 'archived')
         return row.archived;
       else

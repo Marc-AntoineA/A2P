@@ -27,7 +27,9 @@ class Summary extends Component {
     };
     this.getProcessData = this.getProcessData.bind(this);
     this.editStep = this.editStep.bind(this);
+    this.scheduleItw = this.scheduleItw.bind(this);
     this.updateArchive = this.updateArchive.bind(this);
+    this.isItwSelected = this.isItwSelected.bind(this);
   }
 
   componentWillMount() {
@@ -76,6 +78,21 @@ class Summary extends Component {
     e.stopPropagation();
   }
 
+  scheduleItw(e) {
+    const target = e.currentTarget;
+    this.setState((prevState) => {
+      prevState.redirectPath = '/interview/';
+      return prevState;
+    });
+    e.stopPropagation();
+  }
+
+  isItwSelected() {
+    if (this.state.process.interviewSlot)
+      return 'validated';
+    return 'todo';
+  }
+
   getActionSymbol(status) {
       switch (status) {
         case 'todo':
@@ -96,13 +113,10 @@ class Summary extends Component {
     switch(status) {
       case 'todo':
         return faEdit;
-
       case 'pending':
         return faSpinner;
-
       case 'validated':
         return faCheck;
-
       case 'rejected':
         return faTimes;
       default:
@@ -128,10 +142,9 @@ class Summary extends Component {
   }
 
   updateArchive() {
-
     ApiRequests.putArchive(this.props.user, this.state.process.archived ? 'unarchive' : 'archive')
     .then((response) => {
-      // this.props.handleModal(response.message, 'Success');
+      this.props.handleModal(response.message, 'Success');
       this.getProcessData();
     })
     .catch((error) => {
@@ -152,6 +165,33 @@ class Summary extends Component {
         <FontAwesomeIcon className='status-icon' icon={faExclamationTriangle} />{ this.deadlineTemplate({ deadline: this.getDeadline() })}
       </Alert>
     );
+
+    const date = new Date(this.state.process.interviewSlot ? this.state.process.interviewSlot.begin : undefined);
+
+    const itwCard = (
+      <Card className={'step-card ' + this.isItwSelected()} onClick={ this.scheduleItw }>
+      <Card.Body>
+      <Card.Title>
+      <span className='step-nb'>Interview:</span> Schedule your interview!
+      </Card.Title>
+      <span class='step-explanation'>
+      <FontAwesomeIcon className='status-icon' icon={this.getResultSymbol(this.isItwSelected())} />
+      {
+        this.state.process.interviewSlot ?
+        "Your interview is scheduled on "
+          +  date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+          + ' at ' + date.toLocaleTimeString('en-GB')
+        :
+        TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.TODO_ICON_DESCRIPTION
+      }
+      </span>
+      </Card.Body>
+      <div className='answer-button'>
+      <FontAwesomeIcon className='edit-button' icon={faAngleRight} />
+      </div>
+      </Card>
+    );
+
     const steps = this.state.process.process === undefined ? []
     : this.state.process.process.steps.map((step, index) => {
       return (
@@ -177,7 +217,7 @@ class Summary extends Component {
 
     const stepsProgress = this.state.process.process ? this.state.process.process.steps.map((step, index) => {
       return (
-        <ProgressBar animated striped variant={this.getProgressVariant(step.status)} now={100/this.state.process.process.steps.length}
+        <ProgressBar animated striped variant={this.getProgressVariant(step.status)} now={100/(1 + this.state.process.process.steps.length)}
         key={index} label={`Step ${index + 1}`}/>
       );
     }) : [];
@@ -186,7 +226,16 @@ class Summary extends Component {
       <div id='process'>
         <p>{ TEXTS.SUMMARY_VIEW.WELCOME_DESCRIPTION }</p>
         { deadlineBox}
-        <ProgressBar>{ stepsProgress }</ProgressBar>
+        <ProgressBar>
+          {
+            this.state.process.process ?
+            <ProgressBar animated striped variant={this.getProgressVariant(this.isItwSelected())} now={100/(1 + this.state.process.process.steps.length)} label={'Interview'}/>
+            :
+            ''
+          }
+          { stepsProgress }
+        </ProgressBar>
+        { itwCard }
         { steps }
       </div>
     );

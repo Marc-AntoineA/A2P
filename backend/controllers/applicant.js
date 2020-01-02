@@ -7,6 +7,7 @@ const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
+const InterviewSlot = require('../models/interviewSlot').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
 const SheetExports = require('../utils/sheetExports');
@@ -157,8 +158,13 @@ exports.getApplicant = (req, res, next) => {
   Applicant.findOne({
     _id: req.params.userId
   }).then((applicant) => {
-    applicant.password = undefined;
-    res.status(200).json(applicant);
+    const appStr = JSON.stringify(applicant);
+    const appCopy = JSON.parse(appStr);
+    appCopy.password = undefined;
+    InterviewSlot.findOne({ applicantId: req.params.userId }).then((slot) => {
+      appCopy.interviewSlot = slot;
+      res.status(200).json(appCopy);
+    });
   }).catch((error) => {
     res.status(500).json({
       error: error
@@ -342,7 +348,6 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
-      console.log(error);
       res.status(500).json({ error: error });
     });
   }).catch((errorMessage) => {
@@ -425,7 +430,6 @@ exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
         const readStream = fileSystem.createReadStream('tmp/out.xlsx');
         readStream.pipe(res);
       }).catch((error) => {
-        console.log(error);
         res.status(404).json({
           error: { messsage: error.toString() }
         });

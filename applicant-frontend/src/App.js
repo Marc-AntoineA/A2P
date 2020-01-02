@@ -6,6 +6,7 @@ import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
+import Interview from './Pages/Interview/Interview.jsx';
 import ApiRequests from './Providers/ApiRequests';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -30,6 +31,7 @@ class App extends Component {
       this.login = this.login.bind(this);
       this.welcome = this.welcome.bind(this);
       this.privacyPolicy = this.privacyPolicy.bind(this);
+      this.interview = this.interview.bind(this);
 
       this.handleCloseModal = this.handleCloseModal.bind(this);
       this.handleModal = this.handleModal.bind(this);
@@ -64,6 +66,10 @@ class App extends Component {
 
   privacyPolicy() {
     return (<PrivacyPolicy  version={this.props.version} user={ this.state.user }/>);
+  }
+
+  interview() {
+    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>)
   }
 
   handleCloseModal() {
@@ -131,6 +137,7 @@ class App extends Component {
           <Route exact path='/signin' component={ this.signin }/>
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
+          <Route exact path='/interview' component={ this.interview }/>
         </div>
       </Router>
     );

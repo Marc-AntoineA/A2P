@@ -11,7 +11,8 @@ module.exports = function(superviser) {
         throw 'Invalid token';
       const userId = decodedToken.userId;
       if ((req.body.userId && req.body.userId !== userId)
-        || (req.params.userId && req.params.userId !== userId)) {
+        || (req.params.userId && req.params.userId !== userId)
+        || (req.params.applicantId && req.params.applicantId !== userId)) {
         throw 'Invalid token';
       } else {
         next();

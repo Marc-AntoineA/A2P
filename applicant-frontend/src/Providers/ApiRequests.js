@@ -105,9 +105,24 @@ exports.postForgotPassword = function(data) {
 
 exports.getOpenedProcesses = function() {
   return getData(API_PATH + routes.GET_OPENED_PROCESSES);
-}
+};
 
 exports.putArchive = function(user, value) {
   const url = `${API_PATH}/archive/${user.id}/${value}`;
   return putData({}, url, user.token);
+};
+
+exports.selectSlot = function(user, slotBegin) {
+  const url = `${API_PATH}/slot/${user.id}/${slotBegin}`;
+  return putData({}, url, user.token);
+};
+
+exports.listAvailableSlots = function(user) {
+  const url = `${API_PATH}/slot/${user.id}/available`;
+  return getData(url, user.token);
+};
+
+exports.getSelectedSlot = function(user) {
+  const url = `${API_PATH}/slot/${user.id}`;
+  return getData(url, user.token);
 }

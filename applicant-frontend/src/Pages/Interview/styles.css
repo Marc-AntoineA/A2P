@@ -1,0 +1,59 @@
+.day-box {
+  display: flex;
+}
+
+.day-label {
+	min-width: 100px;
+	border-right: 2px solid gray;
+	padding-right: 10px;
+}
+
+.day-number {
+	font-size: 40px;
+	display: block;
+}
+
+.day-month {
+	display: block;
+	text-transform: uppercase;
+	color: gray;
+}
+
+.slots-label {
+	flex: 0 0 100%;
+}
+
+.slot {
+	border: 1px solid gray;
+	margin: 15px;
+	padding: 15px;
+}
+
+.slot:hover {
+	border-color: var(--red);
+	margin: 15px 10px;
+	border: 1px solid var(--red);
+}
+
+.slot-label {
+	text-transform: uppercase;
+	font-size: 14px;
+	font-weight: bold;
+	color: var(--red);
+}
+
+.slot-time {
+	font-size: 22px;
+	font-weight: 400;
+}
+
+.btn-toolbar.center {
+  justify-content: center;
+}
+
+.slot-confirmation {
+	font-size: 22px;
+	text-align: center;
+	font-style: italic;
+	color: var(--red);
+}
