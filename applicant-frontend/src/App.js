@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import ApiRequests from './Providers/ApiRequests';
+
 import Welcome from './Pages/Welcome/Welcome.jsx';
 import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
@@ -79,10 +81,10 @@ class App extends Component {
 
   resetPassword() {
     return (<ResetPassword version={this.props.version} handleModal={ this.handleModal }/>);
+  }
 
   interview() {
-    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>)
-
+    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>);
   }
 
   handleCloseModal() {
