@@ -63,13 +63,17 @@ export default {
 .question-list {
   list-style: none;
   padding-left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 li.question-element::before {
   content: "Question " counter(step-counter) ".";
   margin-right: 5px;
+  margin-left: 30px;
   font-size: 95%;
-  background-color: teal;
+  background-color: var(--primary);
   color: white;
   font-weight: bold;
   padding: 3px 8px;
@@ -78,10 +82,11 @@ li.question-element::before {
 
 li.question-element {
   counter-increment: step-counter;
-  border: solid 1px teal;
+  border: solid 1px var(--primary);
   margin: 10px 5px;
   padding: 10px;
   border-radius: 7px;
+  width: 540px;
 }
 
 .full {

@@ -16,6 +16,7 @@ export default {
 
 <style>
 .spinner {
+  color: var(--primary);
 	transition: opacity 0.15s ease;
 	animation: rotator 1.4s linear infinite;
 	animation-play-state: paused;

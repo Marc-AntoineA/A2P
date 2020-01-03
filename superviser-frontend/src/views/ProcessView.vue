@@ -286,10 +286,10 @@ export default {
   width: 100%;
   bottom: 0;
   z-index: 999;
-  background-color: #dedede;
+  background-color: var(--light-gray-background);
   margin: 0;
   left: 0;
-  border-top: 1px solid teal;
+  border-top: 1px solid var(--primary);
   padding: 12px;
 }
 
@@ -371,7 +371,7 @@ export default {
 .page-number {
 	font-size: 9px;
 	text-transform: uppercase;
-	background-color: teal;
+	background-color: var(--primary);
 	color: white;
 	padding: 3px 4px;
 	margin-right: 4px;

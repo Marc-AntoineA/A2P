@@ -11,6 +11,7 @@ const InterviewSlot = require('../models/interviewSlot').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
 const SheetExports = require('../utils/sheetExports');
+const Validators = require('../validators/automated/').validators;
 
 const signinForm = require('./signin-form.json');
 
@@ -58,7 +59,7 @@ exports.createApplicant = (req, res, next) => {
         process: process,
         archived: false
       });
-      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id, supervisor: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
         sendApplicationMail(mailAddress, { applicant: applicant });
         res.status(201).json({
@@ -101,7 +102,7 @@ exports.login = (req, res, next) => {
           error: {message: 'User or password is incorrect'}
         });
       }
-      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id, supervisor: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       res.status(200).json({
         id: applicant._id,
         token: token
@@ -215,8 +216,9 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
 
       // TODO add here automatic validation
       if (confirm)  {
-        step.status = 'pending';
-        sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
+        // step.status = 'pending';
+        // TODO WARNING
+        // sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
       }
 
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
@@ -254,9 +256,40 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   const confirm = true;
   editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
+      automaticallyCheckAnswers(userId, stepIndex);
       res.status(200).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
   }).catch((error) => {
     res.status(500).json({ error: { message: error.message }});
+  });
+};
+
+function automaticallyCheckAnswers(userId, stepIndex) {
+  promiseGetApplicantStep(userId, stepIndex).then((step) => {
+    console.log('automatically check answers')
+    console.log(step);
+    const errors = [];
+    for (let pageIndex=0; pageIndex<step.pages.length;pageIndex++) {
+      for (let questionIndex=0; questionIndex<step.pages[pageIndex].questions.length; questionIndex++) {
+          const question = step.pages[pageIndex].questions[questionIndex];
+          console.log(question);
+          if (!question.validator) continue;
+          const validator = Validators[question.validator];
+          const options = JSON.parse(question.validatorOptions);
+          console.log(validator);
+          console.log(validator.function);
+          try {
+            validator.function(question.answer, options);
+          } catch (error) {
+            errors.push({
+              questionLabel: question.label,
+              errorMessage: error.toString()
+            });
+          }
+      }
+    }
+    console.log('done')
+    console.log(errors);
+
   });
 }
 
@@ -344,7 +377,8 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
         applicant: applicant,
         step: step
       };
-      loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
+      // TODO warning
+      // loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {

@@ -184,17 +184,17 @@ export default {
 .processes-box li {
 	list-style: none;
 	font-size: 14px;
-	color: teal;
+	color: var(--primary);
 	font-weight: bold;
   margin: 10px 5px;
 }
 
 .processes-box li a {
-  color: teal;
+  color: var(--primary);
 }
 
 .processes-box li a:visited {
-  color: teal;
+  color: var(--primary);
 }
 
 .processes-box li::before {

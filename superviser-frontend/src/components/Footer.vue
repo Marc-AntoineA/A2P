@@ -51,7 +51,7 @@ export default {
 
 <style>
 .el-footer {
-	border-top: solid 4px teal;
+	border-top: solid 4px var(--primary);
 	margin: -8px;
 	margin-top: 20px;
 	padding: 20px 0px;

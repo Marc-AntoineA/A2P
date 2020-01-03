@@ -1,27 +1,29 @@
 <template>
   <li class='question-element'>
-    <el-input class='label-input'
-      v-model='question.label'
-      @change='onModification'
-      :disabled='!editable'></el-input>
-    <span v-if='editable' class='vertical-toolbar float-right'>
-        <i class='el-icon-close round-boxed big'
-          @click='deleteQuestion'>
-        </i>
-        <i class='el-icon-arrow-up round-boxed big'
+    <span v-if='editable' class='float-right'>
+        <i class='el-icon-arrow-left round-boxed big'
           @click='moveQuestionUp'>
         </i>
-        <i class='el-icon-arrow-down round-boxed big'
+        <i class='el-icon-arrow-right round-boxed big'
           @click='moveQuestionDown'>
         </i>
+        <i class='el-icon-close round-boxed big'
+        @click='deleteQuestion'>
+      </i>
     </span>
-    <el-form :inline="true" class="demo-form-inline">
-      <el-form-item>
+    <el-form class="demo-form-inline" label-width="120px">
+      <el-form-item label='Label'>
+        <el-input
+        v-model='question.label'
+        @change='onModification'
+        :disabled='!editable'/>
+      </el-form-item>
+      <el-form-item label='Mandatory?'>
         <el-switch v-model="question.mandatory"
           @change='onModification'
           :disabled='!editable'></el-switch>
       </el-form-item>
-      <el-form-item>
+      <el-form-item label='Type'>
         <el-select v-model="question.type" placeholder="Type"
           :disabled='!editable'
           @change='onModification'>
@@ -33,10 +35,31 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item label='Choices'>
+        <ul>
+          <aap-choice v-for='(choice, choiceIndex) in question.choices'
+          :key='choiceIndex'
+          :choice='choice'
+          :editable='editable'
+          :on-modification='onModification'
+          :state-key='{
+            processId: stateKey.processId,
+            stepIndex: stateKey.stepIndex,
+            pageIndex: stateKey.pageIndex,
+            questionIndex: stateKey.questionIndex,
+            choiceIndex: choiceIndex
+            }'/>
+            <li v-if='editable' class='choice new-choice'>
+              <el-input v-model='newChoice' placeholder='Add a new choice'/>
+              <i class='el-icon-plus round-boxed small'
+              @click='addNewChoice'></i>
+            </li>
+          </ul>
+      </el-form-item>
+      <el-form-item label='Validator'>
         <el-select v-model="question.validator" placeholder="Validator"
           :disabled='!editable'
-          @change='onModification'>
+          @change='onModification' clearable>
           <el-option
             v-for="key in Object.keys(validators)"
             :key="key"
@@ -45,26 +68,10 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label='Validator options'>
+        <el-input v-model="question.validatorOptions" placeholder='Options' style='width: 190px'/>
+      </el-form-item>
     </el-form>
-    <ul>
-      <aap-choice v-for='(choice, choiceIndex) in question.choices'
-        :key='choiceIndex'
-        :choice='choice'
-        :editable='editable'
-        :on-modification='onModification'
-        :state-key='{
-          processId: stateKey.processId,
-          stepIndex: stateKey.stepIndex,
-          pageIndex: stateKey.pageIndex,
-          questionIndex: stateKey.questionIndex,
-          choiceIndex: choiceIndex
-          }'/>
-      <li v-if='editable' class='choice new-choice'>
-        <el-input v-model='newChoice'/>
-        <i class='el-icon-plus round-boxed small'
-          @click='addNewChoice'></i>
-      </li>
-    </ul>
   </li>
 </template>
 
@@ -117,7 +124,11 @@ export default {
 
 
 <style>
-/* TODO: understand how to use the global variable var(--color-primary); for background-color*/
+
+li.question-element {
+  text-align: left;
+}
+
 .question-element h4 {
     display: inline-block;
     font-size: 16px;
@@ -134,14 +145,6 @@ export default {
 .disabled i.round-boxed {
   color: #cfd6d9;
   cursor: not-allowed;
-}
-
-.label-input {
-  width: 600px;
-  margin: 10px;
-  font-size: larger;
-  font-weight: bold;
-  padding: 10px;
 }
 
 li.choice {
@@ -172,6 +175,11 @@ li.new-choice {
 }
 
 li.new-choice:focus-within {
-  border-color: teal;
+  border-color: var(--primary);
 }
+
+.el-form-item ul {
+  padding-left: 0px;
+}
+
 </style>
