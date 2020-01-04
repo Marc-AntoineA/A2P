@@ -47,7 +47,7 @@ i.round-boxed {
 }
 
 i.round-boxed:hover {
-  border-color: teal;
+  border-color: var(--primary);
   background-color: #f8f8f8;
 }
 
@@ -71,4 +71,20 @@ a:visited {
 a {
   text-decoration: none;
 }
+
+:root {
+  --primary: #dc3545;
+  --primary-pale: #fcebec;
+  --light-gray-background: #f5f7fa;
+  --primary-dark: #8e202b;
+}
+
+.main-view {
+  min-height: calc(100vh - 168px);
+}
+
+strong {
+  color: var(--primary);
+}
+
 </style>

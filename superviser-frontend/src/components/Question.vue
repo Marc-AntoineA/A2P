@@ -1,27 +1,29 @@
 <template>
   <li class='question-element'>
-    <el-input class='label-input'
-      v-model='question.label'
-      @change='onModification'
-      :disabled='!editable'></el-input>
-    <span v-if='editable' class='vertical-toolbar float-right'>
-        <i class='el-icon-close round-boxed big'
-          @click='deleteQuestion'>
-        </i>
-        <i class='el-icon-arrow-up round-boxed big'
+    <span v-if='editable' class='float-right'>
+        <i class='el-icon-arrow-left round-boxed big'
           @click='moveQuestionUp'>
         </i>
-        <i class='el-icon-arrow-down round-boxed big'
+        <i class='el-icon-arrow-right round-boxed big'
           @click='moveQuestionDown'>
         </i>
+        <i class='el-icon-close round-boxed big'
+        @click='deleteQuestion'>
+      </i>
     </span>
-    <el-form :inline="true" class="demo-form-inline">
-      <el-form-item>
+    <el-form :model="question" :rules="rules" label-width="120px" :ref='question._id + "-form"'>
+      <el-form-item label='Label'>
+        <el-input
+        v-model='question.label'
+        @change='onModification'
+        :disabled='!editable'/>
+      </el-form-item>
+      <el-form-item label='Mandatory?'>
         <el-switch v-model="question.mandatory"
           @change='onModification'
           :disabled='!editable'></el-switch>
       </el-form-item>
-      <el-form-item>
+      <el-form-item label='Type'>
         <el-select v-model="question.type" placeholder="Type"
           :disabled='!editable'
           @change='onModification'>
@@ -33,38 +35,46 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
+      <el-form-item label='Choices'>
+        <ul>
+          <aap-choice v-for='(choice, choiceIndex) in question.choices'
+          :key='choiceIndex'
+          :choice='choice'
+          :editable='editable'
+          :on-modification='onModification'
+          :state-key='{
+            processId: stateKey.processId,
+            stepIndex: stateKey.stepIndex,
+            pageIndex: stateKey.pageIndex,
+            questionIndex: stateKey.questionIndex,
+            choiceIndex: choiceIndex
+            }'/>
+            <li v-if='editable' class='choice new-choice'>
+              <el-input v-model='newChoice' placeholder='Add a new choice'/>
+              <i class='el-icon-plus round-boxed small'
+              @click='addNewChoice'></i>
+            </li>
+          </ul>
+      </el-form-item>
+      <el-form-item label='Validator'>
         <el-select v-model="question.validator" placeholder="Validator"
           :disabled='!editable'
-          @change='onModification'>
+          @change='onModification' clearable>
           <el-option
-            v-for="option in settings.validators"
-            :key="option.value"
-            :label="option.label"
-            :value="option.value">
+            v-for="key in Object.keys(validators)"
+            :key="key"
+            :label="validators[key].label"
+            :value="key" class='validator'>
+            <div>{{ validators[key].label }}</div>
+            <div class='description'>{{ validators[key].description }}</div>
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label='Validator options' prop='validatorOptions' v-show='question.validator'>
+        <el-input v-model="question.validatorOptions" placeholder='Options' @change='checkForm' style='width: 245px'/>
+        <div v-if='question.validator' class='example'><span class='label'>Example: </span>{{ validators[question.validator].example }}</div>
+      </el-form-item>
     </el-form>
-    <ul>
-      <aap-choice v-for='(choice, choiceIndex) in question.choices'
-        :key='choiceIndex'
-        :choice='choice'
-        :editable='editable'
-        :on-modification='onModification'
-        :state-key='{
-          processId: stateKey.processId,
-          stepIndex: stateKey.stepIndex,
-          pageIndex: stateKey.pageIndex,
-          questionIndex: stateKey.questionIndex,
-          choiceIndex: choiceIndex
-          }'/>
-      <li v-if='editable' class='choice new-choice'>
-        <el-input v-model='newChoice'/>
-        <i class='el-icon-plus round-boxed small'
-          @click='addNewChoice'></i>
-      </li>
-    </ul>
   </li>
 </template>
 
@@ -75,10 +85,27 @@ import AapChoice from './Choice.vue';
 // TODO handling types in settings.json
 export default {
   name: 'aap-question',
-  props: ['question', 'settings', 'editable', 'state-key', 'on-modification'],
-  data: () => ({
-    newChoice: ''
-  }),
+  props: ['question', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
+  data: () => {
+    const validateOptions = (rule, value, callback) => {
+      console.log(rule);
+      console.log('validate options');
+      try {
+        const result = JSON.parse(value);
+      } catch (error) {
+        callback(new Error(`${value} must be a valid JSON ({} if empty)`));
+      }
+    };
+
+    return {
+      newChoice: '',
+      rules: {
+        validatorOptions: [
+          { validator: validateOptions, trigger: 'blur' }
+        ]
+      }
+    }
+  },
   components: { AapChoice },
   beforeMount() {
   },
@@ -110,14 +137,28 @@ export default {
       this.$store.commit('ADD_CHOICE', { identifier: this.stateKey, value: this.newChoice });
       this.onModification();
       this.newChoice = '';
-    }
+    },
+    checkForm() {
+      if (!this.question.validator) return true;
+      this.onModification();
+      let isValid = true;
+      this.$refs[this.question._id + '-form'].validate((valid) => {
+        if (!valid) isValid = false;
+        return valid;
+      });
+      return isValid;
+    },
   }
 }
 </script>
 
 
 <style>
-/* TODO: understand how to use the global variable var(--color-primary); for background-color*/
+
+li.question-element {
+  text-align: left;
+}
+
 .question-element h4 {
     display: inline-block;
     font-size: 16px;
@@ -136,14 +177,6 @@ export default {
   cursor: not-allowed;
 }
 
-.label-input {
-  width: 600px;
-  margin: 10px;
-  font-size: larger;
-  font-weight: bold;
-  padding: 10px;
-}
-
 li.choice {
   height: 30px;
   font-size: 13px;
@@ -155,7 +188,7 @@ li.new-choice {
 }
 
 li.new-choice .el-input {
-  width: auto;
+  width: 190px;
 }
 
 li.new-choice .el-input input {
@@ -172,6 +205,32 @@ li.new-choice {
 }
 
 li.new-choice:focus-within {
-  border-color: teal;
+  border-color: var(--primary);
 }
+
+.el-form-item ul {
+  padding-left: 0px;
+}
+
+.validator.el-select-dropdown__item {
+  height: auto;
+}
+
+.description {
+  font-style: italic;
+  font-size: 12px;
+  color: gray;
+}
+
+.el-form-item .example .label {
+	font-weight: bold;
+}
+
+.el-form-item .example {
+	color: darkgray;
+	font-style: italic;
+  line-height: normal;
+  margin: 5px 0;
+}
+
 </style>

@@ -2,7 +2,7 @@
   <el-container direction='vertical'>
     <aap-header></aap-header>
     <el-container>
-      <el-main>
+      <el-main class='main-view'>
         <aap-broken v-show="broken"></aap-broken>
         <div v-show='!broken'>
           <h2>Applicants</h2>
@@ -349,13 +349,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .status-box {
-	border: 2px solid teal;
+	border: 2px solid var(--primary);
 	padding: 2px 5px;
 	border-radius: 9px;
 	font-size: 10px;
 	font-weight: bolder;
 	color: white;
-	background-color: teal;
+	background-color: var(--primary);
 	text-transform: uppercase;
 }
 
@@ -390,18 +390,18 @@ export default {
 .stat-number {
 	font-size: 30px;
 	font-weight: bold;
-	border: 2px solid teal;
+	border: 2px solid var(--primary);
 	border-radius: 100%;
 	padding: 6px 8px;
 	color: white;
-	background-color: teal;
+	background-color: var(--primary);
 }
 
 .label {
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: bolder;
-	color: teal;
+	color: var(--primary);
 	margin-left: 10px;
 }
 
@@ -409,7 +409,7 @@ export default {
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: bolder;
-	color: teal;
+	color: var(--primary);
 	margin-left: 10px;
 	vertical-align: top;
 	margin-right: 5px;

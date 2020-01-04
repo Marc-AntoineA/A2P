@@ -4,6 +4,7 @@ import processApi from '../api/process.js';
 import applicantApi from '../api/applicant.js';
 import interviewApi from '../api/interview.js';
 import loginApi from '../api/login.js';
+import validatorApi from '../api/validator.js';
 
 import moment from 'moment';
 
@@ -236,7 +237,7 @@ export default {
       });
     });
   },
-  FETCH_INTERVIEWS_BY_PROCESS_ID: ({ commit, state, dispatch }, processId) => {
+  FETCH_INTERVIEWS_BY_PROCESS_ID: ({ commit, state, dispatch }, processId) => {
     return new Promise((resolve, reject) => {
       interviewApi.fetchInterviewsByProcessId(state.user.token, processId)
       .then((interviews) => {
@@ -296,6 +297,18 @@ export default {
         if (code == 401) dispatch('LOGOUT');
         reject(error);
       });
-    })
+    });
+  },
+  GET_ALL_VALIDATORS: ({ commit, state, dispatch }) => {
+    return new Promise((resolve, reject) => {
+      validatorApi.fetchValidators(state.user.token)
+      .then((validators) => {
+        commit('SET_VALIDATORS', validators);
+        resolve();
+      }).catch(({ code, error }) => {
+        if (code == 401) dispatch('LOGOUT');
+        reject(error);
+      });
+    });
   }
 }

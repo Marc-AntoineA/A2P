@@ -74,10 +74,10 @@ export default {
 <style scoped>
 .boxed {
   margin: 50px auto;
-  border: 2px solid teal;
-  background-color: #f0efef;
+  border: 2px solid var(--primary);
+  background-color: var(--primary-pale);
   width: 330px;
-  box-shadow: 0px 6px 4px #004c4c;
+  box-shadow: 0px 6px 4px var(--primary-dark);
 }
 
 .boxed img {

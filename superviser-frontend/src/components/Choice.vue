@@ -27,12 +27,12 @@ export default {
 /* TODO: understand how to use the global variable var(--color-primary); for background-color*/
 li.choice {
   list-style: none;
-  border: solid 1px teal;
+  border: solid 1px var(--primary);
   margin: 6px;
   display: inline-block;
   padding: 2px 11px;
   border-radius: 20px;
-  background-color: #eaeaea;
+  background-color: var(--primary-pale);
 }
 
 i.small {

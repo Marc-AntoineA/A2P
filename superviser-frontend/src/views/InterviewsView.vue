@@ -2,7 +2,7 @@
   <el-container direction='vertical'>
     <aap-header></aap-header>
     <el-container>
-      <el-main>
+      <el-main class='main-view'>
         <aap-broken v-show="broken"></aap-broken>
         <div v-show='!broken'>
           <!-- <h2>Interviews</h2> -->

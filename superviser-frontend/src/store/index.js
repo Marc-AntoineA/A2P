@@ -17,7 +17,8 @@ export function createStore() {
       processes: {/* [id: number]: Process */},
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
       applicantsByProcessId: {/* [id: number]: [ Applicants ] */},
-      interviewsByProcessId: {/* [id: processId]: [Slots] */}
+      interviewsByProcessId: {/* [id: processId]: [Slots] */},
+      validators: { },
     },
     actions,
     mutations,
