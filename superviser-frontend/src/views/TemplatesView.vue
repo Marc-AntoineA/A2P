@@ -10,6 +10,7 @@
           <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "step_accepted"}}'>Step Accepted</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "step_rejected"}}'>Step Rejected</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_automated_rejected"}}'>Step Rejected Automatically</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "step_received"}}'>Step Received</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "reminder"}}'>Reminder</el-menu-item>

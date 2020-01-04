@@ -229,6 +229,8 @@ li.new-choice:focus-within {
 .el-form-item .example {
 	color: darkgray;
 	font-style: italic;
+  line-height: normal;
+  margin: 5px 0;
 }
 
 </style>
