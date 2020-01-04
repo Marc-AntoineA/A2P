@@ -214,11 +214,9 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
         }
       }
 
-      // TODO add here automatic validation
       if (confirm)  {
-        // step.status = 'pending';
-        // TODO WARNING
-        // sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
+        step.status = 'pending';
+        sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
       }
 
       Applicant.updateOne({ _id: userId}, { 'process.steps': applicant.process.steps }).then((x) => {
@@ -265,31 +263,41 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
 
 function automaticallyCheckAnswers(userId, stepIndex) {
   promiseGetApplicantStep(userId, stepIndex).then((step) => {
-    console.log('automatically check answers')
-    console.log(step);
     const errors = [];
+    const promises = [];
     for (let pageIndex=0; pageIndex<step.pages.length;pageIndex++) {
       for (let questionIndex=0; questionIndex<step.pages[pageIndex].questions.length; questionIndex++) {
           const question = step.pages[pageIndex].questions[questionIndex];
-          console.log(question);
           if (!question.validator) continue;
           const validator = Validators[question.validator];
           const options = JSON.parse(question.validatorOptions);
-          console.log(validator);
-          console.log(validator.function);
-          try {
-            validator.function(question.answer, options);
-          } catch (error) {
-            errors.push({
-              questionLabel: question.label,
-              errorMessage: error.toString()
-            });
-          }
+          promises.push(new Promise((resolve, reject) => {
+            validator.function(question.answer, options)
+            .then(() => resolve())
+            .catch((error) => {
+              errors.push({
+                questionLabel: question.label,
+                errorMessage: error.toString()
+              });
+              resolve();
+          });
+        }));
       }
     }
-    console.log('done')
-    console.log(errors);
-
+    Promise.all(promises).then(() => {
+      let errorMessage = 'Please fix the following points:<ul>';
+      for (let errorIndex in errors) {
+        errorMessage += `<li>For question "${errors[errorIndex].questionLabel}": ${errors[errorIndex].errorMessage}</li>`;
+      }
+      errorMessage += '</ul>';
+      if (errors.length > 0) {
+        Applicant.findOne({ _id: userId }).then((applicant) => {
+          Applicant.updateOne({ _id: userId }, { [`process.steps.${stepIndex}.status`]: 'rejected' }).then(() => {
+            loadAndSendEmail('step_automated_rejected', applicant.mailAddress, { feedback: errorMessage, applicant, step });
+          });
+        });
+      }
+    });
   });
 }
 
@@ -377,8 +385,7 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
         applicant: applicant,
         step: step
       };
-      // TODO warning
-      // loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
+      loadAndSendEmail(status === 'validated' ? 'step_accepted' : 'step_rejected', applicant.mailAddress, data, template.template, subject=undefined);
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
