@@ -16,7 +16,6 @@ export default {
 
 <style>
 .spinner {
-  color: var(--primary);
 	transition: opacity 0.15s ease;
 	animation: rotator 1.4s linear infinite;
 	animation-play-state: paused;
@@ -37,7 +36,7 @@ export default {
 }
 
 .spinner .path {
-	stroke: #f60;
+	stroke: var(--primary);
 	stroke-dasharray: 126;
 	stroke-dashoffset: 0;
 	transform-origin: center;

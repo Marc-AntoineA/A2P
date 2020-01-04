@@ -1,35 +1,30 @@
 <template>
   <el-footer>
     <el-row>
-      <el-col :span="8">
+      <el-col :span="10">
         <p>
-          Platform developed by Marc-Antoine Augé for
+          Platform developed by <strong>Marc-Antoine Augé</strong> for
             <a href='https://socialhackersacademy.org/' target='_blank' rel='noopener noreferrer'>Social Hackers Academy</a>.
-        </p>
-        <p>
+          <br/>
           <font-awesome-icon class='big-icon' :icon="['fab', 'github']" />
-          <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'>Source Code</a>
+          <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'> Source Code</a>
           (under
             <a href='https://github.com/Marc-AntoineA/A2P/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>
               MIT Licence
             </a>
           )
         </p>
-        <p> <!-- TODO compute it from package.json -->
-          Version 1.0.0
+      </el-col>
+      <el-col :span="7">
+        <p>
+            <span class='link-prefix'>Go to</span><a href='https://socialhackersacademy.org/'>Social Hackers Academy Website</a><br/>
+            <span class='link-prefix'>Go to</span><a href='/'> Applicant Website</a></li>
         </p>
       </el-col>
-      <el-col :span="8">
-        <ul class='links-list'>
-          <li>
-            <span class='link-prefix'>Go to</span>
-            <a href='https://socialhackersacademy.org/'>Social Hackers Academy Website</a>
-          </li>
-          <li><span class='link-prefix'>Go to</span> <a href='/'> Applicant Website</a></li>
-        </ul>
-      </el-col>
-      <el-col :span="8">
+      <el-col :span="7">
         <p>
+          <p>
+          <strong>Version 1.0.0</strong><br/>
           Questions? Problems? Ideas?
           <a href='https://github.com/Marc-AntoineA/A2P/issues' target='_blank' rel='noopener noreferrer'>Open an issue</a>.
         </p>
@@ -54,11 +49,13 @@ export default {
 	border-top: solid 4px var(--primary);
 	margin: -8px;
 	margin-top: 20px;
-	padding: 20px 0px;
+	padding: 3px 0px;
+  height: 80px!important;
+  background-color: var(--primary-pale);
 }
 
 .big-icon {
-  font-size: 40px;
+  font-size: 15px;
 }
 
 .links-list {

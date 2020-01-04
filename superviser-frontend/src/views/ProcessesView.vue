@@ -3,7 +3,7 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
-        <el-main>
+        <el-main class='main-view'>
           <h2>List of all processes</h2>
           <aap-spinner :show="loading"></aap-spinner>
           <aap-broken v-show="broken"></aap-broken>

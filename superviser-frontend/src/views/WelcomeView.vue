@@ -2,7 +2,7 @@
   <el-container direction='vertical'>
     <el-container direction='vertical'>
       <aap-header></aap-header>
-      <el-container direction='horizontal'>
+      <el-container class='main-view' direction='horizontal'>
         <el-main>
           <aap-broken v-show="broken"></aap-broken>
 
@@ -183,9 +183,7 @@ export default {
 <style scoped>
 .processes-box li {
 	list-style: none;
-	font-size: 14px;
-	color: var(--primary);
-	font-weight: bold;
+	color: #909399;
   margin: 10px 5px;
 }
 
@@ -194,7 +192,12 @@ export default {
 }
 
 .processes-box li a:visited {
-  color: var(--primary);
+  color: #909399;
+}
+
+.processes-box li a:hover {
+  color: black;
+  text-decoration: none;
 }
 
 .processes-box li::before {

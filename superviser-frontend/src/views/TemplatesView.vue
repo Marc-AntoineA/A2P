@@ -3,7 +3,7 @@
     <aap-header></aap-header>
     <el-container>
       <el-aside>
-        <el-menu mode='vertical' :router='true'>
+        <el-menu mode='vertical' class='main-view' :router='true'>
           <el-menu-item :index='{ name: "template", params: { templateName: "accepted"}}'>Accepted</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "rejected"}}'>Rejected</el-menu-item>
           <el-menu-item :index='{ name: "template", params: { templateName: "application"}}'>Application Received</el-menu-item>
@@ -15,7 +15,7 @@
           <el-menu-item :index='{ name: "template", params: { templateName: "reminder"}}'>Reminder</el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main>
+      <el-main class='main-view'>
         <aap-broken v-show="broken"></aap-broken>
         <p v-if='!templateName'>
           Please select one template on the left

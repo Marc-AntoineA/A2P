@@ -79,4 +79,12 @@ a {
   --primary-dark: #8e202b;
 }
 
+.main-view {
+  min-height: calc(100vh - 168px);
+}
+
+strong {
+  color: var(--primary);
+}
+
 </style>

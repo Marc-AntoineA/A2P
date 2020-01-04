@@ -4,7 +4,7 @@
       <aap-header></aap-header>
       <el-container>
         <aap-spinner :show="loading"></aap-spinner>
-        <el-main v-if='process'>
+        <el-main v-if='process' class='main-view'>
           <ul class='inline-list small'>
             <li>Created at: {{ process.createdAt | dateFormatter }}</li>
             <li>Updated at: {{ process.updatedAt | dateFormatter }}</li>
