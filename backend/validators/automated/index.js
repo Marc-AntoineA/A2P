@@ -7,7 +7,7 @@ const validators = {
     "function": minWords,
     "label": "Minimum Words",
     "description": "Check if the answer contains more than a given number of words",
-    "option": "e.g. { minWords: 200 }"
+    "example": "{ \"minWords\": 200 }"
   }
 };
 

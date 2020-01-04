@@ -11,7 +11,7 @@
         @click='deleteQuestion'>
       </i>
     </span>
-    <el-form class="demo-form-inline" label-width="120px">
+    <el-form :model="question" :rules="rules" label-width="120px" :ref='question._id + "-form"'>
       <el-form-item label='Label'>
         <el-input
         v-model='question.label'
@@ -64,12 +64,15 @@
             v-for="key in Object.keys(validators)"
             :key="key"
             :label="validators[key].label"
-            :value="key">
+            :value="key" class='validator'>
+            <div>{{ validators[key].label }}</div>
+            <div class='description'>{{ validators[key].description }}</div>
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label='Validator options'>
-        <el-input v-model="question.validatorOptions" placeholder='Options' style='width: 190px'/>
+      <el-form-item label='Validator options' prop='validatorOptions' v-show='question.validator'>
+        <el-input v-model="question.validatorOptions" placeholder='Options' @change='checkForm' style='width: 245px'/>
+        <div v-if='question.validator' class='example'><span class='label'>Example: </span>{{ validators[question.validator].example }}</div>
       </el-form-item>
     </el-form>
   </li>
@@ -83,9 +86,26 @@ import AapChoice from './Choice.vue';
 export default {
   name: 'aap-question',
   props: ['question', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
-  data: () => ({
-    newChoice: ''
-  }),
+  data: () => {
+    const validateOptions = (rule, value, callback) => {
+      console.log(rule);
+      console.log('validate options');
+      try {
+        const result = JSON.parse(value);
+      } catch (error) {
+        callback(new Error(`${value} must be a valid JSON ({} if empty)`));
+      }
+    };
+
+    return {
+      newChoice: '',
+      rules: {
+        validatorOptions: [
+          { validator: validateOptions, trigger: 'blur' }
+        ]
+      }
+    }
+  },
   components: { AapChoice },
   beforeMount() {
   },
@@ -117,7 +137,17 @@ export default {
       this.$store.commit('ADD_CHOICE', { identifier: this.stateKey, value: this.newChoice });
       this.onModification();
       this.newChoice = '';
-    }
+    },
+    checkForm() {
+      if (!this.question.validator) return true;
+      this.onModification();
+      let isValid = true;
+      this.$refs[this.question._id + '-form'].validate((valid) => {
+        if (!valid) isValid = false;
+        return valid;
+      });
+      return isValid;
+    },
   }
 }
 </script>
@@ -158,7 +188,7 @@ li.new-choice {
 }
 
 li.new-choice .el-input {
-  width: auto;
+  width: 190px;
 }
 
 li.new-choice .el-input input {
@@ -180,6 +210,25 @@ li.new-choice:focus-within {
 
 .el-form-item ul {
   padding-left: 0px;
+}
+
+.validator.el-select-dropdown__item {
+  height: auto;
+}
+
+.description {
+  font-style: italic;
+  font-size: 12px;
+  color: gray;
+}
+
+.el-form-item .example .label {
+	font-weight: bold;
+}
+
+.el-form-item .example {
+	color: darkgray;
+	font-style: italic;
 }
 
 </style>

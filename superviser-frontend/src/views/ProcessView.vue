@@ -3,8 +3,9 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
-        <aap-spinner :show="loading"></aap-spinner>
-        <el-main v-if='process' class='main-view'>
+        <el-main class='main-view'>
+          <aap-spinner :show="loading"></aap-spinner>
+          <div v-if='process'>
           <ul class='inline-list small'>
             <li>Created at: {{ process.createdAt | dateFormatter }}</li>
             <li>Updated at: {{ process.updatedAt | dateFormatter }}</li>
@@ -95,19 +96,21 @@
                       :settings='settings'
                       :validators='$store.state.validators'
                       :on-modification='incrementModifications'
-                      :stateKey='pageIdentifier(stepIndex, pageIndex)'/>
+                      :stateKey='pageIdentifier(stepIndex, pageIndex)'
+                      :ref='"page-" + stepIndex + "-" + pageIndex'/>
                   </el-tab-pane>
                 </el-tabs>
               </div>
             </el-collapse-item>
           </el-collapse>
+        </div>
         </el-main>
       </el-container>
     </el-container>
     <aap-footer/>
     <div class='save-bar' v-if='this.unsavedModifications > 0'>
       <el-badge :value='this.unsavedModifications' class='item big'>
-        <el-button type='success' round
+        <el-button type='primary' plain round
           @click='saveProcess'>Save</el-button>
       </el-badge>
     </div>
@@ -142,6 +145,21 @@ export default {
   },
   methods: {
     saveProcess: function() {
+      console.log(this.process);
+      let saveIsPossible = true;
+      for (let stepIndex=0; stepIndex<this.process.steps.length; stepIndex++) {
+        const step = this.process.steps[stepIndex];
+        for (let pageIndex=0; pageIndex<step.pages.length; pageIndex++) {
+          const page = step.pages[pageIndex];
+          if (!this.$refs["page-" + stepIndex + '-' + pageIndex][0].validate())
+            saveIsPossible = false;
+        }
+      }
+      if (!saveIsPossible) {
+        this.$alert(`Please fix the errors (probably with validator options) before saving the form`, 'Error', { confirmButtonText: 'OK' });
+        return;
+      }
+
       const processId = this.process._id;
         return new Promise((resolve, reject) => {
         this.$store.dispatch('PUT_PROCESS', processId)

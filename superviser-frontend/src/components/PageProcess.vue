@@ -29,7 +29,8 @@
           stepIndex: stateKey.stepIndex,
           pageIndex: stateKey.pageIndex,
           questionIndex: questionIndex
-          }'/>
+          }'
+        :ref='"question-" + questionIndex'/>
     </ol>
     <el-button v-if='editable' class="full" type="primary" plain
       @click='addNewQuestion'>New question</el-button>
@@ -50,6 +51,14 @@ export default {
     addNewQuestion() {
       this.$store.commit('ADD_QUESTION', this.stateKey);
       this.onModification();
+    },
+    validate() {
+      let isValid = true;
+      for (let questionIndex=0; questionIndex<this.page.questions.length; questionIndex++) {
+        const valid = this.$refs["question-" + questionIndex][0].checkForm();
+        if (!valid) isValid = false;
+      }
+      return isValid;
     }
   }
 }
