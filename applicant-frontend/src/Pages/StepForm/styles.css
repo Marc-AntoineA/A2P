@@ -44,3 +44,7 @@
 .progress-bar {
 	background-color: var(--red);
 }
+
+.marged {
+  margin: 30px;
+}

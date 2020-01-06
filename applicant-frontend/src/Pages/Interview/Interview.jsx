@@ -10,7 +10,7 @@ import './styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faFrown } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Container, ButtonToolbar, Alert } from 'react-bootstrap';
+import { Button, Container, ButtonToolbar, Alert, Spinner } from 'react-bootstrap';
 
 import Handlebars from 'handlebars';
 
@@ -23,7 +23,9 @@ class Interview extends Component {
     this.state = {
       'redirectPath': null,
       'slotsByDate': {},
-      'interviewSlot': undefined
+      'interviewSlot': undefined,
+      'loadingSlots': true,
+      'loadingCurrentSlot' : true
     };
 
     this.selectSlot = this.selectSlot.bind(this);
@@ -74,6 +76,7 @@ class Interview extends Component {
     ApiRequests.getSelectedSlot(this.props.user).then((slot) => {
       this.setState((prevState) => {
         prevState.interviewSlot = slot;
+        prevState.loadingCurrentSlot = false;
       });
     })
   }
@@ -94,6 +97,7 @@ class Interview extends Component {
 
       this.setState((prevState) => {
         prevState.slotsByDate = slotsByDate;
+        prevState.loadingSlots = false;
         return prevState;
       });
     }).catch((error) => {
@@ -149,7 +153,7 @@ class Interview extends Component {
           <p>{ !this.state.interviewSlot && TEXTS.ITW_VIEW.SLOT_SELECTION }</p>
 
           {
-            this.state.interviewSlot ?
+            this.state.interviewSlot && !this.state.loadingCurrentSlot && !this.state.loadingSlots ?
             <Alert variant='success'>
               { beginTemplate({
                 begin: date.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
@@ -160,7 +164,7 @@ class Interview extends Component {
             ''
           }
 
-          { !this.state.interviewSlot && dayBoxes.length === 0 ?
+          { !this.state.interviewSlot && !this.state.loadingCurrentSlot && !this.state.loadingSlots && dayBoxes.length === 0 ?
             <Alert variant='warning'>
               <FontAwesomeIcon className='status-icon' icon={faFrown} />{ TEXTS.ITW_VIEW.NO_AVAILABLE_SLOT }
             </Alert>
@@ -168,8 +172,14 @@ class Interview extends Component {
             ''
           }
 
+          { this.state.loadingCurrentSlot || this.state.loadingSlots ?
+            <div className='center'><Spinner animation="border" variant="danger" /></div>
+            :
+            ''
+          }
+
           <div className='calendar-box'>
-            { !this.state.interviewSlot && dayBoxes.length !== 0 && dayBoxes }
+            { !this.state.interviewSlot && !this.state.loadingCurrentSlot && !this.state.loadingSlots && dayBoxes.length !== 0 && dayBoxes }
           </div>
 
         <ButtonToolbar className='center'>

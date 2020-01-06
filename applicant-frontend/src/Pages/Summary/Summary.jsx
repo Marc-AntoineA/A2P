@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Container, Tooltip, OverlayTrigger, Button, Card, Alert, ButtonToolbar, ProgressBar } from 'react-bootstrap';
+import { Container, Tooltip, OverlayTrigger, Button, Card, Alert, ButtonToolbar, ProgressBar, Spinner } from 'react-bootstrap';
 import Handlebars  from 'handlebars';
 import { Redirect } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
@@ -23,7 +23,8 @@ class Summary extends Component {
     super(props);
     this.state = {
       process: {},
-      redirectPath: null
+      redirectPath: null,
+      loadingProcess: true
     };
     this.getProcessData = this.getProcessData.bind(this);
     this.editStep = this.editStep.bind(this);
@@ -61,6 +62,7 @@ class Summary extends Component {
     ApiRequests.getProcess(user).then((process) => {
       this.setState((prevState) => {
         prevState.process = process;
+        prevState.loadingProcess = false;
         return prevState;
       });
     }).catch((error) => {
@@ -156,7 +158,7 @@ class Summary extends Component {
 
   render() {
     const personalData = this.state.process;
-    const loading = this.state.process === undefined && this.state.process.process === undefined;
+    const loading = this.state.loadingProcess;
 
 
     // Main block for interested applicants before the deadline
@@ -273,7 +275,8 @@ class Summary extends Component {
       <div>
         <Header user={ this.props.user }/>
         <Container>
-          <h2>{ this.welcomeTemplate({ name: personalData.name }) }</h2>
+          { loading ? <div className='center'><Spinner animation="border" variant="danger" /></div> : '' }
+          { !loading ? <h2> {this.welcomeTemplate({ name: personalData.name })} </h2> : ''}
           { !loading && this.state.process.status !== 'pending' ? resultsBox : '' }
           { !loading && this.state.process.status === 'pending' && !this.state.process.archived  ? interestedBlock : '' }
           { !loading && this.state.process.status === 'pending' && this.state.process.archived  ? notInterestedBlock : '' }

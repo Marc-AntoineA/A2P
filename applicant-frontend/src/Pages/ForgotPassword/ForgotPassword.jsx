@@ -46,13 +46,11 @@ class ForgotPassword extends Component {
       return (
        <>
         <Header/>
-          <div className="single-box-form">
-            <h1>
-             <Link  to="/">
-                <img src={logo} alt="SHA" className="header-image"/>
-             </Link>
-            </h1>
-            <h2 className="mt-3 mb-3">Password forgot</h2>
+          <div className="single-box-form" style={{"min-height":"calc(100vh - 413px)"}}>
+           <Link  to="/">
+              <img src={logo} alt="SHA" className="header-image"/>
+           </Link>
+            <h3 className="mt-3 mb-3">Password forgot</h3>
             <p className="mt-3 mb-3">{ TEXTS.FORGOT_PASSWORD_VIEW.DESCRIPTION}</p>
 
             <Form>

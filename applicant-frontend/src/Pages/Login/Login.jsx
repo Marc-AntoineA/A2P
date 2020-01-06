@@ -70,12 +70,10 @@ class Login extends Component {
             <div>
               <Header/>
               <Container className="single-box-form">
-         <h1>
-           <Link className="login-header-link" to="/">
+            <Link className="login-header-link" to="/">
             <img src={logo} alt="SHA" className="header-image"/>
-           </Link>
-          </h1>
-            <h2>{ TEXTS.LOGIN_VIEW.TITLE }</h2>
+            </Link>
+            <h3>{ TEXTS.LOGIN_VIEW.TITLE }</h3>
                 <Form>
                   <Form.Group controlId="formGroupEmail" className="input-group mb-3">
                     <Form.Label className='red-label'>Email address</Form.Label>

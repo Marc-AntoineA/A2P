@@ -61,7 +61,7 @@
       "TODO_ICON_DESCRIPTION": "You don't have this step yet, you have to answer and submit it before the deadline",
       "PENDING_ICON_DESCRIPTION": "Your answer is waiting an approval from Social Hackers Academy, it would come soon. You cannot edit it anymore.",
       "REJECTED_ICON_DESCRIPTION": "Unfortunately, your answer had been rejected by Social Hackers Academy: you can find on your emails some comments about it. You have to submit it again",
-      "VALIDATED_ICON_DESCRIPTION": "Your answer was accepted by Social Hackers Academy, perfect!"
+      "VALIDATED_ICON_DESCRIPTION": "Your answer was accepted by Social Hackers Academy, perfect! You cannot edit it anymore."
     },
     "DEADLINE_TEXT": "You have to complete all these steps before the {{ deadline }}",
     "HELP_NOTE": "If you have any question or the platform has problems, don't hesitate to contact Social Hackers Academy (email, Facebook or directly in our office)",

@@ -143,6 +143,7 @@ class App extends Component {
       </Modal>
     );
 
+    // <Route exact path='/reset-password' component={ this.resetPassword }/>
     const router = (
       <Router>
         <div className="App">
@@ -153,7 +154,6 @@ class App extends Component {
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
           <Route exact path='/forgot-password' component={ this.forgotPassword }/>
-          <Route exact path='/reset-password' component={ this.resetPassword }/>
           <Route exact path='/interview' component={ this.interview }/>
         </div>
       </Router>
