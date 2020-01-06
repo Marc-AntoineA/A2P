@@ -53,7 +53,7 @@ class Question extends Component {
         <label className='question-label' htmlFor={ data.id }>{ data.label }{data.mandatory ? '*' : ''}</label>
         { failed ? <div className='error-message'> { this.failedMessage } </div> : ''}
         <Input
-          id={ data. id}
+          id={ data.id}
           type={ data.type }
           data={ data }
           onChange={ this.handleChangeValue }
