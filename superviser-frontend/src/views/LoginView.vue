@@ -22,13 +22,12 @@
 </template>
 
 <script>
-import AapFooter from '../components/Footer.vue';
 import AapSpinner from '../components/Spinner.vue';
 
 export default {
   name: 'Login',
   props: {},
-  components: { AapSpinner, AapFooter },
+  components: { AapSpinner },
   data: () => ({
     username: '',
     password: '',
@@ -42,7 +41,7 @@ export default {
         password: this.password
       }).then(() => {
         this.loading = false;
-        this.$router.push('/administration');
+        this.$router.push({ name: 'welcome'});
         this.$message({
           type: 'success',
           message: 'You are now connected'
@@ -64,7 +63,6 @@ export default {
           type: 'info',
           message: 'You are now disconnected'
         });
-      }).catch((err) => {
       });
   }
 }
@@ -74,10 +72,10 @@ export default {
 <style scoped>
 .boxed {
   margin: 50px auto;
-  border: 2px solid teal;
-  background-color: #f0efef;
+  border: 2px solid var(--primary);
+  background-color: var(--primary-pale);
   width: 330px;
-  box-shadow: 0px 6px 4px #004c4c;
+  box-shadow: 0px 6px 4px var(--primary-dark);
 }
 
 .boxed img {

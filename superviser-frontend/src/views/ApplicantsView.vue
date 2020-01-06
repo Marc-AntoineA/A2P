@@ -2,7 +2,7 @@
   <el-container direction='vertical'>
     <aap-header></aap-header>
     <el-container>
-      <el-main>
+      <el-main class='main-view'>
         <aap-broken v-show="broken"></aap-broken>
         <div v-show='!broken'>
           <h2>Applicants</h2>
@@ -35,6 +35,12 @@
               <el-tooltip class="item" effect="dark" content="Download applicants" placement="bottom">
                 <i class='el-icon-download big round-boxed' @click='downloadApplicants()'/>
               </el-tooltip>
+              <router-link :to='{name: "interviews-processId", params: {processId: process._id} }'>
+                <el-tooltip class="item" effect="dark" content="See interviews" placement="bottom">
+                  <i class='el-icon-date big round-boxed'/>
+                </el-tooltip>
+              </router-link>
+
             </div>
 
             <div class='filters-box'>
@@ -46,7 +52,7 @@
                 </el-tooltip>
                 <el-radio-button label="accepted">Accepted Students</el-radio-button>
                 <el-radio-button label="rejected">Rejected Students</el-radio-button>
-                <el-tooltip  v-for="step, index in process.steps" :key="index" effect="dark" :content="step.label" placement="bottom">
+                <el-tooltip  v-for="(step, index) in process.steps" :key="index" effect="dark" :content="step.label" placement="bottom">
                   <el-radio-button  :label="'step' + index">Step#{{ index + 1 }} completed</el-radio-button>
                 </el-tooltip>
               </el-radio-group>
@@ -57,7 +63,6 @@
               prefix-icon="el-icon-search"
               v-model="searchInput">
             </el-input>
-            {{ searchInput }}
 
             <el-dialog v-if='!loading.applicants && !loading.proces && !broken' class='applicant-modal'
               :title="displayedApplicantName()" :visible.sync="applicantModalVisible"
@@ -73,7 +78,7 @@
             <aap-spinner :show="loading.applicants"></aap-spinner>
 
             <p class='small'> {{ applicants.length }} candidates displayed</p>
-            <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500">
+            <el-table :data='applicants' @row-click='displayModal' ref="applicantsTable" max-height="500" :row-class-name="studentsClassName">
               <el-table-column label='Process' prop='process.label' sortable></el-table-column> -->
               <el-table-column label='Name' prop='name' sortable></el-table-column>
               <el-table-column label='Mail' prop='mailAddress' width='80px' sortable>
@@ -99,7 +104,7 @@
                 <template slot-scope='scope'>
                   <div v-if='scope.row.status === "pending"'>
                     <div class='bar'>
-                      <div v-for='step, index in scope.row.process.steps' :key='index'
+                      <div v-for='(step, index) in scope.row.process.steps' :key='index'
                       v-bind:style="{ width: 100/scope.row.process.steps.length + '%', }" :class='"segment " + step.status'>
                       </div>
                     </div>
@@ -112,6 +117,16 @@
               <el-table-column label='Average Mark' align='center'>
                 <template slot-scope='scope'>
                   <span class='status-box'>{{ computedStatus[scope.row._id].averageMark }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label='Archived' align='center' prop="archived"
+                :filters="[{ text: 'Interested', value: 'unarchived' }, { text: 'Not Interested', value: 'archived' }]"
+                :filter-method="filterArchived"
+                :filter-multiple="false"
+                filter-placement="bottom-end">
+                <template slot-scope='scope'>
+                  <i v-if='!scope.row.archived' class='el-icon-close'></i>
+                  <i v-if='scope.row.archived' class='el-icon-check'></i>
                 </template>
               </el-table-column>
             </el-table>
@@ -127,16 +142,15 @@
 
 import AapHeader from '../components/Header.vue';
 import AapFooter from '../components/Footer.vue';
-import AapAsideMenu from '../components/AsideMenu.vue';
 import AapSpinner from '../components/Spinner.vue';
 import AapBroken from '../components/Broken.vue';
 import AapProcessAnswers from '../components/ProcessAnswers';
 
 export default {
   name: 'Applicants',
-  components: { AapHeader, AapFooter, AapAsideMenu, AapBroken, AapSpinner, AapProcessAnswers },
+  components: { AapHeader, AapFooter, AapBroken, AapSpinner, AapProcessAnswers },
   data: () => ({
-    loading: { processes: true, applicants: true },
+    loading: { processes: true, applicants: true },
     broken: false,
     applicantModalVisible: false,
     currentDisplayedApplicant: { applicantId: '' },
@@ -155,7 +169,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.fetchProcesses().then(() => {
-        vm.fetchApplicants(to.params.processId);
+        if (to.params.processId) vm.fetchApplicants(to.params.processId);
       });
     });
   },
@@ -171,7 +185,7 @@ export default {
         if (Object.values(this.$store.state.processes).length !== 0) { this.loading.processes = false; resolve(); return; }
         this.loading.processes = true;
         this.$store.dispatch('FETCH_PROCESSES')
-        .then((processes) => {
+        .then(() => {
           this.loading.processes = false;
           resolve();
         }).catch((error) => {
@@ -217,25 +231,9 @@ export default {
       const applicant = this.$store.state.applicantsByProcessId[processId][applicantId];
       return applicant;
     },
-    displayModal(row, column, evt) {
+    displayModal(row) {
       this.applicantModalVisible = true;
       this.currentDisplayedApplicant = { applicantId: row._id, processId: row.process._id };
-    },
-    filterStatusHandler(value, row) {
-      if (value === 'accepted')
-        return row.status === 'accepted';
-
-      if (value === 'rejected')
-        return row.status === 'rejected';
-
-      if (row.status !== 'pending')
-        return false;
-
-      const status = this.computedStatus[row._id];
-      if (value === 'required')
-        return status.pending > 0 || status.accepted === row.process.steps.length;
-
-      return false;
     },
     downloadApplicants() {
       this.$store.dispatch('DOWNLOAD_EXCEL_ANSWERS', this.process._id)
@@ -258,7 +256,17 @@ export default {
           confirmButtonText: 'OK'
         });
       });
-    }
+    },
+    studentsClassName({ row }) {
+      if (row.archived) return 'archived-row';
+      return '';
+    },
+    filterArchived(value, row) {
+      if (value === 'archived')
+        return row.archived;
+      else
+        return !row.archived;
+    },
   },
   computed: {
     applicants() {
@@ -346,13 +354,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .status-box {
-	border: 2px solid teal;
+	border: 2px solid var(--primary);
 	padding: 2px 5px;
 	border-radius: 9px;
 	font-size: 10px;
 	font-weight: bolder;
 	color: white;
-	background-color: teal;
+	background-color: var(--primary);
 	text-transform: uppercase;
 }
 
@@ -387,18 +395,18 @@ export default {
 .stat-number {
 	font-size: 30px;
 	font-weight: bold;
-	border: 2px solid teal;
+	border: 2px solid var(--primary);
 	border-radius: 100%;
 	padding: 6px 8px;
 	color: white;
-	background-color: teal;
+	background-color: var(--primary);
 }
 
 .label {
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: bolder;
-	color: teal;
+	color: var(--primary);
 	margin-left: 10px;
 }
 
@@ -406,7 +414,7 @@ export default {
 	text-transform: uppercase;
 	font-size: 12px;
 	font-weight: bolder;
-	color: teal;
+	color: var(--primary);
 	margin-left: 10px;
 	vertical-align: top;
 	margin-right: 5px;
@@ -471,4 +479,34 @@ export default {
   margin: 15px 0;
 }
 
+
+.archived-row .status-box {
+	background-color: #bbb;
+	border-color: #bbb;
+	color: #888;
+}
+
+.archived-row i.round-boxed.big:hover {
+	border-color: #bbb;
+}
+
+.archived-row .segment.rejected {
+	background-color: #a40000;
+}
+
+.archived-row .segment.validated {
+	background-color: #005300;
+}
+
+.archived-row .segment.pending {
+	background-color: #d08700;
+}
+
+</style>
+
+<style>
+  tr.archived-row {
+    background-color: #e9e9e9!important;
+    color: #888!important;
+  }
 </style>

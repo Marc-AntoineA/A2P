@@ -3,8 +3,9 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
-        <aap-spinner :show="loading"></aap-spinner>
-        <el-main v-if='process'>
+        <el-main class='main-view'>
+          <aap-spinner :show="loading"></aap-spinner>
+          <div v-if='process'>
           <ul class='inline-list small'>
             <li>Created at: {{ process.createdAt | dateFormatter }}</li>
             <li>Updated at: {{ process.updatedAt | dateFormatter }}</li>
@@ -93,20 +94,23 @@
                       :page='page'
                       :editable='editable'
                       :settings='settings'
+                      :validators='$store.state.validators'
                       :on-modification='incrementModifications'
-                      :stateKey='pageIdentifier(stepIndex, pageIndex)'/>
+                      :stateKey='pageIdentifier(stepIndex, pageIndex)'
+                      :ref='"page-" + stepIndex + "-" + pageIndex'/>
                   </el-tab-pane>
                 </el-tabs>
               </div>
             </el-collapse-item>
           </el-collapse>
+        </div>
         </el-main>
       </el-container>
     </el-container>
     <aap-footer/>
     <div class='save-bar' v-if='this.unsavedModifications > 0'>
       <el-badge :value='this.unsavedModifications' class='item big'>
-        <el-button type='success' round
+        <el-button type='primary' plain round
           @click='saveProcess'>Save</el-button>
       </el-badge>
     </div>
@@ -127,7 +131,7 @@ export default {
   components: { AapSpinner, AapFooter, AapHeader, AapPageProcess },
   data: () => ({
     loading: true,
-    settings: { types: settings.QUESTION_TYPES, validators: settings.QUESTION_VALIDATORS },
+    settings: { types: settings.QUESTION_TYPES },
     unsavedModifications: 0,
     editable: false,
     deadlineEditable: false
@@ -141,6 +145,20 @@ export default {
   },
   methods: {
     saveProcess: function() {
+      console.log(this.process);
+      let saveIsPossible = true;
+      for (let stepIndex=0; stepIndex<this.process.steps.length; stepIndex++) {
+        const step = this.process.steps[stepIndex];
+        for (let pageIndex=0; pageIndex<step.pages.length; pageIndex++) {
+          if (!this.$refs["page-" + stepIndex + '-' + pageIndex][0].validate())
+            saveIsPossible = false;
+        }
+      }
+      if (!saveIsPossible) {
+        this.$alert(`Please fix the errors (probably with validator options) before saving the form`, 'Error', { confirmButtonText: 'OK' });
+        return;
+      }
+
       const processId = this.process._id;
         return new Promise((resolve, reject) => {
         this.$store.dispatch('PUT_PROCESS', processId)
@@ -239,10 +257,7 @@ export default {
                   confirmButtonText: 'OK'
                 });
               });
-          }).catch((error) => {
           });
-        }).catch(() => {
-
         });
     },
   },
@@ -250,14 +265,22 @@ export default {
     const processId = this.$route.params.processId;
     this.loading = true;
     this.$store.dispatch('FETCH_PROCESS', processId).then((process)=> {
-      this.loading = false;
-      this.editable = (process.status === 'draft');
+      this.$store.dispatch('GET_ALL_VALIDATORS').then(() => {
+        this.loading = false;
+        this.editable = (process.status === 'draft');
+      }).catch((error) => {
+        this.loading = false;
+        alert(error);
+        // this.$alert(error.message, `Error while downloading validators`, {
+        //   confirmButtonText: 'OK'
+        // });
+      });
     }).catch((error) => {
       this.loading = false;
       this.$alert(error.message, `Error while downloading process ${processId}`, {
         confirmButtonText: 'OK'
       });
-      this.$router.push('/administration/404-error');
+      this.$router.push({ name: 'error404'});
     });
   },
   beforeDestroy() {
@@ -277,10 +300,10 @@ export default {
   width: 100%;
   bottom: 0;
   z-index: 999;
-  background-color: #dedede;
+  background-color: var(--light-gray-background);
   margin: 0;
   left: 0;
-  border-top: 1px solid teal;
+  border-top: 1px solid var(--primary);
   padding: 12px;
 }
 
@@ -362,7 +385,7 @@ export default {
 .page-number {
 	font-size: 9px;
 	text-transform: uppercase;
-	background-color: teal;
+	background-color: var(--primary);
 	color: white;
 	padding: 3px 4px;
 	margin-right: 4px;

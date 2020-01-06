@@ -8,7 +8,9 @@ import QuestionPage from '../../Components/QuestionPage/QuestionPage.jsx';
 import ApiRequests from '../../Providers/ApiRequests.js';
 import './styles.css';
 
-import { Button, ProgressBar, Modal, Container } from 'react-bootstrap';
+import { Button, ProgressBar, Modal, Container, Spinner, Alert } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfo } from '@fortawesome/free-solid-svg-icons';
 import { checkPassword, checkPhone, checkMailAddress } from '../../validators';
 
 const TEXTS = require('../../static.json');
@@ -45,7 +47,10 @@ class StepForm extends Component {
       'yDown': null,
       'canBeEdited': true,
       'submitModalOpened': false,
-      'redirectPath': null
+      'redirectPath': null,
+      'loading': true,
+      'showInform': true,
+      'status': undefined
     };
   }
 
@@ -55,6 +60,7 @@ class StepForm extends Component {
       ApiRequests.getSigninForm().then((step) => {
           this.setState((prevState) => {
             prevState.step = step;
+            prevState.loading = false;
             return prevState;
           });
         }).catch((err) => {
@@ -64,7 +70,9 @@ class StepForm extends Component {
         ApiRequests.getStepForm(this.props.user, this.props.index).then((step) => {
           this.setState((prevState) => {
             prevState.step = step.pages;
+            prevState.status = step.status;
             prevState.canBeEdited = step.status === 'rejected' || step.status === 'todo';
+            prevState.loading = false;
             return prevState;
           });
         }).catch((error) => {
@@ -288,7 +296,7 @@ class StepForm extends Component {
         <Button variant="secondary" onClick={ this.closeSubmitModal }>
           Close
         </Button>
-        <Button variant='primary' onClick={ this.submitForm }>
+        <Button variant='danger' onClick={ this.submitForm }>
           Submit
         </Button>
       </Modal.Footer>
@@ -307,26 +315,56 @@ class StepForm extends Component {
         </QuestionPage>);
     });
 
+
+    const informBlockValidated = (
+      <Alert variant='success' className='marged' dismissible onClose={() => this.setState((x) => { x.showInform = false; return x; })}>
+        <FontAwesomeIcon icon={faInfo} /> { TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.VALIDATED_ICON_DESCRIPTION }
+      </Alert>
+    );
+
+    const informBlockTodo = (
+      <Alert variant='info' className='marged' dismissible onClose={() => this.setState((x) => { x.showInform = false; return x; })}>
+        <FontAwesomeIcon icon={faInfo} /> { TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.TODO_ICON_DESCRIPTION }
+      </Alert>
+    );
+
+    const informBlockPending = (
+      <Alert variant='warning' className='marged' dismissible onClose={() => this.setState((x) => { x.showInform = false; return x; })}>
+        <FontAwesomeIcon icon={faInfo} /> { TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.PENDING_ICON_DESCRIPTION }
+      </Alert>
+    );
+
+    const informBlockRejected = (
+      <Alert variant='danger' className='marged' dismissible onClose={() => this.setState((x) => { x.showInform = false; return x; })}>
+        <FontAwesomeIcon icon={faInfo} /> { TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.REJECTED_ICON_DESCRIPTION }
+      </Alert>
+    );
+
     const mainComponent = (
       <div>
         { submitModal }
         <Header user={ this.props.user }/>
-        <ProgressBar animated
+        { !this.state.loading ? <ProgressBar animated
           now={ this.state.currentPage }
           max= { pages.length }
           label={`${this.state.currentPage}/${pages.length}`}>
-        </ProgressBar>
-        <Container>
+        </ProgressBar> : ''}
+        { this.state.loading ? <div className='center'><Spinner animation="border" variant="danger" /></div> :''}
+        { !this.state.loading ? <Container>
+          { !this.state.loading && this.state.showInform && this.state.status === 'validated' && informBlockValidated }
+          { !this.state.loading && this.state.showInform && this.state.status === 'rejected' && informBlockRejected }
+          { !this.state.loading && this.state.showInform && this.state.status === 'todo' && informBlockTodo }
+          { !this.state.loading && this.state.showInform && this.state.status === 'pending' && informBlockPending }
           { pages }
           <div className='buttons-flexbar'>
             {this.state.currentPage !== 1 ?
-              <Button onClick={ this.previousPage } size='lg' className='fixed-width'> { TEXTS.BUTTONS.PREVIOUS_PAGE }</Button> : ''}
+              <Button onClick={ this.previousPage } size='lg' className='fixed-width' variant='dark'> { TEXTS.BUTTONS.PREVIOUS_PAGE }</Button> : ''}
             {
                 this.state.canBeEdited && this.props.index !== undefined ?
                   <Button
                     onClick={ this.saveForm }
                     size='lg'
-                    variant='success'
+                    variant='secondary'
                     className='fixed-width'>
                     { TEXTS.BUTTONS.SAVE }
                   </Button>
@@ -338,7 +376,7 @@ class StepForm extends Component {
                 <Button
                   onClick={ this.openSubmitModal }
                   size='lg'
-                  variant='success'
+                  variant='danger'
                   className='fixed-width'>
                   { TEXTS.BUTTONS.SUBMIT }
                 </Button>
@@ -346,9 +384,9 @@ class StepForm extends Component {
                 ''
             }
             {this.state.currentPage !== pages.length ?
-              <Button onClick={ this.nextPage } size='lg' className='fixed-width'>{ TEXTS.BUTTONS.NEXT_PAGE }</Button> : ''}
+              <Button onClick={ this.nextPage } size='lg' className='fixed-width' variant='dark'>{ TEXTS.BUTTONS.NEXT_PAGE }</Button> : ''}
           </div>
-        </Container>
+        </Container>:''}
       </div>
     );
 

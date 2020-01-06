@@ -8,6 +8,12 @@ export function dateFormatter(value) {
   return m.format('DD/MM/YY, h:mm a');
 }
 
+export function timeFormatter(value) {
+  if (!value) return '';
+  const m = moment(value);
+  return m.format('h:mm a');
+}
+
 export function phoneFormatter(value) {
   if (!value) return '';
 

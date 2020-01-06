@@ -3,24 +3,28 @@
     <aap-header></aap-header>
     <el-container>
       <el-aside>
-        <el-menu mode='vertical' :router='true'>
-          <el-menu-item index='/administration/templates/accepted' route='/administration/templates/accepted'>Accepted</el-menu-item>
-          <el-menu-item index='/administration/templates/rejected' route='/administration/templates/rejected'>Rejected</el-menu-item>
-          <el-menu-item index='/administration/templates/application' route='/administration/templates/application'>Application Received</el-menu-item>
-          <el-menu-item index='/administration/templates/reset_password' route='/administration/templates/reset_password'>Reset Password</el-menu-item>
-          <el-menu-item index='/administration/templates/step_accepted' route='/administration/templates/step_accepted'>Stepd Accepted</el-menu-item>
-          <el-menu-item index='/administration/templates/step_rejected' route='/administration/templates/step_rejected'>Step Rejected</el-menu-item>
-          <el-menu-item index='/administration/templates/step_received' route='/administration/templates/step_received'>Step Received</el-menu-item>
-          <el-menu-item index='/administration/templates/reset_password' route='/administration/templates/reset_password'>Reset Password</el-menu-item>
-          <el-menu-item index='/administration/templates/reminder' route='/administration/templates/reminder'>Reminder</el-menu-item>
+        <el-menu mode='vertical' class='main-view' :router='true'>
+          <el-menu-item :index='{ name: "template", params: { templateName: "accepted"}}'>Accepted</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "rejected"}}'>Rejected</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "application"}}'>Application Received</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_accepted"}}'>Step Accepted</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_rejected"}}'>Step Rejected</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_automated_rejected"}}'>Step Rejected Automatically</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "step_received"}}'>Step Received</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reset_password"}}'>Reset Password</el-menu-item>
+          <el-menu-item :index='{ name: "template", params: { templateName: "reminder"}}'>Reminder</el-menu-item>
         </el-menu>
       </el-aside>
-      <el-main>
+      <el-main class='main-view'>
         <aap-broken v-show="broken"></aap-broken>
         <p v-if='!templateName'>
           Please select one template on the left
         </p>
-        <div v-if='!broken && templateName'>
+
+        <aap-spinner :show="loading"></aap-spinner>
+
+        <div v-if='!loading && !broken && templateName'>
           <h1>Template {{ templateName }}</h1>
           <strong>Some advices</strong>
 
@@ -75,11 +79,11 @@ import AapBroken from '../components/Broken.vue';
 
 export default {
   name: 'Templates',
-  components: { AapHeader, AapFooter, AapBroken },
+  components: { AapHeader, AapFooter, AapBroken, AapSpinner },
   data: () => ({
     loading: false,
     broken: false,
-    template: { template: null, subject: null, language: null, help: null}
+    template: { template: null, subject: null, language: null, help: null}
   }),
   props: [],
   beforeMount() {
@@ -88,6 +92,11 @@ export default {
   beforeRouteUpdate(to, from, next) {
     if (to.params.templateName) this.load(to.params.templateName);
     next();
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.params.templateName) vm.load(to.params.templateName);
+    });
   },
   mounted() {
   },
@@ -100,7 +109,7 @@ export default {
         this.template = template;
       }).catch((error) => {
         this.loading = false;
-        broken = true;
+        this.broken = true;
         this.$alert(error.message, `Error while downloading the template ${templateId}`, {
           confirmButtonText: 'OK'
         });
@@ -123,8 +132,6 @@ export default {
               confirmButtonText: 'OK'
             });
           });
-        }).catch((error) => {
-
         });
     }
   },

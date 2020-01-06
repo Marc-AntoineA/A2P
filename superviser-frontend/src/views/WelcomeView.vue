@@ -2,7 +2,7 @@
   <el-container direction='vertical'>
     <el-container direction='vertical'>
       <aap-header></aap-header>
-      <el-container direction='horizontal'>
+      <el-container class='main-view' direction='horizontal'>
         <el-main>
           <aap-broken v-show="broken"></aap-broken>
 
@@ -22,17 +22,17 @@
               <div v-if='!loading.processes' class="grid-content processes-box">
                 <h3>Processes</h3>
                 <ul>
-                  <li class='opened' v-for='process in $store.getters.openedProcesses'>
+                  <li class='opened' v-for='(process, index) in $store.getters.openedProcesses' :key="index">
                     <router-link :to='{name: "process", params: {processId: process._id} }'>
                       {{ process.label }}
                     </router-link>
                   </li>
-                  <li class='draft' v-for='process in $store.getters.draftProcesses'>
+                  <li class='draft' v-for='(process, index) in $store.getters.draftProcesses' :key="index">
                     <router-link :to='{name: "process", params: {processId: process._id} }'>
                       {{ process.label }}
                     </router-link>
                   </li>
-                  <li class='closed' v-for='process in $store.getters.closedProcesses'>
+                  <li class='closed' v-for='(process, index) in $store.getters.closedProcesses' :key="index">
                     <router-link :to='{name: "process", params: {processId: process._id} }'>
                       {{ process.label }}
                     </router-link>
@@ -48,13 +48,13 @@
               <el-select v-model='filteredProcess' placeholder="Select" style='width: 70%'>
                 <el-option default value='all' label='All processes'></el-option>
                 <el-option
-                 v-for="process, index in processes"
+                 v-for="(process, index) in processes"
                  :key="index"
                  :label="process.label"
                  :value="process._id">
                </el-option>
              </el-select>
-              <el-card v-for='applicant, index in pendingApplicants' shadow="hover" :key='index' class='pending-applicant'>
+              <el-card v-for='(applicant, index) in pendingApplicants' shadow="hover" :key="index" class='pending-applicant'>
                   <span class='name'>{{applicant.name}}</span>, for <span class='process'>{{ applicant.process.label }}</span>
                   <el-button style="float: right; padding: 3px 0" type="text" @click='openReview(index)'>Review</el-button><br/>
                   <span class='task' v-if='nbTasksToReview[applicant._id] > 0'>{{ nbTasksToReview[applicant._id] }} steps to review</span>
@@ -129,9 +129,9 @@ export default {
     },
     currentApplicant() { return this.$store.getters.pendingApplicants[this.currentDisplayedApplicantIndex]; },
     today() { return new Date(); },
-    yesterday() { const day = new Date(); day.setDate(day.getDate() - 1); return day; },
-    todayM2() { const day = new Date(); day.setDate(day.getDate() - 2); return day; },
-    todayW1() { const day = new Date(); day.setDate(day.getDate() - 7); return day; },
+    yesterday() { const day = new Date(); day.setDate(day.getDate() - 1); return day; },
+    todayM2() { const day = new Date(); day.setDate(day.getDate() - 2); return day; },
+    todayW1() { const day = new Date(); day.setDate(day.getDate() - 7); return day; },
   },
   methods: {
     fetchProcesses() {
@@ -183,10 +183,21 @@ export default {
 <style scoped>
 .processes-box li {
 	list-style: none;
-	font-size: 14px;
-	color: teal;
-	font-weight: bold;
+	color: #909399;
   margin: 10px 5px;
+}
+
+.processes-box li a {
+  color: var(--primary);
+}
+
+.processes-box li a:visited {
+  color: #909399;
+}
+
+.processes-box li a:hover {
+  color: black;
+  text-decoration: none;
 }
 
 .processes-box li::before {

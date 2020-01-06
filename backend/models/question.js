@@ -8,7 +8,9 @@ const questionSchema = mongoose.Schema({
   type: { type: String, required: true },
   mandatory: { type: Boolean, required: true },
   choices: { type: [String], required: false },
-  answer: { type: String, required: false }
+  answer: { type: String, required: false },
+  validator: { type: String, required: false },
+  validatorOptions: { type: String, required: false }
 });
 
 module.exports.schema = questionSchema;

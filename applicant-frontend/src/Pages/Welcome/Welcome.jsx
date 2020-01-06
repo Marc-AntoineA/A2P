@@ -8,14 +8,16 @@ import ApiRequests from '../../Providers/ApiRequests';
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
 
-import { Button, Container, Row, Col } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Button, Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
+import { Redirect, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 const TEXTS = require('../../static.json').WELCOME_VIEW;
+const FOOTER = require('../../static.json').FOOTER;
+
 
 library.add(fab);
 
@@ -44,54 +46,52 @@ class Welcome extends Component {
   }
 
   render() {
-    const processesElements = this.state.openedProcesses.map((process) => {
-      return (<div className='location'>
-                <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                {process.location}
-              </div>);
-    });
 
-    const canApply = this.state.openedProcesses.length !== 0;
+    const applyButtons = this.state.openedProcesses.map((process, index) => {
+      return (
+          <Button variant="danger" size="lg" key={index} className='apply-button' href='/apply'>
+            <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
+            Apply in {process.location}
+            </Button>
+          );
+    });
 
     const mainComponent = (
       <div>
         <Header></Header>
         <Container>
-          <Row>
+          <Row className='first-row'>
             <Col>
-              <h2 className='centered-title'>{ TEXTS.TITLE }</h2>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.DESCRIPTION }}></div>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.OFFICE_LOCATION }}></div>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.ANY_QUESTION}}></div>
-
-              <h2 className='centered-title'>{ TEXTS.OPENED_LOCATIONS_LABEL }</h2>
-              { canApply ?
-                <div id='current-locations'>
-                  { processesElements }
-                </div>
-                :
-                <p>{ TEXTS.NO_OPENED_LOCATIONS }</p>
-              }
+              <h2 className='red-title'>{ TEXTS.TITLE }</h2>
+              <p className='subtitle' dangerouslySetInnerHTML={{ __html: TEXTS.BLACK_SUBTITLE }}></p>
+              <p className='red subtitle'>{ TEXTS.RED_SUBTITLE }</p>
             </Col>
             <Col className='centered-col'>
-            <div id='language-container'>
-              <FontAwesomeIcon className='technology html' icon={['fab', 'html5']}/>
-              <FontAwesomeIcon className='technology css' icon={['fab', 'css3-alt']}/>
-              <FontAwesomeIcon className='technology javascript' icon={['fab', 'js-square']}/>
-              <FontAwesomeIcon className='technology node' icon={['fab', 'node-js']}/>
-              <FontAwesomeIcon className='technology react' icon={['fab', 'react']}/>
-              <FontAwesomeIcon className='technology database' icon={faDatabase}/>
-            </div>
-            <div className='citation'>
-              <div className='left-citation'>155 classrooms hours - 24 / 7 Online Support...</div>
-              <div className='right-citation'>...to learn all these technologies in only 7 months.</div>
-            </div>
-
-            <p className='big'>Free For All Students</p>
               <img src={computer} alt='webdevelopment illustration' width='350px'/>
-
-              <Button href='/signin' variant='success' block disabled={!canApply}>{ TEXTS.CREATE_ACCOUNT_BUTTON }</Button>
-              <Button href='/login' variant='info' block>{ TEXTS.ALREADY_REGISTERED_BUTTON }</Button>
+            </Col>
+          </Row>
+          <Row>
+          <Col className='centered-col'>
+          <h2>{TEXTS.OPENED_LOCATIONS_LABEL}</h2>
+          { applyButtons.length > 0 ? <ButtonToolbar className='button-toolbar'>
+            { applyButtons }
+          </ButtonToolbar> :
+            TEXTS.NO_OPENED_LOCATIONS
+          }
+          <Link className='text-btn' to='/login'>{ TEXTS.SIGN_IN }</Link>
+          </Col>
+          </Row>
+          <Row>
+            <Col>
+              <h2>Requirements</h2>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.REQUIREMENTS }}></div>
+              <div dangerouslySetInnerHTML={{ __html: TEXTS.OFFICE_LOCATION }}></div>
+              <ButtonToolbar className='button-toolbar'>
+                <Button variant="secondary" size="lg" href={'mailto:' + FOOTER.EMAIL}>
+                  <FontAwesomeIcon className='status-icon' icon={faEnvelope} />
+                  A question ? Contact us
+                </Button>
+              </ButtonToolbar>
             </Col>
           </Row>
         </Container>

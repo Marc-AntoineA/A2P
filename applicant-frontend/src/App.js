@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import ApiRequests from './Providers/ApiRequests';
+
 import Welcome from './Pages/Welcome/Welcome.jsx';
 import Login from './Pages/Login/Login.jsx';
 import Summary from './Pages/Summary/Summary.jsx';
 import StepForm from './Pages/StepForm/StepForm.jsx';
 import PrivacyPolicy from './Pages/PrivacyPolicy/PrivacyPolicy.jsx';
-import ForgotPassword from './Components/ForgotPassword/forgotpassword.jsx'
-import ResetPassword from './Components/ResetPassword/resetpassword.jsx'
-import ApiRequests from './Providers/ApiRequests';
+
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword.jsx'
+import ResetPassword from './Pages/ResetPassword/ResetPassword.jsx'
+import Interview from './Pages/Interview/Interview.jsx';
 
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
@@ -26,24 +29,27 @@ class App extends Component {
           message: ''
         }
       };
-      this.signin = this.signin.bind(this);
+      this.apply = this.apply.bind(this);
       this.summary = this.summary.bind(this);
       this.stepForm = this.stepForm.bind(this)
       this.login = this.login.bind(this);
       this.welcome = this.welcome.bind(this);
       this.privacyPolicy = this.privacyPolicy.bind(this);
+      this.interview = this.interview.bind(this);
 
       this.handleCloseModal = this.handleCloseModal.bind(this);
       this.handleModal = this.handleModal.bind(this);
       this.handleLogin = this.handleLogin.bind(this);
+
       this.forgotPassword = this.forgotPassword.bind(this);
+      this.resetPassword = this.resetPassword.bind(this);
   }
 
   // bug : use componentDidUpdate?
   componentDidMount(){
     // ??? // In the app component there is a handleError  function but I didn't find any where diefined inside this file.
   }
-   
+
   welcome() {
     return (<Welcome version={this.props.version} user={ this.state.user } handleError={ this.handleModal }/>);
   }
@@ -52,7 +58,7 @@ class App extends Component {
     return (<Login  version={this.props.version} user={ this.state.user } handleModal={ this.handleModal } handleLogin={ this.handleLogin }></Login>);
   }
 
-  signin() {
+  apply() {
     return (<StepForm  version={this.props.version} user={ this.state.user } handleLogin={ this.handleLogin } handleModal={ this.handleModal }></StepForm>);
   }
 
@@ -62,14 +68,23 @@ class App extends Component {
   }
 
   summary() {
-    return (<Summary  version={this.props.version} user={ this.state.user } handleError={ this.handleModal }></Summary>);
+    return (<Summary  version={this.props.version} user={ this.state.user } handleModal={ this.handleModal } handleError={ this.handleModal }></Summary>);
   }
 
   privacyPolicy() {
     return (<PrivacyPolicy  version={this.props.version} user={ this.state.user }/>);
   }
+
   forgotPassword() {
     return (<ForgotPassword  version={this.props.version} handleModal={ this.handleModal }/>);
+  }
+
+  resetPassword() {
+    return (<ResetPassword version={this.props.version} handleModal={ this.handleModal }/>);
+  }
+
+  interview() {
+    return (<Interview version={this.props.version} user={this.state.user} handleModal={ this.handleModal } handleError={ this.handleModal }/>);
   }
 
   handleCloseModal() {
@@ -128,17 +143,18 @@ class App extends Component {
       </Modal>
     );
 
+    // <Route exact path='/reset-password' component={ this.resetPassword }/>
     const router = (
       <Router>
         <div className="App">
           <Route exact path='/' component={ this.welcome }/>
           <Route exact path='/login' component={ this.login }/>
           <Route exact path='/summary' component={ this.summary }/>
-          <Route exact path='/signin' component={ this.signin }/>
+          <Route exact path='/apply' component={ this.apply }/>
           <Route exact path='/privacy-policy' component={ this.privacyPolicy }/>
           <Route exact path='/step/:index' component={ this.stepForm }/>
-          <Route exact path='/reset' component={ this.forgotPassword }/>
-          <Route exact path='/reset-password' component={ ResetPassword }/>
+          <Route exact path='/forgot-password' component={ this.forgotPassword }/>
+          <Route exact path='/interview' component={ this.interview }/>
         </div>
       </Router>
     );

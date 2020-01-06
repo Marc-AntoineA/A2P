@@ -72,6 +72,10 @@
     </el-tabs>
     <div class='action-buttons'>
       <el-button
+      type='warning' @click='archiveApplicant'>
+        {{ applicant.archived ? 'Unarchive' : 'Archive' }}
+      </el-button>
+      <el-button
         type='danger' @click='deleteApplicant'>
         Remove this student (definititve)
       </el-button>
@@ -94,11 +98,12 @@ export default {
   }),
   beforeMount(){
     this.stepsMark = this.process.steps.map((step) => (step.mark));
-    this.stepsResponsesTemplates = this.process.steps.map((step) =>  (
+    this.stepsResponsesTemplates = this.process.steps.map(() =>  (
       {
         accepting: undefined,
         template:{ template: '', language: '', help: '', subject: ''}
       }));
+
     this.$store.dispatch('GET_EMAIL_TEMPLATE', 'step_accepted').then((defaultTemplate) => {
       this.stepsResponsesTemplates = this.process.steps.map((step) => {
         if (step.status !== 'pending') {
@@ -107,14 +112,14 @@ export default {
         return { accepting: true, template: defaultTemplate };
       });
     }).catch((error) => {
-      broken = true;
+      this.broken = true;
       this.$alert(error.message, `Error while downloading the email template`, {
         confirmButtonText: 'OK'
       });
     });
 
     this.notCollapsedQuestions = this.process.steps.map((step, stepIndex) => {
-      return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
+      return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
     });
   },
   computed: {
@@ -132,13 +137,13 @@ export default {
     },
     renderStepsResponsesTemplates() {
       const output = this.stepsResponsesTemplates.map((template, index) => {
-        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
       });
       return output;
     },
     renderStepsResponsesSubjects() {
       const output = this.stepsResponsesTemplates.map((template, index) => {
-        return Mustache.render(template.template.subject, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+        return Mustache.render(template.template.subject, { applicant: this.applicant, step: this.applicant.process.steps[index] });
       });
       return output;
     }
@@ -170,8 +175,7 @@ export default {
         case 'phone':
           return phoneFormatter(answer);
         case 'radio':
-          const choices = question.choices;
-          return choices[answer];
+          return question.choices[answer];
         default:
           throw new Error(`undefined display type ${type}`);
       }
@@ -230,11 +234,21 @@ export default {
               message: 'The applicant has been deleted'
             });
           }).catch((error) => {
-            this.$alert(error.message, `Error while deliting this student`, {
+            this.$alert(error.message, `Error while deleting this student`, {
               confirmButtonText: 'OK'
             });
           });
         });
+    },
+    archiveApplicant() {
+      this.$store.dispatch('SWITCH_ARCHIVE_APPLICANT_BY_ID', { applicantId: this.applicantId, processId: this.process._id }).then(() => {
+        this.$message({
+          type: 'info',
+          message: 'The applicant has been ' + (this.applicant.archived ? 'archived' : 'unarchived')
+        });
+      }).catch((error) => {
+        this.$alert(error.message, `Error while archiving/unarchiving this student`, { confirmButtonText: 'OK' });
+      });
     },
     noteStep(stepIndex) {
       this.$store.dispatch('UPDATE_MARK_STEP', {

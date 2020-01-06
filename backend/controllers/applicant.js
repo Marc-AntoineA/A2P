@@ -7,9 +7,11 @@ const TOKEN_RANDOM_SECRET = require('../settings.json').TOKEN_RANDOM_SECRET;
 const fileSystem = require('fs');
 
 const Applicant = require('../models/applicant').model;
+const InterviewSlot = require('../models/interviewSlot').model;
 const ApplicantStatusEnum = require('../models/applicantStatus');
 const Process = require('../models/process').model;
 const SheetExports = require('../utils/sheetExports');
+const Validators = require('../validators/automated/').validators;
 
 const signinForm = require('./signin-form.json');
 
@@ -55,8 +57,9 @@ exports.createApplicant = (req, res, next) => {
         phoneNumber: phoneNumber,
         status: 'pending',
         process: process,
+        archived: false
       });
-      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id, supervisor: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       applicant.save().then(() => {
         sendApplicationMail(mailAddress, { applicant: applicant });
         res.status(201).json({
@@ -99,7 +102,7 @@ exports.login = (req, res, next) => {
           error: {message: 'User or password is incorrect'}
         });
       }
-      const token = jwt.sign({ userId: applicant._id, superviser: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: applicant._id, supervisor: false }, TOKEN_RANDOM_SECRET, { expiresIn: '24h' });
       res.status(200).json({
         id: applicant._id,
         token: token
@@ -156,8 +159,13 @@ exports.getApplicant = (req, res, next) => {
   Applicant.findOne({
     _id: req.params.userId
   }).then((applicant) => {
-    applicant.password = undefined;
-    res.status(200).json(applicant);
+    const appStr = JSON.stringify(applicant);
+    const appCopy = JSON.parse(appStr);
+    appCopy.password = undefined;
+    InterviewSlot.findOne({ applicantId: req.params.userId }).then((slot) => {
+      appCopy.interviewSlot = slot;
+      res.status(200).json(appCopy);
+    });
   }).catch((error) => {
     res.status(500).json({
       error: error
@@ -206,7 +214,6 @@ function editApplicantAnswers(userId, stepIndex, answers, confirm){
         }
       }
 
-      // TODO add here automatic validation
       if (confirm)  {
         step.status = 'pending';
         sendReceivedStepMail(applicant.mailAddress, { applicant: applicant, step: step });
@@ -247,9 +254,50 @@ exports.confirmAndSaveApplicantAnswers = (req, res, next) => {
   const confirm = true;
   editApplicantAnswers(userId, stepIndex, answers, confirm)
   .then(() => {
+      automaticallyCheckAnswers(userId, stepIndex);
       res.status(200).json({ message: `Applicant ${userId} step ${stepIndex} updated successfully`});
   }).catch((error) => {
     res.status(500).json({ error: { message: error.message }});
+  });
+};
+
+function automaticallyCheckAnswers(userId, stepIndex) {
+  promiseGetApplicantStep(userId, stepIndex).then((step) => {
+    const errors = [];
+    const promises = [];
+    for (let pageIndex=0; pageIndex<step.pages.length;pageIndex++) {
+      for (let questionIndex=0; questionIndex<step.pages[pageIndex].questions.length; questionIndex++) {
+          const question = step.pages[pageIndex].questions[questionIndex];
+          if (!question.validator) continue;
+          const validator = Validators[question.validator];
+          const options = JSON.parse(question.validatorOptions);
+          promises.push(new Promise((resolve, reject) => {
+            validator.function(question.answer, options)
+            .then(() => resolve())
+            .catch((error) => {
+              errors.push({
+                questionLabel: question.label,
+                errorMessage: error.toString()
+              });
+              resolve();
+          });
+        }));
+      }
+    }
+    Promise.all(promises).then(() => {
+      let errorMessage = 'Please fix the following points:<ul>';
+      for (let errorIndex in errors) {
+        errorMessage += `<li>For question "${errors[errorIndex].questionLabel}": ${errors[errorIndex].errorMessage}</li>`;
+      }
+      errorMessage += '</ul>';
+      if (errors.length > 0) {
+        Applicant.findOne({ _id: userId }).then((applicant) => {
+          Applicant.updateOne({ _id: userId }, { [`process.steps.${stepIndex}.status`]: 'rejected' }).then(() => {
+            loadAndSendEmail('step_automated_rejected', applicant.mailAddress, { feedback: errorMessage, applicant, step });
+          });
+        });
+      }
+    });
   });
 }
 
@@ -341,7 +389,6 @@ exports.updateStepStatusByApplicantId = (req, res, next) => {
 
       res.status(200).json({ message: `Status for step ${stepIndex} for applicant ${applicantId} updated successfully`});
     }).catch((error) => {
-      console.log(error);
       res.status(500).json({ error: error });
     });
   }).catch((errorMessage) => {
@@ -424,7 +471,6 @@ exports.getAllApplicantsByProcessIdExcelFile = (req, res, next) => {
         const readStream = fileSystem.createReadStream('tmp/out.xlsx');
         readStream.pipe(res);
       }).catch((error) => {
-        console.log(error);
         res.status(404).json({
           error: { messsage: error.toString() }
         });
@@ -444,7 +490,8 @@ exports.getLasts10Applicants = (req, res, next) => {
 
 exports.getAllPendingApplicants = (req, res, next) => {
   Applicant.find({
-    "status": "pending"
+    "status": "pending",
+    "archived": "false"
   }).then((applicants) => {
     const pendingApplicants = applicants.filter((applicant) => {
       const steps = applicant.process.steps;
@@ -463,3 +510,27 @@ exports.getAllPendingApplicants = (req, res, next) => {
     res.status(404).json({ message: error.toString() });
   });
 };
+
+exports.updateArchivedByApplicantId = (req, res, next) => {
+  const applicantId = req.params.applicantId;
+  const value = req.params.value;
+  if (value !== 'archive' && value !== 'unarchive') {
+    res.status(500).json({ error: { message: `Interest can be only "archive" or "unarchive". Not "${status}"`}});
+    return;
+  }
+
+  Applicant.findOne({ _id: applicantId })
+  .then((applicant) => {
+    if (!applicant) res.status(404).json({ error: { message: `Applicant ${applicantId} doesn't exist`}});
+
+    Applicant.findByIdAndUpdate(applicantId, { archived: value === 'archive' })
+    .then((updatedApplicant) => {
+      updatedApplicant.archived = (value === 'archive');
+      res.status(200).json({ message: `Archived for applicant ${applicantId} updated successfully`, applicant: updatedApplicant });
+    }).catch((error) => {
+      res.status(500).json({ error: error });
+    });
+  }).catch((error) => {
+    res.status(404).json({ error: { message: error.toString() } });
+  });
+}

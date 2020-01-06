@@ -2,18 +2,17 @@
   <el-container direction='vertical'>
     <el-main>
       <h1>Error 404, this page doesn't exist.</h1>
-      <p>Go to the <a href='/administration'> main page </a></p>
+      <p>Go to the <router-link :to="{ name: 'welcome'}"> main page </router-link></p>
     </el-main>
   </el-container>
 </template>
 
 <script>
-import AapFooter from '../components/Footer.vue';
 
 export default {
   name: 'Error404',
   props: {},
-  components: { AapFooter }
+  components: { }
 }
 </script>
 

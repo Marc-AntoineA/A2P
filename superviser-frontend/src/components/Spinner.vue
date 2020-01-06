@@ -36,7 +36,7 @@ export default {
 }
 
 .spinner .path {
-	stroke: #f60;
+	stroke: var(--primary);
 	stroke-dasharray: 126;
 	stroke-dashoffset: 0;
 	transform-origin: center;

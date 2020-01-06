@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const processSchema = require('./process').schema;
+const commentSchema = require('./comment').schema;
+
 const validators = require('../validators/basic');
 
 const applicantSchema = mongoose.Schema({
@@ -12,6 +14,8 @@ const applicantSchema = mongoose.Schema({
   password: { type: String, required: true },
   status: { type: String, required: true }, // TODO rejected, accepted class X...,
   process: { type: processSchema, required: true },
+  archived: { type: Boolean, required: false },
+  comments: { type: [commentSchema], required: false }
 }, { timestamps: { createdAt: 'createdAt' } });
 
 applicantSchema.plugin(uniqueValidator);

@@ -9,7 +9,8 @@ exports.saveLogin = (id, token) => {
 };
 
 exports.logout = () => {
-  let wasConnected = this.getLogin().id !== undefined && this.getLogin().token !== undefined;
+  console.log(this.getLogin());
+  const wasConnected = this.getLogin().id && this.getLogin().token;
   localStorage.removeItem('id');
   localStorage.removeItem('token');
   return wasConnected;
@@ -98,11 +99,32 @@ exports.putStepForm = function(user, index, data, confirm) {
 exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
 };
+
 //This  return function must be putdata function not postdata function
 exports.postForgotPassword = function(data) {
-  return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
+  return postData(data, API_PATH + routes.POST_FORGOT_PASSWORD);
 };
 
 exports.getOpenedProcesses = function() {
   return getData(API_PATH + routes.GET_OPENED_PROCESSES);
+};
+
+exports.putArchive = function(user, value) {
+  const url = `${API_PATH}/archive/${user.id}/${value}`;
+  return putData({}, url, user.token);
+};
+
+exports.selectSlot = function(user, slotBegin) {
+  const url = `${API_PATH}/slot/${user.id}/${slotBegin}`;
+  return putData({}, url, user.token);
+};
+
+exports.listAvailableSlots = function(user) {
+  const url = `${API_PATH}/slot/${user.id}/available`;
+  return getData(url, user.token);
+};
+
+exports.getSelectedSlot = function(user) {
+  const url = `${API_PATH}/slot/${user.id}`;
+  return getData(url, user.token);
 }

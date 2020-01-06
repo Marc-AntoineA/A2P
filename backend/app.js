@@ -23,6 +23,7 @@ if (typeof(PhusionPassenger) === 'undefined') {
   const mongoose = require('mongoose');
   const applicantRoutes = require('./routes/applicant');
   const superviserRoutes = require('./routes/superviser');
+  const Comment = require('./models/comment').model;
 
 
   let MONGODB_URL = 'mongodb+srv://' + settings.DB_USERNAME + ':';

@@ -3,7 +3,7 @@
     <el-container direction='vertical'>
       <aap-header></aap-header>
       <el-container>
-        <el-main>
+        <el-main class='main-view'>
           <h2>List of all processes</h2>
           <aap-spinner :show="loading"></aap-spinner>
           <aap-broken v-show="broken"></aap-broken>
@@ -45,6 +45,11 @@
                 <el-tooltip v-if='$store.getters.processesStatus[scope.row._id] !== "draft"' class="item" effect="dark" content="Download applicants" placement="bottom">
                   <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
                 </el-tooltip>
+                <router-link :to='{name: "interviews-processId", params: {processId: scope.row._id} }'>
+                  <el-tooltip class="item" effect="dark" content="See interviews" placement="bottom">
+                    <i class='el-icon-date big round-boxed'/>
+                  </el-tooltip>
+                </router-link>
                 <span v-if='$store.getters.processesStatus[scope.row._id] === "draft"'>
                   Draft process
                 </span>
@@ -148,7 +153,7 @@ export default {
       this.$store.dispatch('CREATE_PROCESS')
         .then((process) => {
           const processId = process._id;
-          this.$router.push('/administration/process/' + processId);
+          this.$router.push({ name: 'process', params: { processId }});
         })
         .catch((error) => {
           this.$alert(error.message, 'Error while creating a new process', {

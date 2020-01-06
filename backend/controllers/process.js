@@ -77,7 +77,6 @@ exports.deleteProcessById = (req, res, next) => {
   Process.findOneAndDelete({_id: processId})
     .then((process) => {
       if (!process) res.status(404).json({error: { message: `process ${processId} doesn't exist.`}});
-      console.log(process);
       res.status(200).json({
         message: `Process ${processId} deleted successfully`
       });
@@ -122,13 +121,12 @@ const updateOpenedProcessById = (req, res, next) => {
         });
       });
     }).catch((error) => {
-      console.log(error);
       res.status(500).json({
         error: error
       });
     });
   });
-}
+};
 
 exports.updateProcessById = (req, res, next) => {
   const processId = req.params.processId;

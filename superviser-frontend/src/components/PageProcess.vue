@@ -21,6 +21,7 @@
         :key='questionIndex'
         :question='question'
         :settings='settings'
+        :validators='validators'
         :editable='editable'
         :on-modification='onModification'
         :state-key='{
@@ -28,7 +29,8 @@
           stepIndex: stateKey.stepIndex,
           pageIndex: stateKey.pageIndex,
           questionIndex: questionIndex
-          }'/>
+          }'
+        :ref='"question-" + questionIndex'/>
     </ol>
     <el-button v-if='editable' class="full" type="primary" plain
       @click='addNewQuestion'>New question</el-button>
@@ -39,17 +41,24 @@
 
 import AapQuestion from './Question.vue';
 
-// TODO handling types in settings.json
 export default {
   name: 'aap-page-process',
   components: { AapQuestion },
-  props: ['page', 'settings', 'editable', 'state-key', 'on-modification'],
+  props: ['page', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
   beforeMount() {
   },
   methods: {
     addNewQuestion() {
       this.$store.commit('ADD_QUESTION', this.stateKey);
       this.onModification();
+    },
+    validate() {
+      let isValid = true;
+      for (let questionIndex=0; questionIndex<this.page.questions.length; questionIndex++) {
+        const valid = this.$refs["question-" + questionIndex][0].checkForm();
+        if (!valid) isValid = false;
+      }
+      return isValid;
     }
   }
 }
@@ -63,13 +72,17 @@ export default {
 .question-list {
   list-style: none;
   padding-left: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 li.question-element::before {
   content: "Question " counter(step-counter) ".";
   margin-right: 5px;
+  margin-left: 30px;
   font-size: 95%;
-  background-color: teal;
+  background-color: var(--primary);
   color: white;
   font-weight: bold;
   padding: 3px 8px;
@@ -78,10 +91,11 @@ li.question-element::before {
 
 li.question-element {
   counter-increment: step-counter;
-  border: solid 1px teal;
+  border: solid 1px var(--primary);
   margin: 10px 5px;
   padding: 10px;
   border-radius: 7px;
+  width: 540px;
 }
 
 .full {
