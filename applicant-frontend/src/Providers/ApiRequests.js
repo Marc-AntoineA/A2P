@@ -9,12 +9,13 @@ exports.saveLogin = (id, token) => {
 };
 
 exports.logout = () => {
-  let wasConnected = this.getLogin().id != undefined && this.getLogin().token != undefined;
+  console.log(this.getLogin());
+  const wasConnected = this.getLogin().id && this.getLogin().token;
   localStorage.removeItem('id');
   localStorage.removeItem('token');
   return wasConnected;
 }
-
+//getItem() method allows you to access the data stored in the browser's localStorage object. It accepts only one parameter which is the key and returns the value as a string.
 exports.getLogin = () => {
   return {
     id: localStorage.getItem('id'),
@@ -99,8 +100,9 @@ exports.postLogin = function(data) {
   return postData(data, API_PATH + routes.POST_LOGIN);
 };
 
+//This  return function must be putdata function not postdata function
 exports.postForgotPassword = function(data) {
-  return postData( data, API_PATH + routes.POST_FORGOT_PASSWORD);
+  return postData(data, API_PATH + routes.POST_FORGOT_PASSWORD);
 };
 
 exports.getOpenedProcesses = function() {

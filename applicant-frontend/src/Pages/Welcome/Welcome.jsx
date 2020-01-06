@@ -9,7 +9,7 @@ import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
 
 import { Button, Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faDatabase, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
@@ -55,55 +55,9 @@ class Welcome extends Component {
 
     const canApply = this.state.openedProcesses.length !== 0;
 
-    const oldMainComponent = (
-      <div>
-        <Header></Header>
-        <Container>
-          <Row>
-            <Col>
-              <h2 className='centered-title'>{ TEXTS.TITLE }</h2>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.DESCRIPTION }}></div>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.OFFICE_LOCATION }}></div>
-              <div dangerouslySetInnerHTML={{ __html: TEXTS.ANY_QUESTION}}></div>
-
-              <h2 className='centered-title'>{ TEXTS.OPENED_LOCATIONS_LABEL }</h2>
-              { canApply ?
-                <div id='current-locations'>
-                  { processesElements }
-                </div>
-                :
-                <p>{ TEXTS.NO_OPENED_LOCATIONS }</p>
-              }
-            </Col>
-            <Col className='centered-col'>
-            <div id='language-container'>
-              <FontAwesomeIcon className='technology html' icon={['fab', 'html5']}/>
-              <FontAwesomeIcon className='technology css' icon={['fab', 'css3-alt']}/>
-              <FontAwesomeIcon className='technology javascript' icon={['fab', 'js-square']}/>
-              <FontAwesomeIcon className='technology node' icon={['fab', 'node-js']}/>
-              <FontAwesomeIcon className='technology react' icon={['fab', 'react']}/>
-              <FontAwesomeIcon className='technology database' icon={faDatabase}/>
-            </div>
-            <div className='citation'>
-              <div className='left-citation'>155 classrooms hours - 24 / 7 Online Support...</div>
-              <div className='right-citation'>...to learn all these technologies in only 7 months.</div>
-            </div>
-
-            <p className='big'>Free For All Students</p>
-              <img src={computer} alt='webdevelopment illustration' width='350px'/>
-
-              <Button href='/signin' variant='success' block disabled={!canApply}>{ TEXTS.CREATE_ACCOUNT_BUTTON }</Button>
-              <Button href='/login' variant='info' block>{ TEXTS.ALREADY_REGISTERED_BUTTON }</Button>
-            </Col>
-          </Row>
-        </Container>
-        <Footer version={this.props.version}/>
-      </div>
-    );
-
     const applyButtons = this.state.openedProcesses.map((process, index) => {
       return (
-          <Button variant="danger" size="lg" key={index} className='apply-button' href='/signin'>
+          <Button variant="danger" size="lg" key={index} className='apply-button' href='/apply'>
             <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
             Apply in {process.location}
             </Button>
@@ -125,13 +79,14 @@ class Welcome extends Component {
             </Col>
           </Row>
           <Row>
-          <Col>
+          <Col className='centered-col'>
           <h2>{TEXTS.OPENED_LOCATIONS_LABEL}</h2>
           { applyButtons.length > 0 ? <ButtonToolbar className='button-toolbar'>
             { applyButtons }
           </ButtonToolbar> :
             'All the applications are curently closed. '
           }
+          <Link className='text-btn' to='/login'>{ TEXTS.SIGN_IN }</Link>
           </Col>
           </Row>
           <Row>

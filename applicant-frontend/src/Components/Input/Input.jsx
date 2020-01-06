@@ -1,4 +1,4 @@
-'using strict';
+ 'using strict';
 
 import React, { Component } from 'react';
 
@@ -39,7 +39,9 @@ class Input extends Component {
 
   initState(type) {
     if (this.props.data && this.props.data.answer !== undefined) {
-      if (type !== 'text')
+      if (type === 'date')
+        this.state = { 'currentValue': new Date(this.props.data.answer)};
+      else if (type !== 'text')
         this.state = { 'currentValue': this.props.data.answer };
       else
         this.state = { 'currentValue': this.props.data.answer, 'nbWords': this.props.data.answer.split(' ').length };
@@ -48,7 +50,7 @@ class Input extends Component {
 
     switch (type) {
       case 'date':
-        this.state = {'currentValue': null};
+        this.state = {'currentValue': new Date() };
         break;
       case 'radio':
         this.state = {'currentValue': -1};
@@ -115,7 +117,7 @@ class Input extends Component {
         <div className="input-group mb-3">
           <div className="input-group-prepend">
             <span className='input-group-text'>
-              <FontAwesomeIcon icon={faPen} />
+              <FontAwesomeIcon className='red' icon={faPen} />
             </span>
           </div>
           <input type="text"
@@ -131,12 +133,12 @@ class Input extends Component {
       <div className="input-group mb-3">
         <div className="input-group-prepend">
           <span className='input-group-text'>
-            <FontAwesomeIcon icon={faCalendarAlt} />
+            <FontAwesomeIcon icon={faCalendarAlt} className='red'/>
           </span>
+          <DatePicker
+            selected={this.state.currentValue}
+            onChange={this.handleChangeDate}/>
         </div>
-        <DatePicker
-          selected={this.state.currentValue}
-          onChange={this.handleChangeDate}/>
       </div>);
   }
 
@@ -144,11 +146,11 @@ class Input extends Component {
     return (
       <div className="input-group mb-3">
         <div className="input-group-prepend">
-          <span className="input-group-text">@</span>
+          <span className="input-group-text red">@</span>
         </div>
         <input type="text"
           className="form-control"
-          placeholder="mail address"
+          placeholder={this.props.placeholder ? this.props.placeholder : 'Email address'}
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);
@@ -159,7 +161,7 @@ class Input extends Component {
       <div className="input-group mb-3">
         <div className="input-group-prepend">
           <span className='input-group-text'>
-            <FontAwesomeIcon icon={faMobileAlt} />
+            <FontAwesomeIcon icon={faMobileAlt} className='red'/>
           </span>
         </div>
         <input type="text"
@@ -175,12 +177,12 @@ class Input extends Component {
       <div className="input-group mb-3">
         <div className="input-group-prepend">
         <span className='input-group-text'>
-          <FontAwesomeIcon icon={faUnlockAlt} />
+          <FontAwesomeIcon icon={faUnlockAlt} className='red'/>
         </span>
         </div>
         <input type="password"
           className="form-control"
-          placeholder="password"
+          placeholder={this.props.placeholder ? this.props.placeholder : 'Password'}
           onChange={this.handleChangeTextInput}
           value={this.state.currentValue}/>
       </div>);
@@ -190,17 +192,18 @@ class Input extends Component {
     const choices = [];
     this.props.data.choices.forEach((choice, index) => {
       choices.push(
-        <div className='custom-control custom-checkbox' key={ index }>
-          <Form.Check
+        <label className='custom-control custom-checkbox' key={ index }>
+          { choice }
+          <input
             type='radio'
-            label={ choice }
             id={ this.props.id + '-' + index }
             data-index={ index }
             name={ this.props.id }
             checked={ this.state.currentValue == index}
             onChange={ this.handleChangeRadio }
           />
-        </div>);
+          <span className='checkmark'></span>
+        </label>);
     });
     return (<div>{ choices }</div>);
   }
