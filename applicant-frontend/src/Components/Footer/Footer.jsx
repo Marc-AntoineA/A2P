@@ -93,7 +93,7 @@ class Footer extends Component {
               (Source code <a href='https://github.com/Marc-AntoineA/A2P' target='_blank' rel='noopener noreferrer'>
                 <FontAwesomeIcon className='social-media-icon' icon={['fab', 'github']}/>
               </a>).<br/>
-              Version {this.props.version}
+              Version <strong>{this.props.version}</strong>
             </Col>
           </Row>
         </Container>

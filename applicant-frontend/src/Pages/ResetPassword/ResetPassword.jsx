@@ -46,7 +46,7 @@ class ResetPassword extends Component {
         return (
             <>
             <Header />
-            <div className="single-box-form">
+            <Container className="single-box-form">
                 <h1>
                     <Link  to="/">
                         <img src={logo} alt="SHA" className="header-image"/>
@@ -69,7 +69,7 @@ class ResetPassword extends Component {
                   <Form.Group className='right-aligned'>
                   </Form.Group>
                 </Form>
-            </div>
+            </Container>
             <Footer />
             </>
         );

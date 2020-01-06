@@ -11,7 +11,7 @@ import Footer from '../../Components/Footer/Footer.jsx';
 import { Button, Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
 import { Redirect, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faDatabase, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -46,14 +46,6 @@ class Welcome extends Component {
   }
 
   render() {
-    const processesElements = this.state.openedProcesses.map((process) => {
-      return (<div className='location'>
-                <FontAwesomeIcon className='map-icon' icon={faMapMarkerAlt} />
-                {process.location}
-              </div>);
-    });
-
-    const canApply = this.state.openedProcesses.length !== 0;
 
     const applyButtons = this.state.openedProcesses.map((process, index) => {
       return (
@@ -84,7 +76,7 @@ class Welcome extends Component {
           { applyButtons.length > 0 ? <ButtonToolbar className='button-toolbar'>
             { applyButtons }
           </ButtonToolbar> :
-            'All the applications are curently closed. '
+            TEXTS.NO_OPENED_LOCATIONS
           }
           <Link className='text-btn' to='/login'>{ TEXTS.SIGN_IN }</Link>
           </Col>

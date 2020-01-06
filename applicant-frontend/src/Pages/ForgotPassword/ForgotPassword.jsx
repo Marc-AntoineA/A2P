@@ -46,7 +46,7 @@ class ForgotPassword extends Component {
       return (
        <>
         <Header/>
-          <div className="single-box-form" style={{"min-height":"calc(100vh - 413px)"}}>
+          <Container className="single-box-form" style={{"min-height":"calc(100vh - 413px)"}}>
            <Link  to="/">
               <img src={logo} alt="SHA" className="header-image"/>
            </Link>
@@ -68,7 +68,7 @@ class ForgotPassword extends Component {
               <Form.Group className='right-aligned'>
               </Form.Group>
             </Form>
-          </div>
+          </Container>
           <Footer version={this.props.version}/>
           </>
       );

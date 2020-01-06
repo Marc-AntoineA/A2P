@@ -1,6 +1,6 @@
 {
   "name": "applicant-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha",
   "private": true,
   "homepage": "https://joinus.socialhackersacademy.org/static-applicant",
   "dependencies": {

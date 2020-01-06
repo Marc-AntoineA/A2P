@@ -199,7 +199,7 @@ class Input extends Component {
             id={ this.props.id + '-' + index }
             data-index={ index }
             name={ this.props.id }
-            checked={ this.state.currentValue == index}
+            checked={ parseInt(this.state.currentValue) === index}
             onChange={ this.handleChangeRadio }
           />
           <span className='checkmark'></span>

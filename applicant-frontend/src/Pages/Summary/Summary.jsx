@@ -2,12 +2,12 @@
 
 import React, { Component } from 'react';
 
-import { Container, Tooltip, OverlayTrigger, Button, Card, Alert, ButtonToolbar, ProgressBar, Spinner } from 'react-bootstrap';
+import { Container, Button, Card, Alert, ButtonToolbar, ProgressBar, Spinner } from 'react-bootstrap';
 import Handlebars  from 'handlebars';
 import { Redirect } from 'react-router-dom';
 import 'react-accessible-accordion/dist/fancy-example.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faSquare, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faExclamationTriangle, faEdit, faCheck, faSpinner, faTimes, faEnvelope, faAngleRight, faThumbsUp, faFrown } from '@fortawesome/free-solid-svg-icons';
 
 import Header from '../../Components/Header/Header.jsx';
 import Footer from '../../Components/Footer/Footer.jsx';
@@ -51,7 +51,6 @@ class Summary extends Component {
   }
 
   componentDidMount() {
-    const user = this.props.user;
     this.getProcessData();
   }
 
@@ -81,7 +80,6 @@ class Summary extends Component {
   }
 
   scheduleItw(e) {
-    const target = e.currentTarget;
     this.setState((prevState) => {
       prevState.redirectPath = '/interview/';
       return prevState;
@@ -107,7 +105,6 @@ class Summary extends Component {
           return faEdit;
         default:
           throw new Error(`getActionSymbol(${status}) is undefined`);
-        break;
       }
   }
 
@@ -123,7 +120,6 @@ class Summary extends Component {
         return faTimes;
       default:
         throw new Error(`getResultSymbol(${status}) is undefined`);
-      break;
     }
   }
 
@@ -139,7 +135,6 @@ class Summary extends Component {
         return 'danger';
       default:
         throw new Error(`getResultSymbol(${status}) is undefined`);
-        break;
     }
   }
 
