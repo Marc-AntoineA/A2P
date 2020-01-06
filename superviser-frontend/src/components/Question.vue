@@ -88,10 +88,8 @@ export default {
   props: ['question', 'settings', 'editable', 'state-key', 'on-modification', 'validators'],
   data: () => {
     const validateOptions = (rule, value, callback) => {
-      console.log(rule);
-      console.log('validate options');
       try {
-        const result = JSON.parse(value);
+        JSON.parse(value);
       } catch (error) {
         callback(new Error(`${value} must be a valid JSON ({} if empty)`));
       }

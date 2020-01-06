@@ -45,6 +45,11 @@
                 <el-tooltip v-if='$store.getters.processesStatus[scope.row._id] !== "draft"' class="item" effect="dark" content="Download applicants" placement="bottom">
                   <i class='el-icon-download big round-boxed' @click='downloadApplicants(scope.row._id)'/>
                 </el-tooltip>
+                <router-link :to='{name: "interviews-processId", params: {processId: scope.row._id} }'>
+                  <el-tooltip class="item" effect="dark" content="See interviews" placement="bottom">
+                    <i class='el-icon-date big round-boxed'/>
+                  </el-tooltip>
+                </router-link>
                 <span v-if='$store.getters.processesStatus[scope.row._id] === "draft"'>
                   Draft process
                 </span>

@@ -10,7 +10,7 @@ import './styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faFrown } from '@fortawesome/free-solid-svg-icons';
 
-import { Button, Container, ButtonToolbar, Alert, Spinner } from 'react-bootstrap';
+import { Button, Container, ButtonToolbar, Alert, Spinner, Modal } from 'react-bootstrap';
 
 import Handlebars from 'handlebars';
 
@@ -25,10 +25,14 @@ class Interview extends Component {
       'slotsByDate': {},
       'interviewSlot': undefined,
       'loadingSlots': true,
-      'loadingCurrentSlot' : true
+      'loadingCurrentSlot' : true,
+      'submitModalOpened': false,
+      'choosenSlotBegin': undefined
     };
 
     this.selectSlot = this.selectSlot.bind(this);
+    this.openSlotModal = this.openSlotModal.bind(this);
+    this.closeSubmitModal = this.closeSubmitModal.bind(this);
   }
 
   isNotAuthorized() {
@@ -54,9 +58,22 @@ class Interview extends Component {
   componentWillUnmount() {
   }
 
-  selectSlot(e) {
+  openSlotModal(e) {
+    console.log('open');
     const target = e.currentTarget;
     const begin = target.dataset.begin;
+
+    this.setState((prevState) => {
+      prevState.submitModalOpened = true;
+      prevState.choosenSlotBegin = begin;
+      return prevState;
+    });
+    console.log(this.state);
+    e.stopPropagation();
+  }
+
+  selectSlot() {
+    const begin = this.state.choosenSlotBegin;
     ApiRequests.selectSlot(this.props.user, begin)
     .then(() => {
       const beginDate = new Date(begin);
@@ -68,7 +85,6 @@ class Interview extends Component {
     }).catch((error) => {
       this.props.handleError(error.message ? error.message : error.toString());
     });
-    e.stopPropagation();
   }
 
   getSelectedSlot() {
@@ -77,6 +93,7 @@ class Interview extends Component {
       this.setState((prevState) => {
         prevState.interviewSlot = slot;
         prevState.loadingCurrentSlot = false;
+        return prevState;
       });
     })
   }
@@ -105,18 +122,45 @@ class Interview extends Component {
     });
   }
 
+  closeSubmitModal() {
+    console.log('closons');
+    this.setState((prevState) => {
+      prevState.submitModalOpened = false;
+      return prevState;
+    });
+  }
+
   render() {
+
+    const begin = this.state.choosenSlotBegin ? new Date(this.state.choosenSlotBegin) : new Date();
+
+    const submitModal = (<Modal show={ this.state.submitModalOpened } onHide={ this.closeSubmitModal }>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirmation</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Are you sure to choose your interview on { begin.toLocaleDateString('en-GB') + ' at ' + begin.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) }? </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={ this.closeSubmitModal }>
+          Close
+        </Button>
+        <Button variant='danger' onClick={ this.selectSlot }>
+          Yes
+        </Button>
+      </Modal.Footer>
+    </Modal>);
 
     const orderedDays = Object.keys(this.state.slotsByDate).sort();
     const dayBoxes = orderedDays.map((date, dayIndex) => {
       const slots = this.state.slotsByDate[date];
       const slotBoxes = slots.map((slot, slotIndex) => {
+        const begin = new Date(slot.begin);
+        const end = new Date(slot.end);
         return (
-          <div key={ dayIndex + '-' + slotIndex} className='slot' onClick={ this.selectSlot } data-begin={ slot.begin }>
+          <div key={ dayIndex + '-' + slotIndex} className='slot' onClick={ this.openSlotModal } data-begin={ slot.begin }>
           <span className='slot-label'>From: </span>
-          <span className='slot-time'>{ slot.begin.slice(11, 16) }</span>
-          <span className='slot-label'>To: </span>
-          <span className='slot-time'>{ slot.end.slice(11, 16) }</span>
+          <span className='slot-time'>{ begin.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) }</span>
+          <span className='slot-label'> To: </span>
+          <span className='slot-time'>{ end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) }</span>
           </div>
         );
       });
@@ -126,7 +170,7 @@ class Interview extends Component {
       const number = d.getDate();
 
       return (
-        <div className='day-box'>
+        <div key={ dayIndex} className='day-box'>
           <div className='day-label'>
             <span className='day-number'>{ number }</span>
             <span className='day-month'>{ month }</span>
@@ -145,6 +189,7 @@ class Interview extends Component {
       <div>
         <Header user={ this.props.user }/>
         <Container>
+          { submitModal }
 
           <h2>{ TEXTS.ITW_VIEW.TITLE }</h2>
 

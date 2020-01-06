@@ -23,7 +23,7 @@ class Summary extends Component {
     super(props);
     this.state = {
       process: {},
-      redirectPath: null,
+      redirectPath: '',
       loadingProcess: true
     };
     this.getProcessData = this.getProcessData.bind(this);
@@ -171,7 +171,7 @@ class Summary extends Component {
       <Card.Title>
       <span className='step-nb'>Interview:</span> Schedule your interview!
       </Card.Title>
-      <span class='step-explanation'>
+      <span className='step-explanation'>
       <FontAwesomeIcon className='status-icon' icon={this.getResultSymbol(this.isItwSelected())} />
       {
         this.state.process.interviewSlot ?
@@ -197,7 +197,7 @@ class Summary extends Component {
         <Card.Title>
         <span className='step-nb'>Step { index + 1 }:</span> { step.label }
         </Card.Title>
-        <span class='step-explanation'>
+        <span className='step-explanation'>
         <FontAwesomeIcon className='status-icon' icon={this.getResultSymbol(step.status)} />
         { step.status === 'pending' ? TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.PENDING_ICON_DESCRIPTION : '' }
         { step.status === 'validated' ? TEXTS.SUMMARY_VIEW.ICONS_DESCRIPTIONS.VALIDATED_ICON_DESCRIPTION : '' }

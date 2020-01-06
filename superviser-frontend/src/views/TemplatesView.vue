@@ -21,7 +21,10 @@
         <p v-if='!templateName'>
           Please select one template on the left
         </p>
-        <div v-if='!broken && templateName'>
+
+        <aap-spinner :show="loading"></aap-spinner>
+
+        <div v-if='!loading && !broken && templateName'>
           <h1>Template {{ templateName }}</h1>
           <strong>Some advices</strong>
 
@@ -76,11 +79,11 @@ import AapBroken from '../components/Broken.vue';
 
 export default {
   name: 'Templates',
-  components: { AapHeader, AapFooter, AapBroken },
+  components: { AapHeader, AapFooter, AapBroken, AapSpinner },
   data: () => ({
     loading: false,
     broken: false,
-    template: { template: null, subject: null, language: null, help: null}
+    template: { template: null, subject: null, language: null, help: null}
   }),
   props: [],
   beforeMount() {
@@ -89,6 +92,11 @@ export default {
   beforeRouteUpdate(to, from, next) {
     if (to.params.templateName) this.load(to.params.templateName);
     next();
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (to.params.templateName) vm.load(to.params.templateName);
+    });
   },
   mounted() {
   },
@@ -101,7 +109,7 @@ export default {
         this.template = template;
       }).catch((error) => {
         this.loading = false;
-        broken = true;
+        this.broken = true;
         this.$alert(error.message, `Error while downloading the template ${templateId}`, {
           confirmButtonText: 'OK'
         });
@@ -124,8 +132,6 @@ export default {
               confirmButtonText: 'OK'
             });
           });
-        }).catch((error) => {
-
         });
     }
   },

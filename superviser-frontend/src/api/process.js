@@ -1,5 +1,5 @@
-'using strict';
-const settings = require('../settings.json');
+'using strict'
+const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
 const { request } = require('./utils.js');
@@ -37,7 +37,7 @@ function createEmptyProcess(token) {
 function createCopyProcess(token, processId) {
   return new Promise((resolve, reject) => {
     request({
-      url: API_PATH + settings.CREATE_COPY_PROCESS + processId,
+      url: API_PATH + settings.CREATE_COPY_PROCESS + processId,
       data: undefined,
       token: token
     }, 'post').then((response) => {
@@ -76,7 +76,7 @@ function updateProcessById(token, processId, process) {
   });
 }
 
-function openProcessById(token, processId, process) {
+function openProcessById(token, processId) {
   return new Promise((resolve, reject) => {
     request({
       url: API_PATH + settings.OPEN_PROCESS + processId,

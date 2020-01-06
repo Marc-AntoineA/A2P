@@ -25,7 +25,7 @@ exports.createInterview = (req, res, next) => {
       res.status(201).json(itw);
    }).catch((error) => {
       res.status(503).json({
-         error: { message: "An unknown error occured while creating the itw slot. Please contact the administrator of this website."}
+         error: { message: error.toString()}
       });
    });
 };
@@ -151,7 +151,14 @@ exports.updateInterview = (req, res, next) => {
         sentSlot.$unset = { applicantId: '' }
       }
 
-      InterviewSlot.updateOne({ _id: sentSlot._id}, sentSlot).then((x) => {
+      slot.applicantId = sentSlot.applicantId ? sentSlot.applicantId : undefined;
+      slot.begin = sentSlot.begin;
+      slot.end = sentSlot.end;
+      slot.supervisorId = sentSlot.supervisorId;
+      slot.updatedAt = new Date();
+      slot.processId = sentSlot.processId;
+
+      slot.save().then((x) => {
         sentSlot.$unset = undefined;
         res.status(200).json(sentSlot);
       }).catch((error) => {

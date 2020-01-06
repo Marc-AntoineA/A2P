@@ -168,7 +168,7 @@ export default {
         });
     });
   },
-  DOWNLOAD_EXCEL_ANSWERS: ({ commit, state, dispatch }, processId) => {
+  DOWNLOAD_EXCEL_ANSWERS: ({ state, dispatch }, processId) => {
     return new Promise((resolve, reject) => {
       processApi.downloadProcessAnswers(state.user.token, processId)
         .then((response) => {
@@ -179,7 +179,7 @@ export default {
         });
     });
   },
-  GET_EMAIL_TEMPLATE: ({ commit, state, dispatch }, templateId) => {
+  GET_EMAIL_TEMPLATE: ({ state, dispatch }, templateId) => {
     return new Promise((resolve, reject) => {
       applicantApi.getEmailTemplate(state.user.token, templateId)
         .then((response) => {
@@ -190,7 +190,7 @@ export default {
         });
     });
   },
-  SAVE_EMAIL_TEMPLATE: ({ commit, state, dispatch }, { templateId, template }) => {
+  SAVE_EMAIL_TEMPLATE: ({ state, dispatch }, { templateId, template }) => {
     return new Promise((resolve, reject) => {
       applicantApi.saveEmailTemplate(state.user.token, templateId, template)
       .then((response) => {
@@ -227,7 +227,7 @@ export default {
   },
   SWITCH_ARCHIVE_APPLICANT_BY_ID: ({ commit, state, dispatch }, { applicantId, processId }) => {
     return new Promise((resolve, reject) => {
-      applicantApi.updateArchivedByApplicantId(state.user.token, applicantId, state.applicantsByProcessId[processId][applicantId].archived ? 'unarchive' : 'archive')
+      applicantApi.updateArchivedByApplicantId(state.user.token, applicantId, state.applicantsByProcessId[processId][applicantId].archived ? 'unarchive' : 'archive')
       .then(({ message, applicant} ) => {
         commit('SET_APPLICANT_BY_PROCESS_ID_AND_APPLICANT_ID', { processId, applicant });
         resolve(message);

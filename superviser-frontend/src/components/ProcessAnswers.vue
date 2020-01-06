@@ -98,11 +98,12 @@ export default {
   }),
   beforeMount(){
     this.stepsMark = this.process.steps.map((step) => (step.mark));
-    this.stepsResponsesTemplates = this.process.steps.map((step) =>  (
+    this.stepsResponsesTemplates = this.process.steps.map(() =>  (
       {
         accepting: undefined,
         template:{ template: '', language: '', help: '', subject: ''}
       }));
+
     this.$store.dispatch('GET_EMAIL_TEMPLATE', 'step_accepted').then((defaultTemplate) => {
       this.stepsResponsesTemplates = this.process.steps.map((step) => {
         if (step.status !== 'pending') {
@@ -111,14 +112,14 @@ export default {
         return { accepting: true, template: defaultTemplate };
       });
     }).catch((error) => {
-      broken = true;
+      this.broken = true;
       this.$alert(error.message, `Error while downloading the email template`, {
         confirmButtonText: 'OK'
       });
     });
 
     this.notCollapsedQuestions = this.process.steps.map((step, stepIndex) => {
-      return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
+      return this.questionsForStep(stepIndex).length < 3 ? ['1'] : [];
     });
   },
   computed: {
@@ -136,7 +137,7 @@ export default {
     },
     renderStepsResponsesTemplates() {
       const output = this.stepsResponsesTemplates.map((template, index) => {
-        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
+        return Mustache.render(template.template.template, { applicant: this.applicant, step: this.applicant.process.steps[index] });
       });
       return output;
     },

@@ -23,10 +23,10 @@
           <div v-if='this.process' style='overflow-x: hidden'>
             <aap-spinner :show="loading.applicants || loading.interviews"></aap-spinner>
 
-            <el-dialog v-if='$store.state.interviewsByProcessId[process._id] && $store.state.interviewsByProcessId[process._id][selectedSlotId]'
+            <el-dialog v-if='itwModalVisible && $store.state.interviewsByProcessId[process._id] && $store.state.interviewsByProcessId[process._id][selectedSlotId]'
               :visible.sync="itwModalVisible"
               width="50%" center>
-              <h2>Edit this slot</h2>
+              <h2>Edit this slot {{ selectedSlotId}}</h2>
               <el-form :model="selectedSlotForm" label-width="120px">
                 <el-form-item label="Day">
                   <el-date-picker type="date" placeholder="Pick a date" v-model="selectedSlotForm.day" style="width: 100%;"></el-date-picker>
@@ -55,7 +55,7 @@
                 <el-form-item>
                   <el-button type="danger" @click="deleteSelectedSlot">Delete</el-button>
                   <el-button type="primary" @click="saveSlot">Save</el-button>
-                  <el-button>Cancel</el-button>
+                  <el-button @click='() => {itwModalVisible = false}'> Cancel</el-button>
                 </el-form-item>
               </el-form>
             </el-dialog>
@@ -78,7 +78,7 @@
               </el-col>
               <el-col :span="6">
                 <h3>{{ currentDay | dayFormatter }}</h3>
-
+                <h4>Process <i>{{ process.label }}</i></h4>
                 <div class='day-table'>
                   <div class='hours-col'>
                     <!-- <div class='hours-cell'><span>00:00 </span></div>
@@ -159,13 +159,13 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       if (to.params.processId) {
-        if (vm.$store.state.applicantsByProcessId[to.params.processId]) return;
+        if (vm.$store.state.applicantsByProcessId[to.params.processId]) { vm.loading.applicants = false; return; }
         vm.fetchApplicants(to.params.processId);
       }
 
       vm.fetchProcesses().then(() => {
         if (!to.params.processId) return;
-        if (vm.$store.state.interviewsByProcessId[to.params.processId]) return;
+        if (vm.$store.state.interviewsByProcessId[to.params.processId]) { vm.loading.interviews = false; return; }
         vm.fetchInterviews(to.params.processId);
       });
     });
@@ -259,16 +259,26 @@ export default {
         supervisorId: this.$store.state.user.id,
         processId: this.process._id
       };
-      this.$store.dispatch('ADD_INTERVIEW_SLOT', itw);
+      this.$store.dispatch('ADD_INTERVIEW_SLOT', itw).catch((error) => {
+        this.$message({
+          type: 'error',
+          message: `Error while creating this slot ${error.message}`
+        });
+      });
     },
     editSlot(evt, slotId) {
       this.itwModalVisible = true;
       this.selectedSlotId = slotId;
+      console.log(slotId);
       const slot = this.$store.state.interviewsByProcessId[this.process._id][slotId];
       this.selectedSlotForm.day = slot.begin;
+      console.log(slot);
+      console.log(slot.begin);
+
       this.selectedSlotForm.time[0] = slot.begin;
       this.selectedSlotForm.time[1] = slot.end;
       this.selectedSlotForm.applicantId = slot.applicantId;
+      console.log(this.selectedSlotForm.time);
       evt.stopPropagation();
     },
     saveSlot() {
@@ -305,10 +315,12 @@ export default {
       this.$confirm('Are you sure to remove all the slots for this day?', 'Warning', {
           confirmButtonText: 'Yes',
           cancelButtonText: 'No',
-        }).then((error) => {
-          this.$store.dispatch('REMOVE_INTERVIEWS_BY_DAY', { processId: this.process._id, dateStr: this.currentDayStr });
-          this.$alert(error.message, 'Error while clearing all slots', {
-            confirmButtonText: 'OK'
+        }).then(() => {
+          this.$store.dispatch('REMOVE_INTERVIEWS_BY_DAY', { processId: this.process._id, dateStr: this.currentDayStr })
+          .catch((error) => {
+            this.$alert(error.message, 'Error while clearing all slots', {
+              confirmButtonText: 'OK'
+            });
           });
         });
     }

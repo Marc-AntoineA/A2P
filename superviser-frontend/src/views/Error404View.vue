@@ -8,12 +8,11 @@
 </template>
 
 <script>
-import AapFooter from '../components/Footer.vue';
 
 export default {
   name: 'Error404',
   props: {},
-  components: { AapFooter }
+  components: { }
 }
 </script>
 

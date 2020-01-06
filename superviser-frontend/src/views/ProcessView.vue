@@ -150,7 +150,6 @@ export default {
       for (let stepIndex=0; stepIndex<this.process.steps.length; stepIndex++) {
         const step = this.process.steps[stepIndex];
         for (let pageIndex=0; pageIndex<step.pages.length; pageIndex++) {
-          const page = step.pages[pageIndex];
           if (!this.$refs["page-" + stepIndex + '-' + pageIndex][0].validate())
             saveIsPossible = false;
         }
@@ -258,10 +257,7 @@ export default {
                   confirmButtonText: 'OK'
                 });
               });
-          }).catch((error) => {
           });
-        }).catch(() => {
-
         });
     },
   },

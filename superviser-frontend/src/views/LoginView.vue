@@ -22,13 +22,12 @@
 </template>
 
 <script>
-import AapFooter from '../components/Footer.vue';
 import AapSpinner from '../components/Spinner.vue';
 
 export default {
   name: 'Login',
   props: {},
-  components: { AapSpinner, AapFooter },
+  components: { AapSpinner },
   data: () => ({
     username: '',
     password: '',
@@ -64,7 +63,6 @@ export default {
           type: 'info',
           message: 'You are now disconnected'
         });
-      }).catch((err) => {
       });
   }
 }

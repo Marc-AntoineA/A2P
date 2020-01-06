@@ -1,5 +1,5 @@
-'using strict';
-const settings = require('../settings.json');
+'using strict'
+const settings = require('../settings.json');
 const API_PATH = settings.API_PATH;
 
 const { request } = require('./utils.js');
